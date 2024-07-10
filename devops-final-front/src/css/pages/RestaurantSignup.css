@@ -1,6 +1,15 @@
+.fullWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .restSigninWrapper {
+  margin: 50px;
   width: clamp(60%, 90% - 20vw, 90%);
-  border: 1px solid;
+  border-radius: 10px;
+  box-shadow: #dddddd 3px 3px 10px;
   display: flex;
   flex-direction: column;
   align-content: center;
@@ -20,7 +29,7 @@
 /* 헤더 */
 .signinHeader {
   width: 100%;
-  margin-bottom: 15px;
+  margin: 15px 0px 10px;
 }
 .headertext {
   font-size: 20px;
@@ -37,7 +46,7 @@
 
 /* 컨텐츠 */
 .signinContent {
-  margin-bottom: 15px;
+  margin: 10px 0px 10px;
 }
 .wrapper2{
   width: 49%;
@@ -91,6 +100,30 @@
   flex-direction: row;
 }
 
+@media(max-width: 900px) {
+  .input2btn2short {
+    width: 100%;
+  }
+  .child2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .input2btn2short {
+    padding: 5px;
+    margin-top: 5px;
+    width: 100%;
+  }
+  .wrapper2{
+    padding: 5px;
+    margin-top: 5px;
+    width: 100%;
+  }
+  .row {
+    margin: 0;
+  }
+}
+
 
 /* 파일 업로드 */
 .filebox {
@@ -105,6 +138,9 @@
 }
 
 /* 푸터 */
+.signinFooter {
+  margin: 10px 0px 15px;
+}
 
 .signinSubmitBtn {
   width: 100%;

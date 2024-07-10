@@ -9,4 +9,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: #dddddd 5px 0px 10px;
 }
