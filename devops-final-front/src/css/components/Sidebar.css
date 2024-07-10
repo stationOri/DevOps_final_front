@@ -1,0 +1,100 @@
+.sideBarWrapper{
+  width: 170px;
+  height: 100vh;
+  border-right: 1px solid #dddddd;
+  border-radius: 5px 10px 10px 5px;
+}
+.extendbtn{
+  position: relative;
+  padding: 3px;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  left: 160px;
+  bottom: 70px;
+}
+.extendbtnImg{
+  width: 10px;
+}
+.sideBarHeader{
+  height: 120px;
+  background: #fafafa;
+  border-bottom: 1px solid #dddddd;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: start;
+}
+
+.iconWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-left: 15px;
+}
+.sidebarLogo {
+  width: 20px;
+}
+
+.guestText {
+  margin-left: 10px;
+}
+
+.searchLogo {
+  width: 15px;
+}
+
+.sidebarsearchboxWrapper {
+  width: 140px;
+  background-color: #FFFFFF;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+}
+
+.sidebarsearchbox{
+  border: none;
+  color: #dddddd;
+  width: 120px;
+}
+
+.sidebarsearchbox:focus{
+  outline: none;
+}
+
+.sidebarContent {
+  margin-left: 20px;
+}
+
+.sidebarRow {
+  display: flex;
+  margin: 20px 0;
+}
+
+.sidebarIcon{
+  width: 15px;
+  height: 15px;
+}
+.rest{
+  width: 13px;
+}
+
+.sidebarText {
+  color: #5C5E64;
+  font-size: 14px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.ctgText{
+  font-size: 10px;
+  font-weight: bold;
+  color: #5C5E64;
+}

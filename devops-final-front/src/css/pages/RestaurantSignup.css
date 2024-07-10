@@ -110,12 +110,12 @@
     flex-direction: column;
   }
   .input2btn2short {
-    padding: 5px;
+    padding: 5px 0;
     margin-top: 5px;
     width: 100%;
   }
   .wrapper2{
-    padding: 5px;
+    padding: 5px 0;
     margin-top: 5px;
     width: 100%;
   }
