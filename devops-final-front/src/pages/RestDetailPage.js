@@ -7,26 +7,71 @@ import RestaurantLocationMap from "../components/RestaurantLocationMap";
 function RestDetailPage() {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
+  const [menus, setMenus] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getRestaurant();
+    fetchRestaurant();
+    fetchMenus();
+    fetchReviews();
   }, [id]);
 
-  const getRestaurant = async () => {
+  const fetchRestaurant = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restaurants/${id}`);
       if (!response.ok) {
-        throw new Error("failed to fetch");
+        throw new Error("Failed to fetch restaurant");
       }
-      const json = await response.json();
-      setRestaurant(json);
-    } catch (e) {
-      console.error(e);
+      const data = await response.json();
+      setRestaurant(data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  if (!restaurant) {
+  const fetchMenus = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/menu");
+      if (!response.ok) {
+        throw new Error("Failed to fetch menus");
+      }
+      const data = await response.json();
+      setMenus(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/reviews");
+      if (!response.ok) {
+        throw new Error("Failed to fetch reviews");
+      }
+      const data = await response.json();
+      setReviews(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const filteredMenus = menus.filter((menu) => menu.rest_id === parseInt(id));
+  const filteredReviews = reviews.filter(
+    (review) => review.rest_id === parseInt(id)
+  );
+
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!restaurant) {
+    return <div>No restaurant found</div>;
   }
 
   return (
@@ -90,6 +135,21 @@ function RestDetailPage() {
         </div>
         <div className="rest-box">
           <div className="rest-title">Menu</div>
+          <div>
+          <div className="menu-container">
+            {filteredMenus.map((menu) => (
+              <li key={menu.id} className="menu-li">
+                <div className="menu-box">
+                  <img className="menu-img" src={menu.menu_photo} alt={menu.menu_name} />
+                  <div className="menu-info-box">
+                    <p className="menu-title">{menu.menu_name}</p>
+                    <p className="menu-price">{menu.menu_price}원</p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </div>
+          </div>
         </div>
         <div className="rest-box">
           <div className="rest-title">Hours and Location</div>
@@ -106,6 +166,22 @@ function RestDetailPage() {
         </div>
         <div className="rest-box">
           <div className="rest-title">Reviews</div>
+          <div> 
+            <ul>
+              {filteredReviews.map((review) => (
+                <li key={review.id}>
+                  <p>{review.user_nickname}</p>
+                  <p>{review.review_grade}점</p>
+                  <p>{review.review_data}</p>
+                  <img src={review.review_img} alt="review" />
+                  <img src={review.review_img2} alt="review" />
+                  <img src={review.review_img3} alt="review" />
+                  <p>{review.review_date}</p>
+                  <p>Likes: {review.like_num}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
