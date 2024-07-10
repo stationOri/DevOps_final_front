@@ -3,6 +3,13 @@ import { useParams } from "react-router-dom";
 import "../css/pages/RestDetailPage.css";
 import StarRatings from "../components/StarRatings";
 import RestaurantLocationMap from "../components/RestaurantLocationMap";
+import ReviewCard from "../components/ReviewCard";
+import rightImg from "../assets/images/right.png";
+import leftImg from "../assets/images/left.png";
+import locationImg from "../assets/images/location.png";
+import opentimeImg from "../assets/images/opentime.png";
+import phoneImg from "../assets/images/phone.png";
+import emptyImg from "../assets/images/empty.png";
 
 function RestDetailPage() {
   const { id } = useParams();
@@ -11,6 +18,8 @@ function RestDetailPage() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 4;
 
   useEffect(() => {
     fetchRestaurant();
@@ -74,6 +83,23 @@ function RestDetailPage() {
     return <div>No restaurant found</div>;
   }
 
+  const paginate = (newPage) => {
+    if (
+      newPage < 1 ||
+      newPage > Math.ceil(filteredReviews.length / reviewsPerPage)
+    ) {
+      return;
+    }
+    setCurrentPage(newPage);
+  };
+
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = filteredReviews.slice(
+    indexOfFirstReview,
+    indexOfLastReview
+  );
+
   return (
     <div className="detail">
       <div className="rest-container">
@@ -89,6 +115,7 @@ function RestDetailPage() {
             <div className="rest-name">{restaurant.rest_name}</div>
             <div className="rest-btn-box">
               <div className="empty-btn">
+                <img className="empty-img" src={emptyImg} />
                 <div>빈자리 알림 요청</div>
               </div>
               <div className="ask-btn">
@@ -136,19 +163,23 @@ function RestDetailPage() {
         <div className="rest-box">
           <div className="rest-title">Menu</div>
           <div>
-          <div className="menu-container">
-            {filteredMenus.map((menu) => (
-              <li key={menu.id} className="menu-li">
-                <div className="menu-box">
-                  <img className="menu-img" src={menu.menu_photo} alt={menu.menu_name} />
-                  <div className="menu-info-box">
-                    <p className="menu-title">{menu.menu_name}</p>
-                    <p className="menu-price">{menu.menu_price}원</p>
+            <div className="menu-container">
+              {filteredMenus.map((menu) => (
+                <li key={menu.id} className="menu-li">
+                  <div className="menu-box">
+                    <img
+                      className="menu-img"
+                      src={menu.menu_photo}
+                      alt={menu.menu_name}
+                    />
+                    <div className="menu-info-box">
+                      <p className="menu-title">{menu.menu_name}</p>
+                      <p className="menu-price">{menu.menu_price}원</p>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </div>
+                </li>
+              ))}
+            </div>
           </div>
         </div>
         <div className="rest-box">
@@ -158,29 +189,45 @@ function RestDetailPage() {
               <RestaurantLocationMap address={restaurant.rest_address} />
             </div>
             <div className="rest-location-wrap">
-              <p>{restaurant.rest_address}</p>
-              <p>{restaurant.rest_opentime}</p>
-              <p>{restaurant.rest_phone}</p>
+              <div className="rest-info-wrap">
+                <img className="rest-info-img" src={locationImg} />
+                <p className="rest-info-content">{restaurant.rest_address}</p>
+              </div>
+              <div className="rest-info-wrap">
+                <img className="rest-info-img" src={opentimeImg} />
+                <p className="rest-info-content">{restaurant.rest_opentime}</p>
+              </div>
+              <div className="rest-info-wrap">
+                <img className="rest-info-img" src={phoneImg} />
+                <p className="rest-info-content">{restaurant.rest_phone}</p>
+              </div>
             </div>
           </div>
         </div>
         <div className="rest-box">
           <div className="rest-title">Reviews</div>
-          <div> 
-            <ul>
-              {filteredReviews.map((review) => (
-                <li key={review.id}>
-                  <p>{review.user_nickname}</p>
-                  <p>{review.review_grade}점</p>
-                  <p>{review.review_data}</p>
-                  <img src={review.review_img} alt="review" />
-                  <img src={review.review_img2} alt="review" />
-                  <img src={review.review_img3} alt="review" />
-                  <p>{review.review_date}</p>
-                  <p>Likes: {review.like_num}</p>
-                </li>
+          <div className="rest-reviews-with-pagination">
+            <div
+              className="pagination-btn"
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <img className="review-pagination-img" src={leftImg} />
+            </div>
+            <div className="rest-review-container">
+              {currentReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
               ))}
-            </ul>
+            </div>
+            <div
+              className="pagination-btn"
+              onClick={() => paginate(currentPage + 1)}
+              disabled={
+                currentPage === Math.ceil(reviews.length / reviewsPerPage)
+              }
+            >
+              <img className="review-pagination-img" src={rightImg} />
+            </div>
           </div>
         </div>
       </div>

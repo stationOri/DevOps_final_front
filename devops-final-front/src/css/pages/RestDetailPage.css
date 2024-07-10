@@ -49,8 +49,9 @@
 
 .empty-btn{
   display: flex;
+  flex-direction: row;
   align-items: center;
-  width: 110px;
+  width: 140px;
   height: 32px;
   border-radius: 7px;
   margin: 0px 10px;
@@ -59,6 +60,12 @@
 }
 .empty-btn:hover {
   text-decoration: underline;
+}
+
+.empty-img{
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
 }
 
 .ask-btn {
@@ -202,4 +209,46 @@
 .menu-price{
   font-size: 18px;
   font-weight: lighter;
+}
+
+.rest-info-wrap{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
+}
+
+.rest-info-img{
+  width: 20px;
+}
+
+.rest-info-content{
+  font-size: 18px;
+  font-weight: lighter;
+  margin-left: 10px;
+}
+
+.rest-reviews-with-pagination{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.rest-review-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 15px;
+  margin-bottom: 50px;
+  min-width: 1400px;
+}
+
+.review-pagination-img{
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  display: block;
 }
