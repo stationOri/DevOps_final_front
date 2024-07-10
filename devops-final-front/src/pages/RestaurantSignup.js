@@ -1,4 +1,4 @@
-import "../css/pages/RestaurantSignin.css"
+import "../css/pages/RestaurantSignup.css"
 import Oriblue from "../assets/images/oriblue.png"
 import File from "../components/File"
 

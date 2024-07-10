@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Main from "./pages/Main";
 import Mypage from "./pages/Mypage";
-import RestaurantSignin from "./pages/RestaurantSignin";
+import RestaurantSignin from "./pages/RestaurantSignup";
 
 
 function App() {
