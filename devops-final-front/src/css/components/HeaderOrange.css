@@ -1,0 +1,12 @@
+.orangeheaderImg {
+  width: 100px;
+  height: 80px;
+}
+
+.orangeheaderWrapper {
+  width: 100%;
+  height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

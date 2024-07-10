@@ -1,11 +1,13 @@
 import "../css/pages/RestaurantSignup.css"
 import Oriblue from "../assets/images/oriblue.png"
 import File from "../components/File"
+import HeaderOrange from "../components/HeaderOrange"
 
 function RestaurantSignin() {
   
   return (
     <div className="fullWrapper">
+    <HeaderOrange></HeaderOrange>
     <div className = "restSigninWrapper">
       <div className="signinHeader">
         <img className="ori" src={Oriblue} alt="duck"/>
