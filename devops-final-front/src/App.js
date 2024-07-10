@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Main from "./pages/Main";
 import Mypage from "./pages/Mypage";
-import RestaurantSignin from "./pages/RestaurantSignup";
+import RestaurantSignup from "./pages/RestaurantSignup";
+import UserSignup from "./pages/UserSignup";
 
 
 function App() {
@@ -11,7 +12,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />}></Route>
           <Route path="/mypage" element={<Mypage />}></Route>
-          <Route path="/restaurantSignin" element={<RestaurantSignin />}></Route>
+          <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
+          <Route path="/usersignup" element={<UserSignup />}></Route>
         </Routes>
       </BrowserRouter>
   );
