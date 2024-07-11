@@ -34,6 +34,13 @@
   top: 70px;
 }
 
+.sidebaraskButton {
+  position: absolute;
+  left: 25px;
+  bottom: 30px;
+  padding: 0 20px;
+}
+
 .extendbtnImg {
   width: 10px;
 }
@@ -94,6 +101,12 @@
   margin-left: 20px;
 }
 
+.sidebaraskButton {
+  margin-top: 20px;
+  color: #FF8A00;
+  border: 1px solid #FF8A00;
+}
+
 .sidebarRow {
   display: flex;
   margin: 20px 0;
@@ -129,4 +142,8 @@
   width: 30px;
   margin-left: 10px;
   background: none;
+}
+
+.hidden {
+  display: none;
 }

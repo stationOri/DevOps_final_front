@@ -36,21 +36,20 @@ function SideBar() {
           {isExtended && <div className="guestText">{username}</div>}
         </div>
         <div className={`sidebarsearchboxWrapper ${isExtended ? '' : 'hidden'}`}>
-            <img src={Search} alt="" className="searchLogo"/>
-        {isExtended && (
+          <img src={Search} alt="" className="searchLogo"/>
+          {isExtended && (
             <input 
               type="text" 
               className="sidebarsearchbox"
               placeholder="Search"
-            ></input>
+            />
           )}
-          </div>
+        </div>
       </div>
       <button className="extendbtn" onClick={toggleSidebar}>
         <img src={ExtendBtn} alt="" className="extendbtnImg"/>
       </button>
       <div className="sidebarContent">
-        <div className="mainContent">
           <div className="sidebarRow">
             <div className={`ctgText ${isExtended ? '' : 'hidden'}`}>MAIN</div>
           </div>
@@ -70,7 +69,7 @@ function SideBar() {
             <img src={Chat} alt="" className="sidebarIcon"/>
             <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>1:1 문의</div>
           </div>
-        </div>
+        
         <div className="userContent">
           <div className="sidebarRow">
             <div className={`ctgText ${isExtended ? '' : 'hidden'}`}>USER</div>
@@ -99,6 +98,7 @@ function SideBar() {
             </>
           )}
         </div>
+        <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`}>관리자 문의</button>
       </div>
     </div>
   );
