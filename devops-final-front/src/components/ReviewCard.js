@@ -11,7 +11,7 @@ const ReviewCard = ({ review }) => {
   };
 
   const reviewContent = review.review_data;
-  const isLongText = reviewContent.length > 135;
+  const isLongText = reviewContent.length > 105;
 
   return (
     <div className="review-card-container">
@@ -25,7 +25,7 @@ const ReviewCard = ({ review }) => {
         <div className="review-data-box">
           <p>
             {isExpanded ? reviewContent : 
-              isLongText ? `${reviewContent.substring(0, 135)}...` : reviewContent}
+              isLongText ? `${reviewContent.substring(0, 105)}...` : reviewContent}
             {isLongText && (
               <span className="read-more" onClick={toggleReadMore}>
                 {isExpanded ? " Show less" : " Read more"}
