@@ -7,12 +7,23 @@ import Chat from "../assets/images/chat.png";
 import Login from "../assets/images/login.png";
 import Search from "../assets/images/search.png";
 import ExtendBtn from "../assets/images/menubtn.png";
-import "../css/components/Sidebar.css";
+import "../css/components/SideBar.css";
+import SigninModal from "../components/Modal/SigninModal";
 
 function SideBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [isExtended, setIsExtended] = useState(true); // 사이드바 확장 상태를 관리하는 변수
+  const [loginshow, setLoginshow] = useState(false);
+  const [signinshow, setSigninshow] = useState(false);
+
+  // login modal 함수
+  const loginClose = () => setLoginshow(false);
+  const loginShow = () => setLoginshow(true);
+
+  // 회원가입 modal 함수
+  const signinClose = () => setSigninshow(false);
+  const signinShow = () => setSigninshow(true);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -25,11 +36,15 @@ function SideBar() {
   };
 
   const toggleSidebar = () => {
-    setIsExtended(!isExtended); // 사이드바 확장 상태 토글
+    setIsExtended(!isExtended);
   };
 
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
+      <SigninModal 
+        signinClose={signinClose}
+        signinshow={signinshow}
+      />
       <div className="sideBarHeader">
         <div className="iconWrapper">
           <img src={Logo} alt="" className="sidebarLogo"/>
@@ -89,11 +104,11 @@ function SideBar() {
             <>
               <div className="sidebarRow">
                 <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={handleLogin}>로그인</div>
+                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={loginShow}>로그인</div>
               </div>
               <div className="sidebarRow">
                 <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>회원가입</div>
+                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={signinShow}>회원가입</div>
               </div>
             </>
           )}
