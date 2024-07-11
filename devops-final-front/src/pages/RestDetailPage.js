@@ -12,19 +12,31 @@ import phoneImg from "../assets/images/phone.png";
 import emptyImg from "../assets/images/empty.png";
 import quotesImg1 from "../assets/images/quotes.png";
 import quotesImg2 from "../assets/images/quotes2.png";
+import EmptyEnrollModal from "../components/Modal/EmptyEnrollModal";
 
 function RestDetailPage() {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
+  const [opentimes, setOpentimes] = useState([]);
   const [menus, setMenus] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     fetchRestaurant();
+    fetchOpentimes();
     fetchMenus();
     fetchReviews();
   }, [id]);
@@ -37,6 +49,19 @@ function RestDetailPage() {
       }
       const data = await response.json();
       setRestaurant(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchOpentimes = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/opentime`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch opentime");
+      }
+      const data = await response.json();
+      setOpentimes(data);
     } catch (error) {
       console.error(error);
     }
@@ -68,10 +93,9 @@ function RestDetailPage() {
     }
   };
 
+  const filteredOpentimes = opentimes.filter((opentime) => opentime.rest_id === parseInt(id));
   const filteredMenus = menus.filter((menu) => menu.rest_id === parseInt(id));
-  const filteredReviews = reviews.filter(
-    (review) => review.rest_id === parseInt(id)
-  );
+  const filteredReviews = reviews.filter((review) => review.rest_id === parseInt(id));
 
   if (loading) {
     return <div>Loading...</div>;
@@ -104,6 +128,7 @@ function RestDetailPage() {
 
   return (
     <div className="detail">
+      <EmptyEnrollModal isOpen={isModalOpen} onClose={closeModal} name={restaurant.rest_name} />
       <div className="rest-container">
         <div className="rest-photo-box">
           <img
@@ -116,7 +141,7 @@ function RestDetailPage() {
           <div className="rest-name-box">
             <div className="rest-name">{restaurant.rest_name}</div>
             <div className="rest-btn-box">
-              <div className="empty-btn">
+              <div className="empty-btn" onClick={openModal}>
                 <img className="empty-img" src={emptyImg} />
                 <div>빈자리 알림 요청</div>
               </div>
@@ -201,9 +226,15 @@ function RestDetailPage() {
                 <img className="rest-info-img" src={locationImg} />
                 <p className="rest-info-content">{restaurant.rest_address}</p>
               </div>
-              <div className="rest-info-wrap">
+              <div className="rest-info-wrap-2">
                 <img className="rest-info-img" src={opentimeImg} />
-                <p className="rest-info-content">{restaurant.rest_opentime}</p>
+                <div>
+                  {filteredOpentimes.map((opentime) => (
+                    <div key={opentime.id} className="rest-info-content">
+                      {opentime.rest_day} : {opentime.rest_open} ~ {opentime.rest_close} / 브레이크타임 : {opentime.rest_breakstart} ~ {opentime.rest_breakend}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="rest-info-wrap">
                 <img className="rest-info-img" src={phoneImg} />

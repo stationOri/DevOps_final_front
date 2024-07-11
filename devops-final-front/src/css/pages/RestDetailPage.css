@@ -243,6 +243,13 @@
   margin: 10px;
 }
 
+.rest-info-wrap-2{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  margin: 10px;
+}
+
 .rest-info-img{
   width: 20px;
 }
@@ -250,7 +257,7 @@
 .rest-info-content{
   font-size: 18px;
   font-weight: lighter;
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .rest-reviews-with-pagination{
