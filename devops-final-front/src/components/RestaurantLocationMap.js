@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
-import markerIcon from '../assets/images/marker.png';
+import markerIcon from "../assets/images/marker.png";
 
 const RestaurantLocationMap = ({ address }) => {
   const mapRef = useRef(null);
@@ -13,8 +13,7 @@ const RestaurantLocationMap = ({ address }) => {
     const map = L.map(mapRef.current).setView([37.339832, 127.108985], 17);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      attribution: "stationOri : Waitmate",
       maxZoom: 18,
     }).addTo(map);
 
@@ -22,7 +21,7 @@ const RestaurantLocationMap = ({ address }) => {
       iconUrl: markerIcon,
       iconSize: [32, 42],
       iconAnchor: [16, 32],
-      popupAnchor: [0, -32]
+      popupAnchor: [0, -32],
     });
 
     const addMarker = async () => {
