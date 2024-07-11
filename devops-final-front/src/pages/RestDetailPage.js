@@ -10,6 +10,8 @@ import locationImg from "../assets/images/location.png";
 import opentimeImg from "../assets/images/opentime.png";
 import phoneImg from "../assets/images/phone.png";
 import emptyImg from "../assets/images/empty.png";
+import quotesImg1 from "../assets/images/quotes.png";
+import quotesImg2 from "../assets/images/quotes2.png";
 
 function RestDetailPage() {
   const { id } = useParams();
@@ -157,7 +159,13 @@ function RestDetailPage() {
         <div className="rest-box">
           <div className="rest-title">Announcement</div>
           <div className="rest-announce-box">
+            <div className="quotes-img-container quotes-img-1">
+              <img className="quotes-img" src={quotesImg1} alt="quote 1" />
+            </div>
             <p>{restaurant.rest_post}</p>
+            <div className="quotes-img-container quotes-img-2">
+              <img className="quotes-img" src={quotesImg2} alt="quote 2" />
+            </div>
           </div>
         </div>
         <div className="rest-box">

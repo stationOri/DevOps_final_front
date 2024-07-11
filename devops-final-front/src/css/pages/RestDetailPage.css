@@ -131,12 +131,37 @@
 }
 
 .rest-announce-box{
+  position: relative;
   background-color: #ECF0F4;
-  padding: 20px 50px;
-  margin-top: 20px;
+  padding: 30px 60px;
+  margin-top: 40px;
   margin-bottom: 30px;
 }
 
+.quotes-img-container {
+  position: absolute;
+  width: 60px;
+  height: 50px;
+}
+
+.quotes-img{
+  position: absolute;
+  width: 60px;
+  height: 50px;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+}
+
+.quotes-img-1 {
+  top: -15px; 
+  left: -15px;
+}
+
+.quotes-img-2 {
+  bottom: -15px;
+  right: -15px;
+}
 
 .rest-location-box{
   display: flex;
