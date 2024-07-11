@@ -9,6 +9,8 @@ import Search from "../assets/images/search.png";
 import ExtendBtn from "../assets/images/menubtn.png";
 import "../css/components/SideBar.css";
 import SigninModal from "./Modal/SigninModal";
+import CheckModal from "./Modal/CheckModal"
+import { useCheckModal } from "./Modal/CheckModalContext";
 
 function SideBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -16,6 +18,12 @@ function SideBar() {
   const [isExtended, setIsExtended] = useState(true); // 사이드바 확장 상태를 관리하는 변수
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
+
+  const { openCheckModal } = useCheckModal();
+
+  const handleOpenModal = () => {
+    openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.');
+  };
 
   // login modal 함수
   const loginClose = () => setLoginshow(false);
@@ -113,8 +121,9 @@ function SideBar() {
             </>
           )}
         </div>
-        <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`}>관리자 문의</button>
+        <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`} onClick={handleOpenModal}>관리자 문의</button>
       </div>
+      <CheckModal />
     </div>
   );
 }

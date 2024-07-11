@@ -5,9 +5,11 @@ import Mypage from "./pages/Mypage";
 import RestaurantSignup from "./pages/RestaurantSignup";
 import UserSignup from "./pages/UserSignup";
 import RestDetailPage from "./pages/RestDetailPage";
+import { CheckModalProvider } from "./components/Modal/CheckModalContext";
 
 function App() {
   return (
+    <CheckModalProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />}></Route>
@@ -17,6 +19,7 @@ function App() {
         <Route path="/restaurants/:id" element={<RestDetailPage />}></Route>
       </Routes>
     </BrowserRouter>
+    </CheckModalProvider>
   );
 }
 
