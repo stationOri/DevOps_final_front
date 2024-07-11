@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
-import SideBar from "../components/Sidebar";
+import SideBar from "../components/SideBar";
 import "../css/pages/Main.css";
 
 function Main() {
