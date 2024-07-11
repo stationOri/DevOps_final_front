@@ -1,0 +1,27 @@
+.adminSidebarWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adminsidebarcontent{
+  width: 120px;
+  border: 1px solid #dddddd;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 5px 5px #dddddd 10px;
+  padding: 10px 0;
+}
+
+.adminSidebatText {
+  border: none;
+  margin: 2px 0;
+}
+
+.line{
+  width: 80%;
+  border-top: 1px solid #dddddd;
+}
