@@ -1,8 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/SigninModal.css";
 
 function SigninModal({ signinClose, signinshow }) {
+  const navigate = useNavigate();
+
+  const handleGoToSignUpPer = () => {
+    navigate('/usersignup');
+  };
+
+  const handleGoToSignUpRes = () => {
+    navigate('/restaurantsignup');
+  };
+
   return (
     <div
       id={signinshow ? "signinbackgroundon" : "signinbackgroundoff"}
@@ -27,8 +38,8 @@ function SigninModal({ signinClose, signinshow }) {
           <div className="signinhintText">가입할 유형을 선택하세요.</div>
         </div>
         <div className="signinModalButton">
-          <button className="signinModalPersonal">개인 회원</button>
-          <button className="signinModalRest">식당 회원</button>
+          <button className="signinModalPersonal" onClick={handleGoToSignUpPer}>개인 회원</button>
+          <button className="signinModalRest" onClick={handleGoToSignUpRes}>식당 회원</button>
         </div>
       </div>
     </div>

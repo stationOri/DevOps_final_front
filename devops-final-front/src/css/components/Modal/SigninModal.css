@@ -70,11 +70,12 @@
 .signinboldText {
   font-weight: bold;
   font-size: 16px;
+  color: #333333;
 }
 
 .signinhintText {
   color: #888888;
-  font-size: 12px;
+  font-size: 11px;
   margin-top: 3px;
 }
 
