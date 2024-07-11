@@ -1,40 +1,132 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "../../css/components/Modal/EmptyEnrollModal.css";
 import closeIcon from "../../assets/images/x-close.png";
 import emptyIcon from "../../assets/images/emptyenroll.png";
 import restIcon from "../../assets/images/rest.png";
 
 const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
-  // Initialize state variables at the top level
-  const [selectedDate, setSelectedDate] = useState(""); // State for selected date
-  const [selectedTime, setSelectedTime] = useState(""); // State for selected time
-  const [selectedGuests, setSelectedGuests] = useState(1); // State for selected number of guests
+  const { id } = useParams();
+  const [opentimes, setOpentimes] = useState([]);
+  const [restInfo, setRestInfo] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedGuests, setSelectedGuests] = useState(1);
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const [maxPpl, setMaxPpl] = useState(0);
 
-  // Check if modal is not open, then return null
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      fetchOpentimes();
+      fetchRestInfo();
+    }
+  }, [isOpen]);
 
-  // Event handlers for handling changes
-  const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+  const fetchOpentimes = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/opentime`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch opentime");
+      }
+      const data = await response.json();
+      setOpentimes(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchRestInfo = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/restInfo`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch restaurant info");
+      }
+      const data = await response.json();
+      setRestInfo(data);
+      if (data && data.length > 0) {
+        setMaxPpl(data[0].max_ppl);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDayOfWeek = (date) => {
+    const dayOfWeek = new Date(date).getDay();
+    const days = ["일", "월", "화", "수", "목", "금", "토"];
+    return days[dayOfWeek];
+  };
+
+  const calculateAvailableTimes = (opentime, interval) => {
+    const start = new Date(`2024-01-01T${opentime.rest_open}:00`);
+    const end = new Date(`2024-01-01T${opentime.rest_close}:00`);
+    const breakStart = new Date(`2024-01-01T${opentime.rest_breakstart}:00`);
+    const breakEnd = new Date(`2024-01-01T${opentime.rest_breakend}:00`);
+    const times = [];
+    const intervalInMinutes = interval === "ONEHOUR" ? 60 : 30;
+
+    let currentTime = new Date(start);
+
+    while (currentTime < end) {
+      if (!(currentTime >= breakStart && currentTime < breakEnd)) {
+        times.push(currentTime.toTimeString().substring(0, 5));
+      }
+      currentTime.setMinutes(currentTime.getMinutes() + intervalInMinutes);
+    }
+    return times;
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+
+    const dayOfWeek = getDayOfWeek(date);
+    const filteredOpentime = opentimes.find(
+      (opentime) =>
+        opentime.rest_id === parseInt(id) && opentime.rest_day === dayOfWeek
+    );
+
+    if (filteredOpentime && restInfo) {
+      const interval = restInfo[0].rest_reserve_interval;
+      const times = calculateAvailableTimes(filteredOpentime, interval);
+      setAvailableTimes(times);
+    } else {
+      setAvailableTimes([]);
+    }
   };
 
   const handleTimeChange = (event) => {
     setSelectedTime(event.target.value);
   };
 
-  const handleGuestsChange = (event) => {
-    setSelectedGuests(parseInt(event.target.value));
+  const handleGuestIncrement = () => {
+    if (selectedGuests < maxPpl) {
+      setSelectedGuests(selectedGuests + 1);
+    }
   };
 
-  // Handle enrollment logic here
+  const handleGuestDecrement = () => {
+    if (selectedGuests > 1) {
+      setSelectedGuests(selectedGuests - 1);
+    }
+  };
+
+  const day = new Date(+selectedDate+ 3240*10000).toISOString().split('T')[0];
+
+  const oneWeekLater = new Date(new Date().setDate(new Date().getDate() + 7));
+const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
+
+const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWeekLater : oneMonthLater;
+
   const handleEnroll = () => {
     console.log("빈자리 알림 신청 완료!");
-    console.log("선택한 날짜:", selectedDate);
+    console.log("선택한 날짜:", day);
     console.log("선택한 시간:", selectedTime);
     console.log("선택한 인원수:", selectedGuests);
-    // Additional logic to handle enrollment
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
@@ -58,42 +150,65 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
           </div>
           <div className="horizon"></div>
           <div className="empty-enroll-content">
-            <div>
-            <label htmlFor="datePicker">날짜:</label>
-              <input
-                type="date"
-                id="datePicker"
-                value={selectedDate}
-                onChange={handleDateChange}
-              />
+            <div className="empty-enroll-picker">
+              <div className="empty-enroll-date-time">
+                <div className="empty-enroll-date">
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                    minDate={new Date()}
+                    maxDate={LaterDate}
+                    className="picker"
+                    placeholderText="날짜 선택"
+                    dateFormat="yyyy-MM-dd"
+                  />
+                </div>
+                <div className="empty-enroll-time">
+                  <select
+                    id="timePicker"
+                    className="picker"
+                    value={selectedTime}
+                    onChange={handleTimeChange}
+                  >
+                    <option value="">TIME</option>
+                    {availableTimes.map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="empty-enroll-content-text">
+                <button
+                  className="guest-picker-btn"
+                  onClick={handleGuestDecrement}
+                >
+                  -
+                </button>
+                <span className="guest-picker-value">
+                  <span className="selected-guest">{selectedGuests}</span>{" "}
+                  Guests
+                </span>
+                <button
+                  className="guest-picker-btn"
+                  onClick={handleGuestIncrement}
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="empty-enroll-content-text">
-              <label htmlFor="timePicker">시간:</label>
-              <input
-                type="time"
-                id="timePicker"
-                value={selectedTime}
-                onChange={handleTimeChange}
-              />
+              해당 시간에 빈자리가 생겼을 시,
             </div>
             <div className="empty-enroll-content-text">
-              <label htmlFor="guestsPicker">인원수:</label>
-              <select
-                id="guestsPicker"
-                value={selectedGuests}
-                onChange={handleGuestsChange}
-              >
-                <option value={1}>1명</option>
-                <option value={2}>2명</option>
-                <option value={3}>3명</option>
-                {/* Add more options as needed */}
-              </select>
+              알림톡을 보내드립니다.
             </div>
-            <div className="empty-enroll-content-text">해당 시간에 빈자리가 생겼을 시,</div>
-            <div className="empty-enroll-content-text">알림톡을 보내드립니다.</div>
           </div>
           <div className="empty-enroll-btn">
-          <div className="empty-btn-content">등록</div>
+            <div className="empty-btn-content" onClick={handleEnroll}>
+              등록
+            </div>
           </div>
         </div>
       </div>
