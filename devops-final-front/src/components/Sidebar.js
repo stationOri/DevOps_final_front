@@ -7,7 +7,7 @@ import Chat from "../assets/images/chat.png";
 import Login from "../assets/images/login.png";
 import Search from "../assets/images/search.png";
 import ExtendBtn from "../assets/images/menubtn.png";
-import "../css/components/SideBar.css";
+import "../css/components/Sidebar.css";
 
 function SideBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
