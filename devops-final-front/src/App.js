@@ -6,6 +6,7 @@ import RestaurantSignup from "./pages/RestaurantSignup";
 import UserSignup from "./pages/UserSignup";
 import RestDetailPage from "./pages/RestDetailPage";
 import { CheckModalProvider } from "./components/Modal/CheckModalContext";
+import RestMain from "./pages/RestMain";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />}></Route>
+        <Route path="/restmain" element={<RestMain />}></Route>
         <Route path="/mypage" element={<Mypage />}></Route>
         <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
         <Route path="/usersignup" element={<UserSignup />}></Route>

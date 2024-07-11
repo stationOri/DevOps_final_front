@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import Logo from "../assets/images/oriblue.png";
-import Home from "../assets/images/sidebar/home.png";
-import Restaurant from "../assets/images/sidebar/restaurant.png";
-import Reservation from "../assets/images/sidebar/reservation.png";
-import Chat from "../assets/images/sidebar/chat.png";
-import Login from "../assets/images/sidebar/login.png";
-import Search from "../assets/images/sidebar/search.png";
-import ExtendBtn from "../assets/images/sidebar/menubtn.png";
+import Home from "../assets/images/home.png";
+import Restaurant from "../assets/images/restaurant.png";
+import Reservation from "../assets/images/reservation.png";
+import Chat from "../assets/images/chat.png";
+import Login from "../assets/images/login.png";
+import Search from "../assets/images/search.png";
+import ExtendBtn from "../assets/images/menubtn.png";
 import "../css/components/SideBar.css";
 import SigninModal from "./Modal/SigninModal";
 import CheckModal from "./Modal/CheckModal"
 import { useCheckModal } from "./Modal/CheckModalContext";
 
-function SideBar() {
+function SideBarRest() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [isExtended, setIsExtended] = useState(true); // 사이드바 확장 상태를 관리하는 변수
@@ -57,16 +57,6 @@ function SideBar() {
         <div className="iconWrapper">
           <img src={Logo} alt="" className="sidebarLogo"/>
           {isExtended && <div className="guestText">{username}</div>}
-        </div>
-        <div className={`sidebarsearchboxWrapper ${isExtended ? '' : 'hidden'}`}>
-          <img src={Search} alt="" className="searchLogo"/>
-          {isExtended && (
-            <input 
-              type="text" 
-              className="sidebarsearchbox"
-              placeholder="Search"
-            />
-          )}
         </div>
       </div>
       <button className="extendbtn" onClick={toggleSidebar}>
@@ -128,4 +118,4 @@ function SideBar() {
   );
 }
 
-export default SideBar;
+export default SideBarRest;
