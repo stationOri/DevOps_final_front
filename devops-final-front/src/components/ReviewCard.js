@@ -19,8 +19,8 @@ const ReviewCard = ({ review }) => {
       <div className="review-card-box">
         <div className="review-img-box">
           <img className="review-img" src={review.review_img} alt="review" />
-          {/* <img src={review.review_img2} alt="review" />
-          <img src={review.review_img3} alt="review" /> */}
+          <img className="review-img" src={review.review_img2} alt="review" />
+          <img className="review-img" src={review.review_img3} alt="review" />
         </div>
         <div className="review-data-box">
           <p>
