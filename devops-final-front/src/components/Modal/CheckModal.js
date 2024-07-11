@@ -1,0 +1,5 @@
+function CheckModal() {
+  return{
+    
+  }
+}

@@ -8,7 +8,7 @@ import Login from "../assets/images/login.png";
 import Search from "../assets/images/search.png";
 import ExtendBtn from "../assets/images/menubtn.png";
 import "../css/components/SideBar.css";
-import SigninModal from "../components/Modal/SigninModal";
+import SigninModal from "./Modal/SigninModal";
 
 function SideBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
