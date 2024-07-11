@@ -159,7 +159,7 @@ const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWe
                     minDate={new Date()}
                     maxDate={LaterDate}
                     className="picker"
-                    placeholderText="날짜 선택"
+                    placeholderText="DATE"
                     dateFormat="yyyy-MM-dd"
                   />
                 </div>
