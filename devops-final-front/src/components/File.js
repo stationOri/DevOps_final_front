@@ -1,19 +1,20 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import React, { useRef, useEffect, useCallback, useState, forwardRef, useImperativeHandle } from "react";
 import "../css/components/File.css";
 
-const File = () => {
+const File = forwardRef((props, ref) => {
   const inputEl = useRef(null);
   const [fileName, setFileName] = useState("파일을 선택하세요.");
+  
   const fileInputHandler = useCallback((event) => {
     const files = event.target && event.target.files;
     if (files && files[0]) {
-      setFileName(event.target.files[0].name);
+      setFileName(files[0].name);
     }
   }, []);
-
+  
   useEffect(() => {
     const currentInputEl = inputEl.current;
-
+  
     if (currentInputEl !== null) {
       currentInputEl.addEventListener("input", fileInputHandler);
     }
@@ -23,18 +24,25 @@ const File = () => {
       }
     };
   }, [fileInputHandler]);
-
+  
+  useImperativeHandle(ref, () => ({
+    reset: () => {
+      setFileName("파일을 선택하세요.");
+      if (inputEl.current) {
+        inputEl.current.value = null;
+      }
+    }
+  }), []);
+  
   return (
     <div className="fileWrapper">
-      <label htmlFor="file">
-        <div className="contentFileWrapper">
-          {fileName ? <div className="file-name">{fileName}</div> : ""}
-          <div className="fileselect">파일 선택</div>
-        </div>
+      <label htmlFor="file" className="contentFileWrapper">
+        <div className="file-name">{fileName}</div>
+        <div className="fileselect">파일 선택</div>
       </label>
-      <input accept=".jpg,.jpeg,.png,.pdf" type="file" id="file" ref={inputEl} />
+      <input accept=".jpg,.jpeg,.png," type="file" id="file" ref={inputEl} className="file-input" />
     </div>
   );
-};
+});
 
 export default File;

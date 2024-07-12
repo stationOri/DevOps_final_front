@@ -11,11 +11,13 @@ import RestMain from "./pages/RestMain";
 import AdminMain from "./pages/AdminMain";
 import Reservation from "./pages/Resveration";
 import Chat from "./pages/Chat"
+import { MenuModalProvider } from "./components/Modal/MenuModalContext";
 
 function App() {
   return (
     <SuccessModalProvider>
     <CheckModalProvider>
+    <MenuModalProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />}></Route>
@@ -29,6 +31,7 @@ function App() {
         <Route path="/chat" element={<Chat />}></Route>
       </Routes>
     </BrowserRouter>
+    </MenuModalProvider>
     </CheckModalProvider>
     </SuccessModalProvider>
   );

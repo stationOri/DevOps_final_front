@@ -23,13 +23,19 @@
 
 .menu-edit-bold {
   color: #333333;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .menu-edit-hint{
   color: #888888;
   font-weight: normal;
   font-size: 13px;
+}
+
+.menu-edit-title-out{
+  display: flex;
+  justify-content: space-between;
 }
 
 .menu-edit-container {
@@ -58,6 +64,7 @@
 .menu-edit-img {
   width: 170px;
   height: 120px;
+  border-radius: 15px;
 }
 
 .menu-edit-info-box {
@@ -90,7 +97,7 @@
   width: 100px;
 }
 
-.menu-edit-edit-btn, .menu-edit-finish-edit {
+.menu-edit-edit-btn{
   border: none;
   background-color: #ff8a00;
   color: white;
@@ -105,9 +112,10 @@
   margin: 10px 0;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
-.menu-edit-btn-wrapper >button{
-  width: 48%;
-  height: 35px;
+.menu-edit-add-menu {
+  border-radius: 15px;
+  height: 30px;
 }
