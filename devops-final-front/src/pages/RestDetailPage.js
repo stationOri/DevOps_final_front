@@ -4,14 +4,14 @@ import "../css/pages/RestDetailPage.css";
 import StarRatings from "../components/StarRatings";
 import RestaurantLocationMap from "../components/RestaurantLocationMap";
 import ReviewCard from "../components/ReviewCard";
-import rightImg from "../assets/images/right.png";
-import leftImg from "../assets/images/left.png";
-import locationImg from "../assets/images/location.png";
-import opentimeImg from "../assets/images/opentime.png";
-import phoneImg from "../assets/images/phone.png";
-import emptyImg from "../assets/images/empty.png";
-import quotesImg1 from "../assets/images/quotes.png";
-import quotesImg2 from "../assets/images/quotes2.png";
+import rightImg from "../assets/images/detail/right.png";
+import leftImg from "../assets/images/detail/left.png";
+import locationImg from "../assets/images/detail/location.png";
+import opentimeImg from "../assets/images/detail/opentime.png";
+import phoneImg from "../assets/images/detail/phone.png";
+import emptyImg from "../assets/images/detail/empty.png";
+import quotesImg1 from "../assets/images/detail/quotes.png";
+import quotesImg2 from "../assets/images/detail/quotes2.png";
 import EmptyEnrollModal from "../components/Modal/EmptyEnrollModal";
 
 function RestDetailPage() {

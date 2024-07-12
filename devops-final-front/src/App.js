@@ -6,11 +6,13 @@ import RestaurantSignup from "./pages/RestaurantSignup";
 import UserSignup from "./pages/UserSignup";
 import RestDetailPage from "./pages/RestDetailPage";
 import { CheckModalProvider } from "./components/Modal/CheckModalContext";
+import { SuccessModalProvider } from "./components/Modal/SuccessModalContext";
 import RestMain from "./pages/RestMain";
 import AdminMain from "./pages/AdminMain";
 
 function App() {
   return (
+    <SuccessModalProvider>
     <CheckModalProvider>
     <BrowserRouter>
       <Routes>
@@ -24,6 +26,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     </CheckModalProvider>
+    </SuccessModalProvider>
   );
 }
 

@@ -3,9 +3,11 @@ import { useParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/components/Modal/EmptyEnrollModal.css";
-import closeIcon from "../../assets/images/x-close.png";
-import emptyIcon from "../../assets/images/emptyenroll.png";
-import restIcon from "../../assets/images/rest.png";
+import closeIcon from "../../assets/images/modal/x-close.png";
+import emptyIcon from "../../assets/images/modal/emptyenroll.png";
+import restIcon from "../../assets/images/modal/rest.png";
+import SuccessModal from "./SuccessModal";
+import { useSuccessModal } from "./SuccessModalContext";
 
 const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
   const { id } = useParams();
@@ -16,6 +18,7 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [maxPpl, setMaxPpl] = useState(0);
+  const { openSuccessModal } = useSuccessModal();
 
   useEffect(() => {
     if (isOpen) {
@@ -115,15 +118,19 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
   const day = new Date(+selectedDate+ 3240*10000).toISOString().split('T')[0];
 
   const oneWeekLater = new Date(new Date().setDate(new Date().getDate() + 7));
-const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
+  const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
 
-const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWeekLater : oneMonthLater;
+  const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWeekLater : oneMonthLater;
 
-  const handleEnroll = () => {
-    console.log("빈자리 알림 신청 완료!");
-    console.log("선택한 날짜:", day);
-    console.log("선택한 시간:", selectedTime);
-    console.log("선택한 인원수:", selectedGuests);
+  const handleOpenModal = () => {
+    openSuccessModal(
+      '빈자리 알림 요청 완료', 
+      '예약자 이름',
+      day,
+      selectedTime,
+      selectedGuests,
+      onClose
+    );
   };
 
   if (!isOpen) return null;
@@ -206,12 +213,13 @@ const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWe
             </div>
           </div>
           <div className="empty-enroll-btn">
-            <div className="empty-btn-content" onClick={handleEnroll}>
+            <div className="empty-btn-content" onClick={handleOpenModal}>
               등록
             </div>
           </div>
         </div>
       </div>
+      <SuccessModal />
     </div>
   );
 };
