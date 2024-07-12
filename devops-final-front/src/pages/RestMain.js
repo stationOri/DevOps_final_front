@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
 import SideBarRest from "../components/SideBarRest";
+import MenuManagement from "../components/MenuManagement"
 import "../css/pages/RestMain.css";
 
 function RestMain() {
-  const [selectedMenu, setSelectedMenu] = useState(null);
+  const [selectedMenu, setSelectedMenu] = useState("식당정보");
 
   const handleMenuClick = (menuName) => {
     setSelectedMenu(menuName);
   };
+  const temp_id =1
 
   return (
     <div className="mainWrapper">
@@ -17,7 +19,7 @@ function RestMain() {
         <HeaderOrange />
         <div className='restmainrealcontents'>
           {selectedMenu === '식당정보' && <RestaurantInfo />}
-          {selectedMenu === '메뉴 관리' && <MenuManagement />}
+          {selectedMenu === '메뉴 관리' && <MenuManagement rest_id={temp_id}/>}
           {selectedMenu === '예약' && <Reservation />}
           {selectedMenu === '웨이팅 관리' && <WaitingManagement />}
           {selectedMenu === '1:1 문의' && <ContactUs />}
@@ -31,10 +33,6 @@ function RestMain() {
 
 function RestaurantInfo() {
   return <div>식당 정보 페이지입니다.</div>;
-}
-
-function MenuManagement() {
-  return <div>메뉴 관리 페이지입니다.</div>;
 }
 
 function Reservation() {
