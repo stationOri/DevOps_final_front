@@ -50,7 +50,7 @@
 }
 
 .empty-enroll-title {
-  font-size: 27px;
+  font-size: 24px;
   margin-bottom: 10px;
 }
 
@@ -104,18 +104,19 @@
 }
 
 .empty-enroll-content-text{
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .empty-enroll-btn{
   width: 90px;
-  height: 50px;
+  height: 40px;
   color: #ffffff;
   border: 1px solid #ff8a00;
   border-radius: 7px;
   margin: 0px 3px;
   background: #ff8a00;
   cursor: pointer;
+  margin-top: 20px;
 }
 
 .empty-btn-content {
@@ -124,4 +125,52 @@
   align-items: center;
   height: 100%;
   font-size: 18px;
+}
+
+.empty-enroll-picker{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.empty-enroll-date-time{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.empty-enroll-date, .empty-enroll-time{
+  margin: 0px 10px;
+}
+
+.picker {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.picker:focus {
+  border-color: #F89C5B;
+  outline: none;
+  box-shadow: 0 0 5px rgba(248, 156, 91, 0.5);
+}
+
+.picker::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.guest-picker-btn{
+  margin: 10px;
+}
+
+.selected-guest{
+  font-size: 17px;
+  color: #ff8a00;
 }
