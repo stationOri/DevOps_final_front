@@ -1,24 +1,60 @@
 import React, { useState } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
 import SideBarRest from "../components/SideBarRest";
-import "../css/pages/RestMain.css"
+import "../css/pages/RestMain.css";
 
 function RestMain() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState(null);
 
-  const toggleSidebar = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
+  const handleMenuClick = (menuName) => {
+    setSelectedMenu(menuName);
   };
 
   return (
-    <div className={`mainWrapper ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-      <SideBarRest className="mainsidebar" />
-      <div className={`contentsWrapper ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+    <div className="mainWrapper">
+      <SideBarRest onMenuClick={handleMenuClick} />
+      <div className="contentsWrapper">
         <HeaderOrange />
+        <div className='restmainrealcontents'>
+          {selectedMenu === '식당정보' && <RestaurantInfo />}
+          {selectedMenu === '메뉴 관리' && <MenuManagement />}
+          {selectedMenu === '예약' && <Reservation />}
+          {selectedMenu === '웨이팅 관리' && <WaitingManagement />}
+          {selectedMenu === '1:1 문의' && <ContactUs />}
+          {selectedMenu === '계정 정보' && <AccountInfo />}
+          {selectedMenu === '로그아웃' && <Logout />}
+        </div>
       </div>
     </div>
-
   );
+}
+
+function RestaurantInfo() {
+  return <div>식당 정보 페이지입니다.</div>;
+}
+
+function MenuManagement() {
+  return <div>메뉴 관리 페이지입니다.</div>;
+}
+
+function Reservation() {
+  return <div>예약 페이지입니다.</div>;
+}
+
+function WaitingManagement() {
+  return <div>웨이팅 관리 페이지입니다.</div>;
+}
+
+function ContactUs() {
+  return <div>1:1 문의 페이지입니다.</div>;
+}
+
+function AccountInfo() {
+  return <div>계정 정보 페이지입니다.</div>;
+}
+
+function Logout() {
+  return <div>로그아웃 페이지입니다.</div>;
 }
 
 export default RestMain;
