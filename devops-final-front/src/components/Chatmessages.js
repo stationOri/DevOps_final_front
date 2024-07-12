@@ -1,7 +1,10 @@
 import { useRef,useEffect } from "react";
 import React from "react";
 import '../css/components/Chat.css'
-function Chatmessages(){
+import Day from "./Day"
+import Banner from "./Banner"
+
+function Chatmessages({chatMsgs}){
     return(
       <div style={{
         position: 'absolute', 
@@ -21,140 +24,24 @@ function Chatmessages(){
           borderRadius: '5px'
         }}>
         <Banner/>
-        <Messages/>
+        <Messages messagejson={chatMsgs}/>
         </div>
         </div>
     );
 }
-const Day=({date})=>{
-  return (
-    <div style={{ width: "810px", height: "15px", display: "flex"}}>
-      <div
-        style={{
-          width: "810px",
-          height: "15px",
-          display: "flex",
-          marginLeft:'20px',
-          marginTop:'15px',
-          marginBottom:'5px',
-          alignItems: "center",
-          opacity: "0.21",
-          borderRadius: "5px",
-          color:'#2b2b2b',
-          background: "linear-gradient(to bottom, #000 0%, #282828 100%)",
-        }}
-      >
-        <p style={{ margin: 0, color: "#2b2b2b" }}>{date}</p>
-      </div>
-    </div>
 
-  );
-}
-function Banner(){
-  return (
-    <div style={{
-      width: "100%", 
-      height:'70px',
-      borderBottom: '1px solid #D9D9D9',
-      display: 'flex',
-      alignItems: 'center',  // Center items vertically
-    }}>
-      <img style={{ 
-        marginLeft: '17.5px', // Space between image and text
-        width: '60px', 
-        height: '60px',
-        marginTop: '5px'  // Space above image
-      }} src="/images/chat1.png" alt="" />
-      <div style={{ 
-        position: 'relative', 
-        fontSize: '20px', 
-        fontWeight: '600', 
-        color: '#515151',
-        marginLeft: '11.5px'  // Space between image and text
-      }}>
-        롯데리아
-      </div>
-      
-      <span  class="material-symbols-outlined"style={{ 
-    marginLeft: 'auto',  // Pushes span to the right end
-    marginRight: '17.5px',  // Adds space between text and span
-    fontSize: '30px',
-    color: '#515151',
-    fontWeight: '600'
-  }}>
-    storefront
-  </span>
-    </div>
 
-  );
-}
-function Messages(){
-    const messages=[
-        {
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "1번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-15 12:12:12",
 
-          },
-          {
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "2번 메시지입d입니다 니다",
-            "time": "2024-03-14 12:12:12",
-
-          },
-          {
-            "sender":2,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "3번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-13 12:12:12",
-
-          },
-          {
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "4번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-14 13:12:12",
-
-          }
-          ,{
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "5번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-14 15:12:12",
-
-          },{
-            "sender":2,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "3번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-13 12:12:12",
-
-          },
-          {
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "4번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-14 13:12:12",
-
-          }
-          ,{
-            "sender":1,
-            "image": "/images/chat1.png",
-            "name": "롯데리아",
-            "message": "5번 메시지입d입니다 입니다 입니다 입니다 니다",
-            "time": "2024-03-14 15:12:12",
-
-          }
-    ]
-    messages.sort((a, b) => new Date(a.time) - new Date(b.time));
+function Messages(messagesjson){
+  let messages=[]
+  try {
+    messages = JSON.parse(messagesjson);
+    console.log(messages);
+  } catch (error) {
+    console.error('Error parsing JSON:', error.message);
+  }
+  // const messages = JSON.parse(messagesjson);
+    // messages.sort((a, b) => new Date(a.time) - new Date(b.time));
     let prevSender = null; // 이전 메시지의 sender 값을 저장할 변수
     let daylist=[];
     let previousDate = messages[0].time.split(' ')[0];

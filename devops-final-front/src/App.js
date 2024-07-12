@@ -10,6 +10,7 @@ import RestDetailPage from "./pages/RestDetailPage";
 import RestMain from "./pages/RestMain";
 import AdminMain from "./pages/AdminMain";
 import Reservation from "./pages/Resveration";
+import Chat from "./pages/Chat"
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/usersignup" element={<UserSignup />}></Route>
         <Route path="/restaurants/:id" element={<RestDetailPage />}></Route>
         <Route path="/reservation/:id" element={<Reservation />}></Route>
+        <Route path="/chat" element={<Chat />}></Route>
       </Routes>
     </BrowserRouter>
     </CheckModalProvider>
