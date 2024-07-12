@@ -1,0 +1,105 @@
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.carouselTrack {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carouselSlide {
+  min-width: 800px;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.carouselSlide.active {
+  transform: translateX(0%) scale(1);
+  z-index: 2;
+}
+
+.carouselSlide {
+  transform: translateX(100%) scale(0.8);
+  opacity: 0.8;
+  z-index: 1;
+}
+
+.carouselWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backgroundImage {
+  width: 800px;
+  height: 400px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  border-radius: 50px;
+}
+
+.carouselContents {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 200px;
+  height: 150px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 520px;
+  top: 230px;
+  padding: 0 30px;
+}
+
+.carouselName {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.carouselAddress {
+  font-size: 13px;
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.carouselButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.carouselIndicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #bbb;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.indicator.active {
+  background-color: #717171;
+}

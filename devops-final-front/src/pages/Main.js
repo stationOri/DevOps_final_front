@@ -7,10 +7,10 @@ import Carousel from '../components/Carousel';
 
 function Main() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [bannerfoods, setBannerFoods] = useState([]);
+  const [bannerFoods, setBannerFoods] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getBannerfood = async () => {
+  const getBannerFood = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restaurant`);
       if (!response.ok) {
@@ -18,7 +18,7 @@ function Main() {
       }
       const json = await response.json();
       console.log('Fetched data:', json);
-      setBannerFoods(json || []); // 여기서 json.row 가 아니라 그냥 json을 사용합니다.
+      setBannerFoods(json || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -27,7 +27,7 @@ function Main() {
   };
 
   useEffect(() => {
-    getBannerfood();
+    getBannerFood();
   }, []);
 
   return (
@@ -36,20 +36,11 @@ function Main() {
         <Loading />
       ) : (
         <div className={`mainWrapper ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-          <SideBar className="mainsidebar" />
+          <SideBar className="mainSidebar" />
           <div className={`contentsWrapper ${isSidebarCollapsed ? 'collapsed' : ''}`}>
             <HeaderOrange />
-            <div>
-              {bannerfoods.map(rest => (
-                <div key={rest.id}>
-                  <Carousel 
-                    rest_name={rest.rest_name}
-                    rest_photo={rest.rest_photo}
-                    rest_grade={rest.rest_grade}
-                    rest_address={rest.rest_address}
-                  />
-                </div>
-              ))}
+            <div className="carouselContainer">
+              <Carousel bannerFoods={bannerFoods} />
             </div>
           </div>
         </div>
