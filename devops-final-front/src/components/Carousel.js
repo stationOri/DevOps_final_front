@@ -19,27 +19,36 @@ function Carousel({ bannerFoods }) {
 
   return (
     <div className="carousel">
-      {bannerFoods.map((rest, index) => (
-        <div
-          key={rest.id}
-          className={`carouselSlide ${index === currentSlide ? "active" : ""}`}
-        >
-          <div className="carouselWrapper">
-            <div
-              className="backgroundImage"
-              style={{ backgroundImage: `url(${rest.rest_photo})` }}
-            >
-              <div className="carouselcontents">
-                <div className="carouselname">{rest.rest_name}</div>
-                <div className="carouseladdress">{rest.rest_address}</div>
-                <div>
-                  <StarRatingsCarousel rating={rest.rest_grade} />
+      <div className="carouselTrack">
+        {bannerFoods.map((rest, index) => (
+          <div
+            key={rest.id}
+            className={`carouselSlide ${index === currentSlide ? "active" : ""}`}
+            style={{
+              transform: `translateX(${100 * (index - currentSlide)}%) scale(${
+                index === currentSlide ? 1 : 0.8
+              })`,
+              zIndex: index === currentSlide ? 2 : 1,
+              opacity: index === currentSlide ? 1 : 0.5,
+            }}
+          >
+            <div className="carouselWrapper">
+              <div
+                className="backgroundImage"
+                style={{ backgroundImage: `url(${rest.rest_photo})` }}
+              >
+                <div className="carouselcontents">
+                  <div className="carouselname">{rest.rest_name}</div>
+                  <div className="carouseladdress">{rest.rest_address}</div>
+                  <div className="carouselrating">
+                    <StarRatingsCarousel rating={rest.rest_grade} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <div className="buttonWrapper">
         <button className="carouselButton prevButton" onClick={handlePrevClick}>
           ◀

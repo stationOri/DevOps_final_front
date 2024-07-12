@@ -1,3 +1,4 @@
+
 .carousel {
   position: relative;
   width: 100%;
@@ -7,6 +8,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin: 40px 0;
 }
 
 .carouselTrack {
@@ -17,17 +19,16 @@
 .carouselSlide {
   min-width: 800px;
   transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  display: none;
+  transform: translateX(100%) scale(0.8);
+  opacity: 0.8;
+  z-index: 1;
 }
 
 .carouselSlide.active {
   transform: translateX(0%) scale(1);
   z-index: 2;
-}
-
-.carouselSlide {
-  transform: translateX(100%) scale(0.8);
-  opacity: 0.8;
-  z-index: 1;
+  display: block;
 }
 
 .carouselWrapper {
@@ -45,8 +46,8 @@
   border-radius: 50px;
 }
 
-.carouselContents {
-  background-color: rgba(255, 255, 255, 0.8);
+.carouselcontents {
+  background-color: #ffffff80;
   width: 200px;
   height: 150px;
   border-radius: 20px;
@@ -58,17 +59,35 @@
   left: 520px;
   top: 230px;
   padding: 0 30px;
+  text-align: center;
 }
 
-.carouselName {
+.carouselcontents > div {
+  width: 200px;
+}
+
+.carouselname {
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
-.carouselAddress {
-  font-size: 13px;
+.carouselrating {
+  display: flex;
+  justify-content: center;
+  height: 30px;
 }
+
+.carouseladdress {
+  font-size: 13px;
+  display: block;
+  text-align: center;       
+  white-space: normal;      
+  overflow: hidden;        
+  word-wrap: break-word;
+  margin: 3px 0;
+}
+
 
 .buttonWrapper {
   display: flex;
@@ -80,7 +99,7 @@
 .carouselButton {
   background: none;
   border: none;
-  font-size: 2rem;
+  font-size: 15px;
   cursor: pointer;
 }
 

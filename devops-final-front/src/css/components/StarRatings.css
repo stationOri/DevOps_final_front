@@ -4,6 +4,10 @@
   margin-top: 20px;
 }
 
+.carouselhei {
+  margin: 0;
+}
+
 .star-ratings {
   position: relative;
   display: inline-block;
