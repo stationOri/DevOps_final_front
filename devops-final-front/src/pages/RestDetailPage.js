@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "../css/pages/RestDetailPage.css";
+import HeaderOrange from "../components/HeaderOrange";
+import SideBar from "../components/SideBar";
+import Loading from "../components/Loading";
 import StarRatings from "../components/StarRatings";
 import RestaurantLocationMap from "../components/RestaurantLocationMap";
 import ReviewCard from "../components/ReviewCard";
@@ -25,6 +28,7 @@ function RestDetailPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -93,9 +97,13 @@ function RestDetailPage() {
     }
   };
 
-  const filteredOpentimes = opentimes.filter((opentime) => opentime.rest_id === parseInt(id));
+  const filteredOpentimes = opentimes.filter(
+    (opentime) => opentime.rest_id === parseInt(id)
+  );
   const filteredMenus = menus.filter((menu) => menu.rest_id === parseInt(id));
-  const filteredReviews = reviews.filter((review) => review.rest_id === parseInt(id));
+  const filteredReviews = reviews.filter(
+    (review) => review.rest_id === parseInt(id)
+  );
 
   if (loading) {
     return <div>Loading...</div>;
@@ -127,149 +135,196 @@ function RestDetailPage() {
   );
 
   return (
-    <div className="detail">
-      <EmptyEnrollModal isOpen={isModalOpen} onClose={closeModal} name={restaurant.rest_name} />
-      <div className="rest-container">
-        <div className="rest-photo-box">
-          <img
-            className="rest-photo"
-            src={restaurant.rest_photo}
-            alt={restaurant.rest_name}
-          />
-        </div>
-        <div className="rest-info-box">
-          <div className="rest-name-box">
-            <div className="rest-name">{restaurant.rest_name}</div>
-            <div className="rest-btn-box">
-              <div className="empty-btn" onClick={openModal}>
-                <img className="empty-img" src={emptyImg} />
-                <div>빈자리 알림 요청</div>
-              </div>
-              <div className="ask-btn">
-                <div className="btn-content">1:1 문의</div>
-              </div>
-              {restaurant.rev_wait === "A" && (
-                <div className="res-btn">
-                  <div className="btn-content">웨이팅</div>
+    <div>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className={`mainWrapper ${isSidebarCollapsed ? "collapsed" : ""}`}>
+          <SideBar className="mainSidebar" />
+          <div
+            className={`contentsWrapper ${
+              isSidebarCollapsed ? "collapsed" : ""
+            }`}
+          >
+            <HeaderOrange />
+            <div className="detail">
+              <EmptyEnrollModal
+                isOpen={isModalOpen}
+                onClose={closeModal}
+                name={restaurant.rest_name}
+              />
+              <div className="rest-container">
+                <div className="rest-photo-box">
+                  <img
+                    className="rest-photo"
+                    src={restaurant.rest_photo}
+                    alt={restaurant.rest_name}
+                  />
                 </div>
-              )}
-              {restaurant.rev_wait === "B" && (
-                <div className="res-btn">
-                  <div className="btn-content">예약</div>
-                </div>
-              )}
-              {restaurant.rev_wait === "C" && (
-                <>
-                  <div className="res-btn">
-                    <div className="btn-content">웨이팅</div>
-                  </div>
-                  <div className="res-btn">
-                    <div className="btn-content">예약</div>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-          <div></div>
-          <StarRatings rating={restaurant.rest_grade} />
-          <div className="rest-intro-box">
-            <div>
-              <span className="rest-keyword">#{restaurant.keyword2} </span>
-              <span className="rest-keyword">#{restaurant.keyword3} </span>
-              <span className="rest-keyword">#{restaurant.keyword1} </span>
-            </div>
-            <p>{restaurant.rest_intro}</p>
-          </div>
-        </div>
-        <div className="rest-box">
-          <div className="rest-title">Announcement</div>
-          <div className="rest-announce-box">
-            <div className="quotes-img-container quotes-img-1">
-              <img className="quotes-img" src={quotesImg1} alt="quote 1" />
-            </div>
-            <p>{restaurant.rest_post}</p>
-            <div className="quotes-img-container quotes-img-2">
-              <img className="quotes-img" src={quotesImg2} alt="quote 2" />
-            </div>
-          </div>
-        </div>
-        <div className="rest-box">
-          <div className="rest-title">Menu</div>
-          <div>
-            <div className="menu-container">
-              {filteredMenus.map((menu) => (
-                <li key={menu.id} className="menu-li">
-                  <div className="menu-box">
-                    <img
-                      className="menu-img"
-                      src={menu.menu_photo}
-                      alt={menu.menu_name}
-                    />
-                    <div className="menu-info-box">
-                      <p className="menu-title">{menu.menu_name}</p>
-                      <p className="menu-price">{menu.menu_price}원</p>
+                <div className="rest-info-box">
+                  <div className="rest-name-box">
+                    <div className="rest-name">{restaurant.rest_name}</div>
+                    <div className="rest-btn-box">
+                      <div className="empty-btn" onClick={openModal}>
+                        <img className="empty-img" src={emptyImg} />
+                        <div>빈자리 알림 요청</div>
+                      </div>
+                      <div className="ask-btn">
+                        <div className="btn-content">1:1 문의</div>
+                      </div>
+                      {restaurant.rev_wait === "A" && (
+                        <div className="res-btn">
+                          <div className="btn-content">웨이팅</div>
+                        </div>
+                      )}
+                      {restaurant.rev_wait === "B" && (
+                        <div className="res-btn">
+                          <div className="btn-content">예약</div>
+                        </div>
+                      )}
+                      {restaurant.rev_wait === "C" && (
+                        <>
+                          <div className="res-btn">
+                            <div className="btn-content">웨이팅</div>
+                          </div>
+                          <div className="res-btn">
+                            <div className="btn-content">예약</div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
-                </li>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="rest-box">
-          <div className="rest-title">Hours and Location</div>
-          <div className="rest-location-box">
-            <div className="rest-map">
-              <RestaurantLocationMap address={restaurant.rest_address} />
-            </div>
-            <div className="rest-location-wrap">
-              <div className="rest-info-wrap">
-                <img className="rest-info-img" src={locationImg} />
-                <p className="rest-info-content">{restaurant.rest_address}</p>
-              </div>
-              <div className="rest-info-wrap-2">
-                <img className="rest-info-img" src={opentimeImg} />
-                <div>
-                  {filteredOpentimes.map((opentime) => (
-                    <div key={opentime.id} className="rest-info-content">
-                      {opentime.rest_day} : {opentime.rest_open} ~ {opentime.rest_close} / 브레이크타임 : {opentime.rest_breakstart} ~ {opentime.rest_breakend}
+                  <div></div>
+                  <StarRatings rating={restaurant.rest_grade} />
+                  <div className="rest-intro-box">
+                    <div>
+                      <span className="rest-keyword">
+                        #{restaurant.keyword2}{" "}
+                      </span>
+                      <span className="rest-keyword">
+                        #{restaurant.keyword3}{" "}
+                      </span>
+                      <span className="rest-keyword">
+                        #{restaurant.keyword1}{" "}
+                      </span>
                     </div>
-                  ))}
+                    <p>{restaurant.rest_intro}</p>
+                  </div>
+                </div>
+                <div className="rest-box">
+                  <div className="rest-title">Announcement</div>
+                  <div className="rest-announce-box">
+                    <div className="quotes-img-container quotes-img-1">
+                      <img
+                        className="quotes-img"
+                        src={quotesImg1}
+                        alt="quote 1"
+                      />
+                    </div>
+                    <p>{restaurant.rest_post}</p>
+                    <div className="quotes-img-container quotes-img-2">
+                      <img
+                        className="quotes-img"
+                        src={quotesImg2}
+                        alt="quote 2"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="rest-box">
+                  <div className="rest-title">Menu</div>
+                  <div>
+                    <div className="menu-container">
+                      {filteredMenus.map((menu) => (
+                        <li key={menu.id} className="menu-li">
+                          <div className="menu-box">
+                            <img
+                              className="menu-img"
+                              src={menu.menu_photo}
+                              alt={menu.menu_name}
+                            />
+                            <div className="menu-info-box">
+                              <p className="menu-title">{menu.menu_name}</p>
+                              <p className="menu-price">{menu.menu_price}원</p>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="rest-box">
+                  <div className="rest-title">Hours and Location</div>
+                  <div className="rest-location-box">
+                    <div className="rest-map">
+                      <RestaurantLocationMap
+                        address={restaurant.rest_address}
+                      />
+                    </div>
+                    <div className="rest-location-wrap">
+                      <div className="rest-info-wrap">
+                        <img className="rest-info-img" src={locationImg} />
+                        <p className="rest-info-content">
+                          {restaurant.rest_address}
+                        </p>
+                      </div>
+                      <div className="rest-info-wrap-2">
+                        <img className="rest-info-img" src={opentimeImg} />
+                        <div>
+                          {filteredOpentimes.map((opentime) => (
+                            <div
+                              key={opentime.id}
+                              className="rest-info-content"
+                            >
+                              {opentime.rest_day} : {opentime.rest_open} ~{" "}
+                              {opentime.rest_close} / 브레이크타임 :{" "}
+                              {opentime.rest_breakstart} ~{" "}
+                              {opentime.rest_breakend}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="rest-info-wrap">
+                        <img className="rest-info-img" src={phoneImg} />
+                        <p className="rest-info-content">
+                          {restaurant.rest_phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="rest-box">
+                  <div className="rest-title">Reviews</div>
+                  <div className="rest-reviews-with-pagination">
+                    <div
+                      className="pagination-btn"
+                      onClick={() => paginate(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      <img className="review-pagination-img" src={leftImg} />
+                    </div>
+                    <div className="rest-review-container">
+                      {currentReviews.map((review) => (
+                        <ReviewCard key={review.id} review={review} />
+                      ))}
+                    </div>
+                    <div
+                      className="pagination-btn"
+                      onClick={() => paginate(currentPage + 1)}
+                      disabled={
+                        currentPage ===
+                        Math.ceil(reviews.length / reviewsPerPage)
+                      }
+                    >
+                      <img className="review-pagination-img" src={rightImg} />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="rest-info-wrap">
-                <img className="rest-info-img" src={phoneImg} />
-                <p className="rest-info-content">{restaurant.rest_phone}</p>
-              </div>
             </div>
           </div>
         </div>
-        <div className="rest-box">
-          <div className="rest-title">Reviews</div>
-          <div className="rest-reviews-with-pagination">
-            <div
-              className="pagination-btn"
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <img className="review-pagination-img" src={leftImg} />
-            </div>
-            <div className="rest-review-container">
-              {currentReviews.map((review) => (
-                <ReviewCard key={review.id} review={review} />
-              ))}
-            </div>
-            <div
-              className="pagination-btn"
-              onClick={() => paginate(currentPage + 1)}
-              disabled={
-                currentPage === Math.ceil(reviews.length / reviewsPerPage)
-              }
-            >
-              <img className="review-pagination-img" src={rightImg} />
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
