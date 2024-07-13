@@ -113,7 +113,7 @@ function Reservation() {
 
   const calculateAvailableTimes = (opentime, interval) => {
     const start = new Date(`2024-01-01T${opentime.rest_open}:00`);
-    const end = new Date(`2024-01-01T${opentime.rest_close}:00`);
+    const end = new Date(`2024-01-01T${opentime.rest_lastorder}:00`);
     const breakStart = new Date(`2024-01-01T${opentime.rest_breakstart}:00`);
     const breakEnd = new Date(`2024-01-01T${opentime.rest_breakend}:00`);
     const times = [];
