@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../css/pages/RestDetailPage.css";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/SideBar";
@@ -36,6 +36,12 @@ function RestDetailPage() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const navigate = useNavigate();
+
+  const moveFunc = () => {
+    navigate("/reservation/" + id);
   };
 
   useEffect(() => {
@@ -176,8 +182,8 @@ function RestDetailPage() {
                       )}
                       {restaurant.rev_wait === "B" && (
                         <div className="res-btn">
-                          <div className="btn-content">예약</div>
-                        </div>
+                        <div className="btn-content" onClick={moveFunc}>예약</div>
+                      </div>
                       )}
                       {restaurant.rev_wait === "C" && (
                         <>
@@ -185,7 +191,7 @@ function RestDetailPage() {
                             <div className="btn-content">웨이팅</div>
                           </div>
                           <div className="res-btn">
-                            <div className="btn-content">예약</div>
+                            <div className="btn-content" onClick={moveFunc}>예약</div>
                           </div>
                         </>
                       )}
