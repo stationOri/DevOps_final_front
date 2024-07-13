@@ -2,7 +2,7 @@ import React from 'react';
 import "../css/components/Pagination.css";
 import LeftPage from "../assets/images/left-chevron.png";
 
-function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange }) {
+function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange, activeColor }) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
@@ -19,6 +19,7 @@ function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange }) {
           key={index + 1}
           onClick={() => onPageChange(index + 1)}
           className={`paginationButton ${currentPage === index + 1 ? "active" : ""}`}
+          style={{ backgroundColor: currentPage === index + 1 ? activeColor : 'white' }}
         >
           {index + 1}
         </button>
