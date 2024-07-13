@@ -1,26 +1,24 @@
 import React, { useState } from "react";
-import AdminNav from "../components/adminn/AdminNav"
-import AdminSideBar from "../components/adminn/AdminSideBar";
-import HeaderBlue from "../components/adminn/HeaderBlue"
+import AdminNav from "../components/adminn/AdminNav";
+import HeaderBlue from "../components/adminn/HeaderBlue";
 import "../css/pages/AdminMain.css";
+import AdminRestControl from "../components/adminn/AdminRestControl"
 
 function AdminMain() {
-  const [activeButton, setActiveButton] = useState("승인 대기");
+  const [activeNavButton, setActiveNavButton] = useState("식당 관리");
 
-  const renderContent = () => {
-    switch (activeButton) {
-      case "승인 대기":
-        return <div>승인 대기 컴포넌트</div>;
-      case "승인 완료":
-        return <div>승인 완료 컴포넌트</div>;
-      case "예약 내역":
-        return <div>예약 내역 컴포넌트</div>;
-      case "신고 내역":
-        return <div>신고 내역 컴포넌트</div>;
-      case "블랙리스트":
-        return <div>블랙리스트 컴포넌트</div>;
+  const renderNavContent = () => {
+    switch (activeNavButton) {
+      case "식당 관리":
+        return <AdminRestControl />;
+      case "사용자 관리":
+        return <div>사용자 관리 컴포넌트</div>;
+      case "1:1문의":
+        return <div>1:1 문의 컴포넌트</div>;
+      case "로그아웃":
+        return <div>로그아웃 컴포넌트</div>;
       default:
-        return <div>승인 대기 컴포넌트</div>;
+        return <div>식당 관리 컴포넌트</div>;
     }
   };
 
@@ -28,13 +26,10 @@ function AdminMain() {
     <div className="adminMainWrapper">
       <div>
         <HeaderBlue />
-        <AdminNav />
+        <AdminNav activeNavButton={activeNavButton} setActiveNavButton={setActiveNavButton} />
       </div>
       <div className="adminmaincontent">
-        <AdminSideBar activeButton={activeButton} setActiveButton={setActiveButton} />
-        <div className="adminrealcontent">
-          {renderContent()}
-        </div>
+        {renderNavContent()}
       </div>
     </div>
   );

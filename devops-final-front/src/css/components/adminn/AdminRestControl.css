@@ -1,0 +1,12 @@
+.admin--rest-control-root {
+  display: flex;
+  
+}
+
+.adminrealcontent{
+  width: 80%;
+}
+
+.adsidebar {
+  width: 20%;
+}

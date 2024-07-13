@@ -19,3 +19,8 @@
 .adminnavmenu{
   border: none;
 }
+
+.adminnavmenu.active {
+  color: #4E95D9;
+  font-weight: bold;
+}
