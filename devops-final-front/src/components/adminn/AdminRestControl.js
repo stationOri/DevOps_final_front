@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AdminSideBar from "./AdminSideBar";
 import "../../css/components/adminn/AdminRestControl.css"
 import AdminRestAccept from "./AdminRestAccept";
+import AdminRestAfterAccept from "./AdminRestAfterAccept";
 
 function AdminRestControl() {
   const [activeButton, setActiveButton] = useState("승인 대기");
@@ -11,7 +12,7 @@ function AdminRestControl() {
       case "승인 대기":
         return <AdminRestAccept />;
       case "승인 완료":
-        return <div>승인 완료 컴포넌트</div>;
+        return <AdminRestAfterAccept />;
       case "예약 내역":
         return <div>예약 내역 컴포넌트</div>;
       case "신고 내역":
