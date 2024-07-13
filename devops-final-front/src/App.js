@@ -9,6 +9,7 @@ import UserSignup from "./pages/UserSignup";
 import RestDetailPage from "./pages/RestDetailPage";
 import RestMain from "./pages/RestMain";
 import AdminMain from "./pages/AdminMain";
+import Restaurants from "./pages/Restaurants";
 import Reservation from "./pages/Resveration";
 import Chat from "./pages/Chat"
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
@@ -26,6 +27,7 @@ function App() {
         <Route path="/mypage" element={<Mypage />}></Route>
         <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
         <Route path="/usersignup" element={<UserSignup />}></Route>
+        <Route path="/restaurants" element={<Restaurants />}></Route>
         <Route path="/restaurants/:id" element={<RestDetailPage />}></Route>
         <Route path="/reservation/:id" element={<Reservation />}></Route>
         <Route path="/chat" element={<Chat />}></Route>
