@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Loading from "./Loading";
-import "../css/components/MenuManagement.css";
-import { useMenuModal } from "./Modal/MenuModalContext";
-import MenuModal from "../components/Modal/Menu"
+import Loading from "../Loading";
+import "../../css/components/restaurant/MenuManagement.css";
+import { useMenuModal } from "../Modal/MenuModalContext";
+import MenuModal from "../Modal/Menu"
 
 function MenuManagement({ rest_id }) {
   const [restmenu, setRestMenu] = useState([]);

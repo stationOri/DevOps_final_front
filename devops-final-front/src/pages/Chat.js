@@ -3,7 +3,7 @@ import Chatmessages from "../components/Chatmessages";
 import ChatImg from "../assets/images/chatorange.png";
 import HeaderOrange from "../components/HeaderOrange";
 import Loading from "../components/Loading";
-import SideBar from "../components/SideBar";
+import SideBar from "../components/user/SideBar";
 import "../css/pages/Chat.css"
 import React, { useState, useEffect } from "react";
 

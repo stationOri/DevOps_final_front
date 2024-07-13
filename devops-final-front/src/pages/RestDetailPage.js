@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../css/pages/RestDetailPage.css";
 import HeaderOrange from "../components/HeaderOrange";
-import SideBar from "../components/SideBar";
+import SideBar from "../components/user/SideBar";
 import Loading from "../components/Loading";
 import StarRatings from "../components/StarRatings";
 import RestaurantLocationMap from "../components/RestaurantLocationMap";

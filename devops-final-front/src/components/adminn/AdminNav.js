@@ -1,4 +1,4 @@
-import "../css/components/AdminNav.css"
+import "../../css/components/adminn/AdminNav.css"
 
 function AdminNav() {
   

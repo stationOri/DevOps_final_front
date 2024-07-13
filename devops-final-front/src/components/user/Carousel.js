@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/components/Carousel.css";
+import "../../css/components/user/Carousel.css";
 import StarRatingsCarousel from "./StarRatingCarousel";
 
 function Carousel({ bannerFoods }) {

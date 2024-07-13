@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import Logo from "../assets/images/oriblue.png";
-import Food from "../assets/images/sidebar/food.png";
-import Rest from "../assets/images/sidebar/rest.png";
-import Reservation from "../assets/images/sidebar/reservation.png";
-import Chat from "../assets/images/sidebar/chat.png";
-import RestUser from "../assets/images/sidebar/restuser.png";
-import ExtendBtn from "../assets/images/sidebar/menubtn.png";
-import Waiting from "../assets/images/sidebar/waiting.png";
-import Login from "../assets/images/sidebar/login.png";
-import CheckModal from "./Modal/CheckModal";
-import { useCheckModal } from "./Modal/CheckModalContext";
+import Logo from "../../assets/images/oriblue.png";
+import Food from "../../assets/images/sidebar/food.png";
+import Rest from "../../assets/images/sidebar/rest.png";
+import Reservation from "../../assets/images/sidebar/reservation.png";
+import Chat from "../../assets/images/sidebar/chat.png";
+import RestUser from "../../assets/images/sidebar/restuser.png";
+import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
+import Waiting from "../../assets/images/sidebar/waiting.png";
+import Login from "../../assets/images/sidebar/login.png";
+import CheckModal from "../Modal/CheckModal";
+import { useCheckModal } from "../Modal/CheckModalContext";
 
 function SideBarRest({ onMenuClick }) {
   const [isExtended, setIsExtended] = useState(true); 

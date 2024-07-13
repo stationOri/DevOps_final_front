@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import Logo from "../assets/images/oriblue.png";
-import Home from "../assets/images/sidebar/home.png";
-import Restaurant from "../assets/images/sidebar/restaurant.png";
-import Reservation from "../assets/images/sidebar/reservation.png";
-import Chat from "../assets/images/sidebar/chat.png";
-import Login from "../assets/images/sidebar/login.png";
-import Search from "../assets/images/sidebar/search.png";
-import ExtendBtn from "../assets/images/sidebar/menubtn.png";
-import "../css/components/SideBar.css";
-import SigninModal from "./Modal/SigninModal";
-import CheckModal from "./Modal/CheckModal"
-import { useCheckModal } from "./Modal/CheckModalContext";
+import Logo from "../../assets/images/oriblue.png";
+import Home from "../../assets/images/sidebar/home.png";
+import Restaurant from "../../assets/images/sidebar/restaurant.png";
+import Reservation from "../../assets/images/sidebar/reservation.png";
+import Chat from "../../assets/images/sidebar/chat.png";
+import Login from "../../assets/images/sidebar/login.png";
+import Search from "../../assets/images/sidebar/search.png";
+import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
+import "../../css/components/user/SideBar.css";
+import SigninModal from "../Modal/SigninModal";
+import CheckModal from "../Modal/CheckModal"
+import { useCheckModal } from "../Modal/CheckModalContext";
 
 function SideBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

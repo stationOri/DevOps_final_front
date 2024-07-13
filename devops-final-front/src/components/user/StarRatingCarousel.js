@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/components/StarRatings.css';
+import '../../css/components/StarRatings.css';
 
 function StarRatingsCarousel({ rating }) {
   const ratingToPercent = (rating / 5) * 100;

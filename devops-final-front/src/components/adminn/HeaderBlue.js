@@ -1,5 +1,5 @@
-import LogoBlue from "../assets/images/logo-blue.png"
-import "../css/components/HeaderBlue.css"
+import LogoBlue from "../../assets/images/logo-blue.png"
+import "../../css/components/adminn/HeaderBlue.css"
 
 function HeaderOrange() {
   

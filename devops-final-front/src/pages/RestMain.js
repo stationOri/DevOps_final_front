@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
-import SideBarRest from "../components/SideBarRest";
-import MenuManagement from "../components/MenuManagement"
+import SideBarRest from '../components/restaurant/SideBarRest';
+import MenuManagement from "../components/restaurant/MenuManagement"
 import "../css/pages/RestMain.css";
 
 function RestMain() {

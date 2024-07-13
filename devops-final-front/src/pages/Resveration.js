@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "../css/pages/Reservation.css";
 import HeaderOrange from "../components/HeaderOrange";
-import SideBar from "../components/SideBar";
+import SideBar from "../components/user/SideBar";
 import Loading from "../components/Loading";
 import RestaurantLocationMap from "../components/RestaurantLocationMap";
 import DatePicker from "react-datepicker";

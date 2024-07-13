@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
-import SideBar from "../components/SideBar";
+import SideBar from '../components/user/SideBar';
 import Loading from "../components/Loading";
 import "../css/pages/Main.css";
-import Carousel from '../components/Carousel';
+import Carousel from '../components/user/Carousel';
 
 function Main() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
