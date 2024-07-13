@@ -5,9 +5,6 @@
 }
 
 .adminmaincontent {
-  width: 84%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 8%;
+  width: 80%;
+  margin: 0 10%;
 }

@@ -1,0 +1,19 @@
+.paginationWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.paginationButton {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  background-color: white;
+  cursor: pointer;
+}
+
+.paginationButton.active {
+  background-color: #4E95D9;
+  color: white;
+  border-color: #4E95D9;
+}
