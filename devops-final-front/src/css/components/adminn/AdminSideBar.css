@@ -30,3 +30,7 @@
   color: #4E95D9;
   font-weight: bold;
 }
+.adminSidebatText.empty {
+  cursor: default;
+  pointer-events: none;
+}
