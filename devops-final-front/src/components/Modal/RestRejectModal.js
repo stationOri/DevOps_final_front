@@ -38,7 +38,7 @@ function RestRejectModal({
               X
             </button>
           </div>
-          <div className="acceptModalContent">
+          <div className="rejectModalContent">
             <button
               className={activeButton === "서류 미흡" ? "rejectbtnactive" : ""}
               onClick={() => handleButtonClick("서류 미흡")}
