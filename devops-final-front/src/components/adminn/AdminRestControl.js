@@ -21,7 +21,7 @@ function AdminRestControl() {
       case "블랙리스트":
         return <div>블랙리스트 컴포넌트</div>;
       default:
-        return <div>승인 대기 컴포넌트</div>;
+        return <AdminRestAccept />;
     }
   };
   return (
