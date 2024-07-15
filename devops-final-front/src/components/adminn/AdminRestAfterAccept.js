@@ -1,16 +1,19 @@
-import "../../css/components/adminn/AdminRestAfterAccept.css";
 import React, { useState, useEffect } from "react";
-import Pagination from "../Pagination";  // 페이지네이션 컴포넌트 임포트
+import "../../css/components/adminn/AdminRestAfterAccept.css";
+import Pagination from "../Pagination";
+import RestInfoModal from "../Modal/RestInfoModal";
 
 function AdminRestAfterAccept() {
   const [readyRest, setReadyRest] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRest, setSelectedRest] = useState(null); // 선택된 매장 정보
+  const [infoshow, setInfoShow] = useState(false);
   const itemsPerPage = 20;
 
   const getRestData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/readyaccept`);
+      const response = await fetch(`http://localhost:4000/afterAccept`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -36,6 +39,15 @@ function AdminRestAfterAccept() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = readyRest.slice(indexOfFirstItem, indexOfLastItem);
 
+  const openInfoModal = (rest) => {
+    setSelectedRest(rest);
+    setInfoShow(true);
+  };
+
+  const closeInfoModal = () => {
+    setInfoShow(false);
+  };
+
   const leftColumnItems = currentItems.filter((_, index) => index % 2 === 0);
   const rightColumnItems = currentItems.filter((_, index) => index % 2 !== 0);
 
@@ -51,7 +63,7 @@ function AdminRestAfterAccept() {
           {leftColumnItems.map((rest) => (
             <div className="restafteracceptRowWrapper" key={rest.id}>
               <div className="restaccept">{rest.rest_name}</div>
-              <button className="restafteracceptbutton" rest_id={rest.id}>매장 확인</button>
+              <button className="restafteracceptbutton" onClick={() => openInfoModal(rest)}>매장 확인</button>
             </div>
           ))}
         </div>
@@ -59,7 +71,7 @@ function AdminRestAfterAccept() {
           {rightColumnItems.map((rest) => (
             <div className="restafteracceptRowWrapper" key={rest.id}>
               <div className="restaccept">{rest.rest_name}</div>
-              <button className="restafteracceptbutton" rest_id={rest.id}>매장 확인</button>
+              <button className="restafteracceptbutton" onClick={() => openInfoModal(rest)}>매장 확인</button>
             </div>
           ))}
         </div>
@@ -70,6 +82,23 @@ function AdminRestAfterAccept() {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
+      {infoshow && selectedRest && (
+        <RestInfoModal 
+          InfoClose={closeInfoModal}
+          infoshow={infoshow}
+          rest_id={selectedRest.id}
+          rest_name={selectedRest.rest_name}
+          rest_num={selectedRest.rest_num}
+          rest_owner={selectedRest.rest_owner}
+          rest_phone={selectedRest.rest_phone}
+          rest_data={selectedRest.rest_data}
+          join_date={selectedRest.join_date}
+          quit_date={selectedRest.quit_date}
+          is_blocked={selectedRest.is_blocked}
+          rest_isopen={selectedRest.rest_isopen}
+          rest_status={selectedRest.rest_status}
+        />
+      )}
     </div>
   );
 }

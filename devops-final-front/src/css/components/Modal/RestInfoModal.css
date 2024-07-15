@@ -1,5 +1,5 @@
-.rejectModal{
-  width: 300px;
+.infoModal{
+  width: 500px;
   position: fixed; 
   top: 50%; 
   left: 50%;
@@ -14,25 +14,24 @@
   padding: 20px;
 }
 
-.rejectmodalcontentswrapper {
+.fifthaccpetrow, .sixthaccpetrow {
   display: flex;
-  flex-direction: column;
-  width: 290px;
-  justify-content: center;
-}
-
-.rejectModalContent {
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
-  margin: 5px 0;
 }
 
-.rejectModalContent >button {
-  width: 32%;
-  height: 30px;
+.infoModalcheck {
+  border: none;
+  color: white;
+  background-color: #4E95D9;
+  width: 100%;
 }
 
-.rejectbtnactive {
-  /* border: 1px solid #4E95D9; */
-  font-weight: bold ;
+
+.input1boxzero {
+  width: 100%;
+  height: 28px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
 }

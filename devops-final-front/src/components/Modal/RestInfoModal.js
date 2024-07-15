@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import "../../css/components/Modal/RestAcceptModal.css";
-import RestRejectModal from "./RestRejectModal";
+import "../../css/components/Modal/RestInfoModal.css";
 
-function RestAcceptModal({
-  acceptshow,
-  AcceptClose,
+function RestInfoModal({
+  InfoClose,
+  infoshow,
   rest_id,
   rest_name,
   rest_num,
@@ -12,46 +10,46 @@ function RestAcceptModal({
   rest_phone,
   rest_data,
   join_date,
+  quit_date,
+  is_blocked,
+  rest_isopen,
+  rest_status
 }) {
-  const [rejectshow, setRejectShow] = useState(false);
 
-  const RejectClose = () => setRejectShow(false);
-  const RejectShow = () => setRejectShow(true);
-
-  const handleAcceptRest = () => {
-    // 승인 업데이트 하기
-    AcceptClose();
-  };
-
-  const handleRejectRest = () => {
-    AcceptClose();
-    RejectShow();
-  };
+  const blockedStatus = is_blocked ? 'yes' : 'no';
+  const openStatus = rest_isopen ? 'yes' : 'no';
 
   return (
     <div>
       <div
-        id={acceptshow ? "signinbackgroundon" : "signinbackgroundoff"}
+        id={infoshow ? "signinbackgroundon" : "signinbackgroundoff"}
         onClick={(e) => {
           if (
             e.target.id === "signinbackgroundon" ||
             e.target.id === "signinbackgroundoff"
           ) {
-            AcceptClose();
+            InfoClose();
           }
         }}
       >
-        <div
-          className={`acceptModal ${acceptshow ? "signinshow" : "signinhide"}`}
-        >
+        <div className={`infoModal ${infoshow ? "signinshow" : "signinhide"}`}>
           <div className="acceptmodalcontentswrapper">
             <div className="acceptModalHeader">
-              <div className="acceptboldText">신규 매장 승인</div>
-              <button className="acceptclosebtn" onClick={AcceptClose}>
+              <div className="acceptboldText">매장 정보 확인</div>
+              <button className="acceptclosebtn" onClick={InfoClose}>
                 X
               </button>
             </div>
             <div className="acceptModalContent">
+              <div className="zeroacceptrow">
+                <div className="accepthintText">식당 id</div>
+                <input
+                  type="text"
+                  className="input1boxzero"
+                  value={rest_id}
+                  readOnly
+                />
+              </div>
               <div className="firstacceptrow">
                 <div className="accepthintText">매장 이름</div>
                 <input
@@ -104,7 +102,7 @@ function RestAcceptModal({
                   </div>
                 </div>
                 <div className="foralign">
-                  <div className="accepthintText">승인 요청일</div>
+                  <div className="accepthintText">가입일</div>
                   <input
                     type="text"
                     className="input2box"
@@ -113,27 +111,47 @@ function RestAcceptModal({
                   />
                 </div>
               </div>
+              <div className="fifthaccpetrow">
+                <div className="foralign">
+                  <div className="accepthintText">계정 금지 유무</div>
+                  <input className="input2box" value={blockedStatus} ReadOnly/>
+                </div>
+                <div className="foralign">
+                  <div className="accepthintText">탈퇴일</div>
+                  <input
+                    type="text"
+                    className="input2box"
+                    value={quit_date}
+                    readOnly
+                  />
+                </div>
+              </div>
+              <div className="sixthaccpetrow">
+                <div className="foralign">
+                  <div className="accepthintText">식당 상태</div>
+                  <input
+                    type="text"
+                    className="input2box"
+                    value={rest_status}
+                    readOnly
+                  />
+                </div>
+                <div className="foralign">
+                  <div className="accepthintText">예약 오픈 여부</div>
+                  <input className="input2box" value={openStatus} ReadOnly/>
+                </div>
+              </div>
             </div>
             <div className="acceptModalButton">
-              <button className="acceptModalAccept" onClick={handleAcceptRest}>
-                승인
-              </button>
-              <button className="acceptModalReject" onClick={handleRejectRest}>
-                거절
+              <button className="infoModalcheck" onClick={InfoClose}>
+                확인
               </button>
             </div>
           </div>
         </div>
       </div>
-      {rejectshow && (
-        <RestRejectModal
-        rest_id={rest_id}
-          rejectshow={rejectshow}
-          RejectClose={RejectClose}
-        />
-      )}
-      </div>
+    </div>
   );
 }
 
-export default RestAcceptModal;
+export default RestInfoModal;
