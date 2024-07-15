@@ -23,12 +23,42 @@ function Restaurants() {
   const [currentPage, setCurrentPage] = useState(1);
   const restaurantsPerPage = 6;
 
+  const convertDayToKorean = (day) => {
+    switch (day) {
+      case "MON":
+        return "월요일";
+      case "TUE":
+        return "화요일";
+      case "WED":
+        return "수요일";
+      case "THU":
+        return "목요일";
+      case "FRI":
+        return "금요일";
+      case "SAT":
+        return "토요일";
+      case "SUN":
+        return "일요일";
+      case "HOL":
+        return "공휴일";
+      default:
+        return day;
+    }
+  };
+
+  const userId = 3;
+
   useEffect(() => {
-    fetchRestaurants();
-    fetchOpentimes();
-    fetchFavorites();
-    fetchKeywords();
+    Promise.all([fetchRestaurants(), fetchFavorites(), fetchKeywords()])
+      .then(() => setLoading(false))
+      .catch((error) => console.error("Error fetching initial data:", error));
   }, []);
+
+  useEffect(() => {
+    restaurants.forEach((restaurant) => {
+      fetchOpentimes(restaurant.restId);
+    });
+  }, [restaurants]);
 
   useEffect(() => {
     filterRestaurants();
@@ -36,55 +66,63 @@ function Restaurants() {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restaurants`);
+      const response = await fetch(`http://localhost:8080/restaurants`);
       if (!response.ok) {
         throw new Error("Failed to fetch restaurants");
       }
       const data = await response.json();
       setRestaurants(data);
       setFilteredRestaurants(data);
-      setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching restaurants:", error);
     }
   };
 
-  const fetchOpentimes = async () => {
+  const fetchOpentimes = async (restId) => {
     try {
-      const response = await fetch(`http://localhost:4000/opentime`);
+      const response = await fetch(`http://localhost:8080/opentime/${restId}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch opentime");
+        throw new Error("Failed to fetch opentimes");
       }
       const data = await response.json();
-      setOpentimes(data);
+
+      const opentimesFormatted = data.map((opentime) => ({
+        ...opentime,
+        restDay: convertDayToKorean(opentime.restDay)
+      }));
+
+      setOpentimes((prevOpentimes) => [
+        ...prevOpentimes.filter((opentime) => opentime.restId !== restId),
+        ...opentimesFormatted
+      ]);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching opentimes:", error);
     }
   };
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/favorite`);
+      const response = await fetch(`http://localhost:8080/favorite/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch favorites");
       }
       const data = await response.json();
       setFavorites(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching favorites:", error);
     }
   };
 
   const fetchKeywords = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/keywords`);
+      const response = await fetch(`http://localhost:8080/keywords`);
       if (!response.ok) {
         throw new Error("Failed to fetch keywords");
       }
       const data = await response.json();
       setKeywords(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching keywords:", error);
     }
   };
 
@@ -127,7 +165,7 @@ function Restaurants() {
 
     if (locationFilter) {
       filtered = filtered.filter((restaurant) =>
-        restaurant.rest_address
+        restaurant.restAddress
           .toLowerCase()
           .startsWith(locationFilter.toLowerCase())
       );
@@ -150,7 +188,7 @@ function Restaurants() {
 
     if (searchTerm) {
       filtered = filtered.filter((restaurant) =>
-        restaurant.rest_name.toLowerCase().includes(searchTerm.toLowerCase())
+        restaurant.restName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -159,9 +197,55 @@ function Restaurants() {
 
   const extractLocations = () => {
     const locations = restaurants.map((restaurant) =>
-      restaurant.rest_address.split(" ").slice(0, 2).join(" ")
+      restaurant.restAddress.split(" ").slice(0, 2).join(" ")
     );
     return [...new Set(locations)];
+  };
+
+  const toggleFavorite = async (restId, isFavorite) => {
+    try {
+      const existingFavorite = favorites.find(
+        (fav) => fav.restaurantId === restId && fav.userId === userId
+      );
+  
+      if (existingFavorite) {
+        const response = await fetch(
+          `http://localhost:8080/favorite/${existingFavorite.favoriteId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("찜취소: ",response);
+  
+        if (response.ok) {
+          fetchFavorites();
+        } else {
+          throw new Error("Failed to remove favorite");
+        }
+      } else {
+        const response = await fetch(
+          `http://localhost:8080/favorite/${userId}/rest/${restId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("찜추가: ",response);
+  
+        if (response.ok) {
+          fetchFavorites();
+        } else {
+          throw new Error("Failed to add favorite");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error.message);
+    }
   };
 
   return (
@@ -246,26 +330,30 @@ function Restaurants() {
                     )
                     .map((restaurant) => {
                       const restaurantOpentimes = opentimes.filter(
-                        (opentime) =>
-                          Number(opentime.rest_id) === Number(restaurant.id)
-                      );
-                      const restaurantFavorites = favorites.filter(
-                        (favorite) =>
-                          Number(favorite.rest_id) === Number(restaurant.id)
+                        (opentime) => Number(opentime.restId) === Number(restaurant.restId)
                       );
 
                       return (
-                        <div className="rest-card-li" key={restaurant.id}>
+                        <div className="rest-card-li" key={restaurant.restId}>
                           <RestCard
-                            restId={restaurant.id}
-                            img={restaurant.rest_photo}
-                            RestName={restaurant.rest_name}
-                            RestAddress={restaurant.rest_address}
+                            userId={3}
+                            restId={restaurant.restId}
+                            img={restaurant.restPhoto}
+                            RestName={restaurant.restName}
+                            RestAddress={restaurant.restAddress}
                             RestOpentimes={restaurantOpentimes}
                             keyword1={restaurant.keyword1}
                             keyword2={restaurant.keyword2}
                             keyword3={restaurant.keyword3}
-                            favorites={restaurantFavorites}
+                            isFavorite={
+                              favorites.some(
+                                (fav) =>
+                                  fav.restaurantId === restaurant.restId && fav.userId === userId
+                              )
+                                ? true
+                                : false
+                            }
+                            toggleFavorite={toggleFavorite}
                           />
                         </div>
                       );
