@@ -2,6 +2,7 @@ import "../../css/components/adminn/AdminRestReservation.css";
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination";
 import Search from "../../assets/images/sidebar/search.png";
+import AdminResCancelModal from "../Modal/AdminResCancelModal";
 
 function AdminRestReservation() {
   const [readyRest, setReadyRest] = useState([]);
@@ -10,12 +11,17 @@ function AdminRestReservation() {
   const itemsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+  const [admincancelshow, setAdminCancelShow] = useState(false);
   const [statusFilters, setStatusFilters] = useState({
     예약대기: true,
     예약취소: true,
     예약승인: true,
     방문완료: true,
   });
+  const [selectedReservation, setSelectedReservation] = useState(null); // 선택된 예약 상태를 추적하기 위한 상태 추가
+
+  const AdminCancelClose = () => setAdminCancelShow(false);
+  const AdminCancelShow = () => setAdminCancelShow(true);
 
   // 데이터 불러오기
   const getRestData = async () => {
@@ -27,7 +33,7 @@ function AdminRestReservation() {
       const json = await response.json();
       console.log("Fetched data:", json);
       setReadyRest(json || []);
-      setFilteredItems([]); // 새로운 데이터를 가져오기 전에 기존 필터링 결과 초기화
+      setFilteredItems([]);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -35,12 +41,10 @@ function AdminRestReservation() {
     }
   };
 
-  // 초기 데이터 로드
   useEffect(() => {
     getRestData();
   }, []);
 
-  // 필터링 함수
   useEffect(() => {
     filterItems();
   }, [searchTerm, statusFilters, readyRest]);
@@ -63,7 +67,6 @@ function AdminRestReservation() {
   const filterItems = () => {
     let filtered = readyRest;
 
-    // 상태 필터링
     filtered = filtered.filter((item) => {
       if (
         (statusFilters.예약대기 && item.status === "예약대기") ||
@@ -76,7 +79,6 @@ function AdminRestReservation() {
       return false;
     });
 
-    // 검색어 필터링
     filtered = filtered.filter((item) =>
       item.rest_id.toString().includes(searchTerm)
     );
@@ -84,7 +86,6 @@ function AdminRestReservation() {
     setFilteredItems(filtered);
   };
 
-  // 빈 항목 채우기
   const fillEmptyItems = (array, itemsPerPage) => {
     const filledArray = [...array];
     const remainder = filledArray.length % itemsPerPage;
@@ -106,7 +107,11 @@ function AdminRestReservation() {
     return filledArray;
   };
 
-  // 필터된 데이터를 페이징하여 현재 페이지에 맞는 데이터 가져오기
+  const handleReservationClick = (reservation) => {
+    setSelectedReservation(reservation);
+    AdminCancelShow(); // 모달을 열어 선택된 예약 정보를 보여줄 수 있도록 함
+  };
+
   const filledItems = fillEmptyItems(filteredItems, itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -115,15 +120,15 @@ function AdminRestReservation() {
   return (
     <div className="restacceptrootWrapper">
       <div className="restAcceptbfWrapper">
-        <div className="restAcceptexWrapper">
+        <div className="resfirstrowWrapper">
           <div className="headerfortext">
             <div className="restacceptTitle">예약 목록</div>
             <p className="restacceptP">예약의 전체 목록이 보여집니다.</p>
           </div>
         </div>
         <div className="ressecondrowWRapper">
-        <div className="rescheckboxWrapper">
-          <div>예약 상태 : </div>
+          <div className="rescheckboxWrapper">
+            <div>예약 상태 :</div>
             <label>
               <input
                 type="checkbox"
@@ -175,12 +180,10 @@ function AdminRestReservation() {
               onChange={handleSearchChange}
             />
           </div>
-          </div>
+        </div>
       </div>
       <hr />
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
+      {!loading && (
         <div className="restResTableWrapper">
           <div className="restresTableWrapper">
             <table className="tableforadminres">
@@ -198,17 +201,33 @@ function AdminRestReservation() {
               </thead>
               <tbody>
                 {currentItems.map((rest, index) => (
-                  <tr key={index}>
+                  <tr key={index} onClick={() => handleReservationClick(rest)}>
                     {rest.status !== "빈열" ? <td>{rest.id}</td> : <td></td>}
-                    <td>{rest.rest_name ? `${rest.rest_name} (${rest.rest_id})` : ""}</td>
+                    <td>
+                      {rest.rest_name
+                        ? `${rest.rest_name} (${rest.rest_id})`
+                        : ""}
+                    </td>
                     <td>{rest.user_id}</td>
                     <td>{rest.res_num}</td>
                     <td>{rest.res_datetime}</td>
                     <td>{rest.req_datetime}</td>
-                    {rest.status !== "빈열" ? <td>{rest.status}</td> : <td></td>}
+                    {rest.status !== "빈열" ? (
+                      <td>{rest.status}</td>
+                    ) : (
+                      <td></td>
+                    )}
                     <td className="cnforbgc" style={{ width: "65px" }}>
-                      {rest.status === '예약승인' && (
-                        <button className="adminrescancel">예약취소</button>
+                      {rest.status === "예약승인" && (
+                        <button
+                          className="adminrescancel"
+                          onClick={(e) => {
+                            e.stopPropagation(); // 부모 클릭 방지
+                            handleReservationClick(rest);
+                          }}
+                        >
+                          예약취소
+                        </button>
                       )}
                     </td>
                   </tr>
@@ -224,6 +243,13 @@ function AdminRestReservation() {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
+      {selectedReservation && (
+        <AdminResCancelModal
+          reservation={selectedReservation}
+          admincancelshow={admincancelshow}
+          AdminCancelClose={AdminCancelClose}
+        />
+      )}
     </div>
   );
 }
