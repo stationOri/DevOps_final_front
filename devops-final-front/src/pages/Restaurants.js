@@ -14,8 +14,10 @@ function Restaurants() {
   const [restaurants, setRestaurants] = useState([]);
   const [opentimes, setOpentimes] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [keywords, setKeywords] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [keywordFilters, setKeywordFilters] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,11 +27,12 @@ function Restaurants() {
     fetchRestaurants();
     fetchOpentimes();
     fetchFavorites();
+    fetchKeywords();
   }, []);
 
   useEffect(() => {
     filterRestaurants();
-  }, [locationFilter]);
+  }, [locationFilter, keywordFilters]);
 
   const fetchRestaurants = async () => {
     try {
@@ -72,6 +75,19 @@ function Restaurants() {
     }
   };
 
+  const fetchKeywords = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/keywords`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch keywords");
+      }
+      const data = await response.json();
+      setKeywords(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const onPageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -97,6 +113,15 @@ function Restaurants() {
     setCurrentPage(1);
   };
 
+  const handleKeywordClick = (keyword) => {
+    setKeywordFilters((prevFilters) =>
+      prevFilters.includes(keyword)
+        ? prevFilters.filter((k) => k !== keyword)
+        : [...prevFilters, keyword]
+    );
+    setCurrentPage(1);
+  };
+
   const filterRestaurants = () => {
     let filtered = restaurants;
 
@@ -105,6 +130,15 @@ function Restaurants() {
         restaurant.rest_address
           .toLowerCase()
           .startsWith(locationFilter.toLowerCase())
+      );
+    }
+
+    if (keywordFilters.length > 0) {
+      filtered = filtered.filter(
+        (restaurant) =>
+          keywordFilters.includes(restaurant.keyword1) ||
+          keywordFilters.includes(restaurant.keyword2) ||
+          keywordFilters.includes(restaurant.keyword3)
       );
     }
 
@@ -154,7 +188,7 @@ function Restaurants() {
                   </button>
                   <input
                     type="text"
-                    placeholder="Search by name"
+                    placeholder="Search"
                     className="rest-search-input"
                     value={searchTerm}
                     onChange={handleSearchChange}
@@ -176,41 +210,67 @@ function Restaurants() {
                   </select>
                 </div>
               </div>
-              <div className="rest-keyword-container">
-                {/* 키워드 검색 */}
+              <div className="rest-keyword-con">
+                <div  className="rest-keyword-container">
+                <div className="rest-keyword-box">
+                  <div className="rest-keyword-title">
+                    <div className="rest-keyword-title-text">
+                      <div>어떤 음식을</div>
+                      <div>좋아하세요?</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="rest-keyword-btn-box">
+                  {keywords.map((keyword) => (
+                    <div
+                      key={keyword.id}
+                      className={`rest-keyword-btn ${
+                        keywordFilters.includes(keyword.keyword) ? "active" : ""
+                      }`}
+                      onClick={() => handleKeywordClick(keyword.keyword)}
+                    >
+                      {keyword.keyword}
+                    </div>
+                  ))}
+                </div>
+              </div>
               </div>
               <div className="rest-list-box">
-                {filteredRestaurants
-                  .slice(
-                    (currentPage - 1) * restaurantsPerPage,
-                    currentPage * restaurantsPerPage
-                  )
-                  .map((restaurant) => {
-                    const restaurantOpentimes = opentimes.filter(
-                      (opentime) =>
-                        Number(opentime.rest_id) === Number(restaurant.id)
-                    );
-                    const restaurantFavorites = favorites.filter(
-                      (favorite) =>
-                        Number(favorite.rest_id) === Number(restaurant.id)
-                    );
+                {filteredRestaurants.length === 0 ? (
+                  <div className="rest-no-list">해당 식당이 없습니다</div>
+                ) : (
+                  filteredRestaurants
+                    .slice(
+                      (currentPage - 1) * restaurantsPerPage,
+                      currentPage * restaurantsPerPage
+                    )
+                    .map((restaurant) => {
+                      const restaurantOpentimes = opentimes.filter(
+                        (opentime) =>
+                          Number(opentime.rest_id) === Number(restaurant.id)
+                      );
+                      const restaurantFavorites = favorites.filter(
+                        (favorite) =>
+                          Number(favorite.rest_id) === Number(restaurant.id)
+                      );
 
-                    return (
-                      <div className="rest-card-li" key={restaurant.id}>
-                        <RestCard
-                          restId={restaurant.id}
-                          img={restaurant.rest_photo}
-                          RestName={restaurant.rest_name}
-                          RestAddress={restaurant.rest_address}
-                          RestOpentimes={restaurantOpentimes}
-                          keyword1={restaurant.keyword1}
-                          keyword2={restaurant.keyword2}
-                          keyword3={restaurant.keyword3}
-                          favorites={restaurantFavorites}
-                        />
-                      </div>
-                    );
-                  })}
+                      return (
+                        <div className="rest-card-li" key={restaurant.id}>
+                          <RestCard
+                            restId={restaurant.id}
+                            img={restaurant.rest_photo}
+                            RestName={restaurant.rest_name}
+                            RestAddress={restaurant.rest_address}
+                            RestOpentimes={restaurantOpentimes}
+                            keyword1={restaurant.keyword1}
+                            keyword2={restaurant.keyword2}
+                            keyword3={restaurant.keyword3}
+                            favorites={restaurantFavorites}
+                          />
+                        </div>
+                      );
+                    })
+                )}
               </div>
               <Pagination
                 totalItems={filteredRestaurants.length}
