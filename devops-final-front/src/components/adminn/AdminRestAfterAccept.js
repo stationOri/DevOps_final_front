@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../css/components/adminn/AdminRestAfterAccept.css";
 import Pagination from "../Pagination";
 import RestInfoModal from "../Modal/RestInfoModal";
+import Search from "../../assets/images/sidebar/search.png";
 
 function AdminRestAfterAccept() {
   const [readyRest, setReadyRest] = useState([]);
@@ -9,6 +10,8 @@ function AdminRestAfterAccept() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRest, setSelectedRest] = useState(null); // 선택된 매장 정보
   const [infoshow, setInfoShow] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredItems, setFilteredItems] = useState([]);
   const itemsPerPage = 20;
 
   const getRestData = async () => {
@@ -18,10 +21,11 @@ function AdminRestAfterAccept() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log('Fetched data:', json);
+      console.log("Fetched data:", json);
       setReadyRest(json || []);
+      setFilteredItems(json || []);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -37,7 +41,7 @@ function AdminRestAfterAccept() {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = readyRest.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
 
   const openInfoModal = (rest) => {
     setSelectedRest(rest);
@@ -48,14 +52,33 @@ function AdminRestAfterAccept() {
     setInfoShow(false);
   };
 
+  useEffect(() => {
+    const filtered = readyRest.filter((item) =>
+      item.rest_name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredItems(filtered);
+  }, [searchTerm, readyRest]);
+
   const leftColumnItems = currentItems.filter((_, index) => index % 2 === 0);
   const rightColumnItems = currentItems.filter((_, index) => index % 2 !== 0);
 
   return (
     <div className="restacceptrootWrapper">
       <div className="restAcceptexWrapper">
-        <div className="restacceptTitle">승인 완료 매장 목록</div>
-        <p className="restacceptP">가게 이름 클릭 시 가게 정보 표시</p>
+        <div className="headerfortext">
+          <div className="restacceptTitle">승인 완료 매장 목록</div>
+          <p className="restacceptP">가게 이름 클릭 시 가게 정보 표시</p>
+        </div>
+        <div className="headerforsearch">
+          <img src={Search} alt="" className="searchimginrestsearch" />
+          <input
+            type="text"
+            className="restsearchinput"
+            placeholder="매장명 검색"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
       <hr />
       <div className="restafteracceptTableWrapper">
@@ -63,7 +86,12 @@ function AdminRestAfterAccept() {
           {leftColumnItems.map((rest) => (
             <div className="restafteracceptRowWrapper" key={rest.id}>
               <div className="restaccept">{rest.rest_name}</div>
-              <button className="restafteracceptbutton" onClick={() => openInfoModal(rest)}>매장 확인</button>
+              <button
+                className="restafteracceptbutton"
+                onClick={() => openInfoModal(rest)}
+              >
+                매장 확인
+              </button>
             </div>
           ))}
         </div>
@@ -71,19 +99,24 @@ function AdminRestAfterAccept() {
           {rightColumnItems.map((rest) => (
             <div className="restafteracceptRowWrapper" key={rest.id}>
               <div className="restaccept">{rest.rest_name}</div>
-              <button className="restafteracceptbutton" onClick={() => openInfoModal(rest)}>매장 확인</button>
+              <button
+                className="restafteracceptbutton"
+                onClick={() => openInfoModal(rest)}
+              >
+                매장 확인
+              </button>
             </div>
           ))}
         </div>
       </div>
       <Pagination
-        totalItems={readyRest.length}
+        totalItems={filteredItems.length}
         itemsPerPage={itemsPerPage}
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
       {infoshow && selectedRest && (
-        <RestInfoModal 
+        <RestInfoModal
           InfoClose={closeInfoModal}
           infoshow={infoshow}
           rest_id={selectedRest.id}

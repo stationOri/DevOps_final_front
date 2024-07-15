@@ -47,7 +47,7 @@ function AdminRestAccept() {
 
   return (
     <div className="restacceptrootWrapper">
-      <div className="restAcceptexWrapper">
+      <div className="restAcceptbfWrapper">
         <div className="restacceptTitle">승인 대기 매장 목록</div>
         <p className="restacceptP">가게 이름 클릭 시 가게 등록 정보 표시</p>
       </div>
