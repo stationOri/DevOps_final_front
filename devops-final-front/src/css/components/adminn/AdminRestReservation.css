@@ -45,3 +45,17 @@
 .cnforbgc {
   background-color: #f8f8f8;
 }
+
+.rescheckboxWrapper {
+  display: flex;
+}
+
+.rescheckboxWrapper input {
+  margin: 0 10px;
+}
+
+.ressecondrowWRapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
