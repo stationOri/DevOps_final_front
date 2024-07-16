@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import "../css/components/RestCard.css";
 
 const RestCard = ({
+  userId,
   restId,
   img,
   RestName,
@@ -12,31 +13,25 @@ const RestCard = ({
   keyword1,
   keyword2,
   keyword3,
-  favorites,
+  isFavorite,
+  toggleFavorite,
 }) => {
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  useEffect(() => {
-    const restIdNumber = Number(restId);
-
-    const isFavorited = favorites.some(fav => Number(fav.user_id) === 1 && Number(fav.rest_id) === restIdNumber);
-    setIsFavorite(isFavorited);
-  }, [favorites, restId]);
 
   const moveFunc = () => {
     navigate(`/restaurants/${restId}`);
   };
 
-  const handleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    console.log(`Toggled favorite for restaurant ${RestName}`);
+  const handleFavorite = (e) => {
+    e.stopPropagation();
+    toggleFavorite(restId, !isFavorite);
+    console.log(isFavorite);
   };
 
   return (
     <div className="rest-card-container">
-      <div className="rest-card">
-        <div className="rest-card-img-box" onClick={moveFunc}>
+      <div className="rest-card" onClick={moveFunc}>
+        <div className="rest-card-img-box">
           <img className="rest-card-img" src={img} alt="restaurantImg" />
         </div>
         <div className="rest-card-info">
@@ -45,7 +40,7 @@ const RestCard = ({
           {RestOpentimes.map((opentime, index) => (
             <div key={index}>
               <div className="rest-card-opentime">
-                {opentime.rest_day}: {opentime.rest_open} - {opentime.rest_close}
+                {opentime.restDay}: {opentime.restOpen} - {opentime.restClose}
               </div>
             </div>
           ))}
@@ -55,14 +50,11 @@ const RestCard = ({
               <span className="rest-keyword">#{keyword2} </span>
               <span className="rest-keyword">#{keyword3} </span>
             </div>
-            <div
-              className="favorite-btn"
-              onClick={handleFavorite}
-            >
+            <div className="favorite-btn" onClick={handleFavorite}>
               {isFavorite ? (
                 <FaHeart className="favorited-icon" />
               ) : (
-                <FaRegHeart className="favorited-icon"/>
+                <FaRegHeart className="favorited-icon" />
               )}
             </div>
           </div>

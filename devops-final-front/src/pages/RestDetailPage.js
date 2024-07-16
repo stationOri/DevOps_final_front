@@ -30,6 +30,8 @@ function RestDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
+  const userId = 3;
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -44,43 +46,79 @@ function RestDetailPage() {
     navigate("/reservation/" + id);
   };
 
+  const convertDayToKorean = (day) => {
+    switch (day) {
+      case "MON":
+        return "월요일";
+      case "TUE":
+        return "화요일";
+      case "WED":
+        return "수요일";
+      case "THU":
+        return "목요일";
+      case "FRI":
+        return "금요일";
+      case "SAT":
+        return "토요일";
+      case "SUN":
+        return "일요일";
+      case "HOL":
+        return "공휴일";
+      default:
+        return day;
+    }
+  };
+
   useEffect(() => {
-    fetchRestaurant();
-    fetchOpentimes();
-    fetchMenus();
-    fetchReviews();
+    const fetchData = async () => {
+      try {
+        await Promise.all([fetchRestaurant(), fetchOpentimes(), fetchMenus(), fetchReviews()]);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [id]);
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restaurants/${id}`);
+      const response = await fetch(`http://localhost:8080/restaurants/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant");
       }
       const data = await response.json();
       setRestaurant(data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
+      setError(error.message);
     }
   };
 
   const fetchOpentimes = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/opentime`);
+      const response = await fetch(`http://localhost:8080/opentime/${id}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch opentime");
+        throw new Error("Failed to fetch opentimes");
       }
       const data = await response.json();
-      setOpentimes(data);
+
+      const opentimesFormatted = data.map((opentime) => ({
+        ...opentime,
+        restDay: convertDayToKorean(opentime.restDay)
+      }));
+
+      setOpentimes(opentimesFormatted);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching opentimes:", error);
+      setError(error.message);
     }
   };
 
   const fetchMenus = async () => {
     try {
-      const response = await fetch("http://localhost:4000/menu");
+      const response = await fetch(`http://localhost:8080/restaurants/menu/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch menus");
       }
@@ -93,7 +131,7 @@ function RestDetailPage() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch("http://localhost:4000/reviews");
+      const response = await fetch(`http://localhost:8080/review/rest/${id}/user/${userId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
@@ -103,14 +141,6 @@ function RestDetailPage() {
       console.error(error);
     }
   };
-
-  const filteredOpentimes = opentimes.filter(
-    (opentime) => opentime.rest_id === parseInt(id)
-  );
-  const filteredMenus = menus.filter((menu) => menu.rest_id === parseInt(id));
-  const filteredReviews = reviews.filter(
-    (review) => review.rest_id === parseInt(id)
-  );
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -123,7 +153,7 @@ function RestDetailPage() {
   const paginate = (newPage) => {
     if (
       newPage < 1 ||
-      newPage > Math.ceil(filteredReviews.length / reviewsPerPage)
+      newPage > Math.ceil(reviews.length / reviewsPerPage)
     ) {
       return;
     }
@@ -132,7 +162,7 @@ function RestDetailPage() {
 
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = filteredReviews.slice(
+  const currentReviews = reviews.slice(
     indexOfFirstReview,
     indexOfLastReview
   );
@@ -160,13 +190,13 @@ function RestDetailPage() {
                 <div className="rest-photo-box">
                   <img
                     className="rest-photo"
-                    src={restaurant.rest_photo}
-                    alt={restaurant.rest_name}
+                    src={restaurant.restPhoto}
+                    alt={restaurant.restName}
                   />
                 </div>
                 <div className="rest-info-box">
                   <div className="rest-name-box">
-                    <div className="rest-name">{restaurant.rest_name}</div>
+                    <div className="rest-name">{restaurant.restName}</div>
                     <div className="rest-btn-box">
                       <div className="empty-btn" onClick={openModal}>
                         <img className="empty-img" src={emptyImg} />
@@ -175,17 +205,17 @@ function RestDetailPage() {
                       <div className="ask-btn">
                         <div className="btn-content">1:1 문의</div>
                       </div>
-                      {restaurant.rev_wait === "A" && (
+                      {restaurant.revWait === "A" && (
                         <div className="res-btn">
                           <div className="btn-content">웨이팅</div>
                         </div>
                       )}
-                      {restaurant.rev_wait === "B" && (
+                      {restaurant.revWait === "B" && (
                         <div className="res-btn">
                         <div className="btn-content" onClick={moveFunc}>예약</div>
                       </div>
                       )}
-                      {restaurant.rev_wait === "C" && (
+                      {restaurant.revWait === "C" && (
                         <>
                           <div className="res-btn">
                             <div className="btn-content">웨이팅</div>
@@ -198,20 +228,20 @@ function RestDetailPage() {
                     </div>
                   </div>
                   <div></div>
-                  <StarRatings rating={restaurant.rest_grade} />
+                  <StarRatings rating={restaurant.restGrade} />
                   <div className="rest-intro-box">
                     <div>
+                      <span className="rest-keyword">
+                        #{restaurant.keyword1}{" "}
+                      </span>
                       <span className="rest-keyword">
                         #{restaurant.keyword2}{" "}
                       </span>
                       <span className="rest-keyword">
                         #{restaurant.keyword3}{" "}
                       </span>
-                      <span className="rest-keyword">
-                        #{restaurant.keyword1}{" "}
-                      </span>
                     </div>
-                    <p>{restaurant.rest_intro}</p>
+                    <p>{restaurant.restIntro}</p>
                   </div>
                 </div>
                 <div className="rest-box">
@@ -224,7 +254,7 @@ function RestDetailPage() {
                         alt="quote 1"
                       />
                     </div>
-                    <p>{restaurant.rest_post}</p>
+                    <p>{restaurant.restPost}</p>
                     <div className="quotes-img-container quotes-img-2">
                       <img
                         className="quotes-img"
@@ -238,17 +268,17 @@ function RestDetailPage() {
                   <div className="rest-title">Menu</div>
                   <div>
                     <div className="menu-container">
-                      {filteredMenus.map((menu) => (
+                      {menus.map((menu) => (
                         <li key={menu.id} className="menu-li">
                           <div className="menu-box">
                             <img
                               className="menu-img"
-                              src={menu.menu_photo}
-                              alt={menu.menu_name}
+                              src={menu.menuPhoto}
+                              alt={menu.menuName}
                             />
                             <div className="menu-info-box">
-                              <p className="menu-title">{menu.menu_name}</p>
-                              <p className="menu-price">{menu.menu_price}원</p>
+                              <p className="menu-title">{menu.menuName}</p>
+                              <p className="menu-price">{menu.menuPrice}원</p>
                             </div>
                           </div>
                         </li>
@@ -261,28 +291,28 @@ function RestDetailPage() {
                   <div className="rest-location-box">
                     <div className="rest-map">
                       <RestaurantLocationMap
-                        address={restaurant.rest_address}
+                        address={restaurant.restAddress}
                       />
                     </div>
                     <div className="rest-location-wrap">
                       <div className="rest-info-wrap">
                         <img className="rest-info-img" src={locationImg} />
                         <p className="rest-info-content">
-                          {restaurant.rest_address}
+                          {restaurant.restAddress}
                         </p>
                       </div>
                       <div className="rest-info-wrap-2">
                         <img className="rest-info-img" src={opentimeImg} />
                         <div>
-                          {filteredOpentimes.map((opentime) => (
+                          {opentimes.map((opentime) => (
                             <div
                               key={opentime.id}
                               className="rest-info-content"
                             >
-                              {opentime.rest_day} : {opentime.rest_open} ~{" "}
-                              {opentime.rest_close} / 브레이크타임 :{" "}
-                              {opentime.rest_breakstart} ~{" "}
-                              {opentime.rest_breakend}
+                              {opentime.restDay} : {opentime.restOpen} ~{" "}
+                              {opentime.restClose} / 브레이크타임 :{" "}
+                              {opentime.restBreakstart} ~{" "}
+                              {opentime.restBreakend}
                             </div>
                           ))}
                         </div>
@@ -290,7 +320,7 @@ function RestDetailPage() {
                       <div className="rest-info-wrap">
                         <img className="rest-info-img" src={phoneImg} />
                         <p className="rest-info-content">
-                          {restaurant.rest_phone}
+                          {restaurant.restPhone}
                         </p>
                       </div>
                     </div>
