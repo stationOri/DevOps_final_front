@@ -19,7 +19,7 @@ function AdminRestAccept() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/readyaccept`);
+      const response = await fetch('http://localhost:8080/restaurants/beforeAccept');
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -41,6 +41,14 @@ function AdminRestAccept() {
     setCurrentPage(pageNumber);
   };
 
+  const handleUpdateStatus = (id, newStatus) => {
+    console.log('Updating status for ID:', id, 'to:', newStatus);
+    const updatedRests = readyRest.map(rest =>
+      rest.restId === id ? { ...rest, status: newStatus } : rest
+    );
+    setReadyRest(updatedRests);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = readyRest.slice(indexOfFirstItem, indexOfLastItem);
@@ -54,9 +62,9 @@ function AdminRestAccept() {
       <hr />
       <div className="restacceptTableWrapper">
         {currentItems.map((rest) => (
-          <div className="restacceptRowWrapper" key={rest.id}>
+          <div className="restacceptRowWrapper" key={rest.restId}>
             <div className="restaccept">{rest.rest_name}</div>
-            <button className="restacceptbutton" rest_id={rest.id} onClick={() => AcceptShow(rest)}>승인</button>
+            <button className="restacceptbutton" rest_id={rest.restId} onClick={() => AcceptShow(rest)}>승인</button>
           </div>
         ))}
       </div>
@@ -70,13 +78,15 @@ function AdminRestAccept() {
         <RestAcceptModal
           acceptshow={acceptshow}
           AcceptClose={AcceptClose}
-          rest_id={selectedRest.id}
+          rest_id={selectedRest.restId}
           rest_name={selectedRest.rest_name}
           rest_num={selectedRest.rest_num}
           rest_owner={selectedRest.rest_owner}
           rest_phone={selectedRest.rest_phone}
           rest_data={selectedRest.rest_data}
           join_date={selectedRest.join_date}
+          onUpdateStatus={handleUpdateStatus}
+          reloadData={getRestData} // 새로운 함수 전달
         />
       )}
     </div>
