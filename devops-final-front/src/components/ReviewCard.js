@@ -10,17 +10,17 @@ const ReviewCard = ({ review }) => {
     setIsExpanded(!isExpanded);
   };
 
-  const reviewContent = review.review_data;
+  const reviewContent = review.reviewData;
   const isLongText = reviewContent.length > 105;
 
   return (
     <div className="review-card-container">
-      <StarRatings rating={review.review_grade} />
+      <StarRatings rating={review.reviewGrade} />
       <div className="review-card-box">
         <div className="review-img-box">
-          <img className="review-img" src={review.review_img} alt="review" />
-          <img className="review-img" src={review.review_img2} alt="review" />
-          <img className="review-img" src={review.review_img3} alt="review" />
+          <img className="review-img" src={review.reviewImg} alt="review" />
+          <img className="review-img" src={review.reviewImg2} alt="review" />
+          <img className="review-img" src={review.reviewImg3} alt="review" />
         </div>
         <div className="review-data-box">
           <p>
@@ -34,13 +34,13 @@ const ReviewCard = ({ review }) => {
           </p>
         </div>
         <div className="review-info-box">
-          <p className="reviewer-name">{review.user_nickname}</p>
+          <p className="reviewer-name">{review.userNickname}</p>
           <div className="review-like-box">
             <button className="button-like">
               <div className="review-like-btn">
                 <FontAwesomeIcon className="fa" icon={faThumbsUp} />
                 <span>Likes</span>
-                <span>{review.like_num}</span>
+                <span>{review.likeNum}</span>
               </div>
             </button>
           </div>
