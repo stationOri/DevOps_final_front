@@ -22,15 +22,38 @@ function Reservation() {
   const [restaurant, setRestaurant] = useState(null);
   const [opentimes, setOpentimes] = useState([]);
   const [restInfo, setRestInfo] = useState(null);
+  const [availableTimes, setAvailableTimes] = useState([]);
   const [menus, setMenus] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedGuests, setSelectedGuests] = useState(1);
-  const [availableTimes, setAvailableTimes] = useState([]);
   const [maxPpl, setMaxPpl] = useState(0);
   const [menuQuantities, setMenuQuantities] = useState({});
   const [checkBoxChecked, setCheckBoxChecked] = useState(false);
   const [reqText, setReqText] = useState("");
+
+  const convertDayToKorean = (day) => {
+    switch (day) {
+      case "MON":
+        return "월요일";
+      case "TUE":
+        return "화요일";
+      case "WED":
+        return "수요일";
+      case "THU":
+        return "목요일";
+      case "FRI":
+        return "금요일";
+      case "SAT":
+        return "토요일";
+      case "SUN":
+        return "일요일";
+      case "HOL":
+        return "공휴일";
+      default:
+        return day;
+    }
+  };
 
   useEffect(() => {
     fetchRestaurant();
@@ -42,7 +65,7 @@ function Reservation() {
   useEffect(() => {
     if (menus.length > 0) {
       const initialQuantities = menus.reduce((acc, menu) => {
-        acc[menu.id] = 0;
+        acc[menu.menuId] = 0;
         return acc;
       }, {});
       setMenuQuantities(initialQuantities);
@@ -51,7 +74,7 @@ function Reservation() {
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restaurants/${id}`);
+      const response = await fetch(`http://localhost:8080/restaurants/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant");
       }
@@ -65,14 +88,64 @@ function Reservation() {
 
   const fetchOpentimes = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/opentime`);
+      const response = await fetch(`http://localhost:8080/opentime/${id}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch opentime");
+        throw new Error("Failed to fetch opentimes");
       }
       const data = await response.json();
-      setOpentimes(data);
+
+      const opentimesFormatted = data.map((opentime) => ({
+        ...opentime,
+        restDay: convertDayToKorean(opentime.restDay),
+      }));
+
+      setOpentimes(opentimesFormatted);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchMenus = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/restaurants/menu/${id}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch menus");
+      }
+      const data = await response.json();
+      setMenus(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchAvailableTimes = async (date) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/reservations/${id}/times/${date}`
+      );
+      if (!response.ok) {
+        throw new Error("사용 가능한 시간 가져오기 실패");
+      }
+      const data = await response.json();
+
+      if (!data || !data.availabilityMap || !data.availabilityMap[date]) {
+        setAvailableTimes({});
+        console.warn(`서버에서 반환된 데이터 구조가 예상과 다릅니다:`, data);
+        return;
+      }
+
+      // const times = Object.keys(data.availabilityMap[date]);
+      // const timeStates = Object.values(data.availabilityMap[date]);
+
+      // times.forEach((time, index) => {
+      //   console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
+      // });
+
+      setAvailableTimes(data.availabilityMap[date]);
+    } catch (error) {
+      console.error("사용 가능한 시간 가져오기 오류:", error);
     }
   };
 
@@ -92,60 +165,10 @@ function Reservation() {
     }
   };
 
-  const fetchMenus = async () => {
-    try {
-      const response = await fetch("http://localhost:4000/menu");
-      if (!response.ok) {
-        throw new Error("Failed to fetch menus");
-      }
-      const data = await response.json();
-      setMenus(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getDayOfWeek = (date) => {
-    const dayOfWeek = new Date(date).getDay();
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
-    return days[dayOfWeek];
-  };
-
-  const calculateAvailableTimes = (opentime, interval) => {
-    const start = new Date(`2024-01-01T${opentime.rest_open}:00`);
-    const end = new Date(`2024-01-01T${opentime.rest_lastorder}:00`);
-    const breakStart = new Date(`2024-01-01T${opentime.rest_breakstart}:00`);
-    const breakEnd = new Date(`2024-01-01T${opentime.rest_breakend}:00`);
-    const times = [];
-    const intervalInMinutes = interval === "ONEHOUR" ? 60 : 30;
-
-    let currentTime = new Date(start);
-
-    while (currentTime < end) {
-      if (!(currentTime >= breakStart && currentTime < breakEnd)) {
-        times.push(currentTime.toTimeString().substring(0, 5));
-      }
-      currentTime.setMinutes(currentTime.getMinutes() + intervalInMinutes);
-    }
-    return times;
-  };
-
   const handleDateChange = (date) => {
     setSelectedDate(date);
-
-    const dayOfWeek = getDayOfWeek(date);
-    const filteredOpentime = opentimes.find(
-      (opentime) =>
-        opentime.rest_id === parseInt(id) && opentime.rest_day === dayOfWeek
-    );
-
-    if (filteredOpentime && restInfo) {
-      const interval = restInfo[0].rest_reserve_interval;
-      const times = calculateAvailableTimes(filteredOpentime, interval);
-      setAvailableTimes(times);
-    } else {
-      setAvailableTimes([]);
-    }
+    const formattedDate = date.toISOString().split("T")[0];
+    fetchAvailableTimes(formattedDate);
   };
 
   const handleTimeClick = (time) => {
@@ -156,10 +179,6 @@ function Reservation() {
     setSelectedGuests(event.target.value);
   };
 
-  const day = new Date(+selectedDate + 3240 * 10000)
-    .toISOString()
-    .split("T")[0];
-
   const oneWeekLater = new Date(new Date().setDate(new Date().getDate() + 7));
   const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
 
@@ -167,11 +186,6 @@ function Reservation() {
     restInfo && restInfo.rest_reservation_rule === "WEEKS"
       ? oneWeekLater
       : oneMonthLater;
-
-  const filteredOpentimes = opentimes.filter(
-    (opentime) => opentime.rest_id === parseInt(id)
-  );
-  const filteredMenus = menus.filter((menu) => menu.rest_id === parseInt(id));
 
   const handleMenuIncrement = (menuId) => {
     setMenuQuantities((prevQuantities) => ({
@@ -190,7 +204,7 @@ function Reservation() {
   const checkMenuSelected = () => {
     let menuSelected = false;
     menus.forEach((menu) => {
-      if (menuQuantities[menu.id] > 0) {
+      if (menuQuantities[menu.menuId] > 0) {
         menuSelected = true;
       }
     });
@@ -199,7 +213,7 @@ function Reservation() {
 
   const calculateTotalPrice = () => {
     return menus.reduce((total, menu) => {
-      return total + menu.menu_price * (menuQuantities[menu.id] || 0);
+      return total + menu.menuPrice * (menuQuantities[menu.menuId] || 0);
     }, 0);
   };
 
@@ -207,16 +221,24 @@ function Reservation() {
     setCheckBoxChecked(event.target.checked);
   };
 
+  const formatDateToKoreanTime = (date) => {
+    const koreanDate = new Date(date.getTime() + 9 * 60 * 60 * 1000); // KST로 변환
+    const formattedDate = `${koreanDate.getFullYear()}-${String(
+      koreanDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(koreanDate.getDate()).padStart(2, "0")}`;
+    return formattedDate;
+  };
+
   const handleEnrollReservation = () => {
     console.log("예약 완료");
-    console.log(day); // 예약일
-    console.log(new Date().toISOString().split('T')[0]); // 예약 신청일
+    console.log(new Date().toISOString().split("T")[0]); // 예약 신청일
+    console.log(formatDateToKoreanTime(selectedDate)); // 예약 날짜
     console.log(selectedTime); // 예약 시간
     console.log(selectedGuests); // 예약 인원
     menus.forEach((menu) => {
-      if (menuQuantities[menu.id] > 0) {
-        console.log(`${menu.menu_name}`); // 선택한 메뉴
-        console.log(`${menuQuantities[menu.id]}`); // 수량
+      if (menuQuantities[menu.menuId] > 0) {
+        console.log(`${menu.menuName}`); // 선택한 메뉴
+        console.log(`${menuQuantities[menu.menuId]}`); // 수량
       }
     });
     console.log(reqText); // 요청사항 출력
@@ -248,27 +270,27 @@ function Reservation() {
                   <div className="res-rest-photo">
                     <img
                       className="rest-photo"
-                      src={restaurant.rest_photo}
-                      alt={restaurant.rest_name}
+                      src={restaurant.restPhoto}
+                      alt={restaurant.restName}
                     />
                   </div>
                   <div className="res-map">
-                    <RestaurantLocationMap address={restaurant.rest_address} />
+                    <RestaurantLocationMap address={restaurant.restAddress} />
                   </div>
                 </div>
                 <div className="res-rest-content">
                   <div className="rest-info-box">
                     <div className="rest-name-box">
-                      <div className="rest-name">{restaurant.rest_name}</div>
+                      <div className="rest-name">{restaurant.restName}</div>
                       <div className="res-rest-keyword">
+                        <span className="rest-keyword">
+                          #{restaurant.keyword1}{" "}
+                        </span>
                         <span className="rest-keyword">
                           #{restaurant.keyword2}{" "}
                         </span>
                         <span className="rest-keyword">
                           #{restaurant.keyword3}{" "}
-                        </span>
-                        <span className="rest-keyword">
-                          #{restaurant.keyword1}{" "}
                         </span>
                       </div>
                     </div>
@@ -278,7 +300,7 @@ function Reservation() {
                         <div className="rest-info-wrap">
                           <img className="rest-info-img" src={locationImg} />
                           <p className="rest-info-content">
-                            {restaurant.rest_address}
+                            {restaurant.restAddress}
                           </p>
                         </div>
                         <div className="rest-info-wrap-2">
@@ -287,15 +309,15 @@ function Reservation() {
                             src={opentimeImg}
                           />
                           <div>
-                            {filteredOpentimes.map((opentime) => (
+                            {opentimes.map((opentime) => (
                               <div
-                                key={opentime.id}
+                                key={opentime.restaurantOpenId}
                                 className="rest-info-content"
                               >
-                                {opentime.rest_day} : {opentime.rest_open} ~{" "}
-                                {opentime.rest_close}/ 브레이크타임 :{" "}
-                                {opentime.rest_breakstart} ~{" "}
-                                {opentime.rest_breakend}
+                                {opentime.restDay} : {opentime.restOpen} ~{" "}
+                                {opentime.restClose}/ 브레이크타임 :{" "}
+                                {opentime.restBreakstart} ~{" "}
+                                {opentime.restBreakend}
                               </div>
                             ))}
                           </div>
@@ -303,7 +325,7 @@ function Reservation() {
                         <div className="rest-info-wrap">
                           <img className="rest-info-img" src={phoneImg} />
                           <p className="rest-info-content">
-                            {restaurant.rest_phone}
+                            {restaurant.restPhone}
                           </p>
                         </div>
                       </div>
@@ -311,7 +333,7 @@ function Reservation() {
                         <div className="rest-info-wrap-2">
                           <img className="rest-info-img mt-5" src={noteImg} />
                           <div className="rest-info-content">
-                            {restaurant.rest_intro}
+                            {restaurant.restIntro}
                           </div>
                         </div>
                       </div>
@@ -356,48 +378,58 @@ function Reservation() {
                   <div>
                     <div className="res-sub-title">Available Time Slots</div>
                     <div className="res-btn-container">
-                      {availableTimes.map((time) => (
-                        <div
-                          className={`res-time-btn ${
-                            selectedTime === time ? "selected" : ""
-                          }`}
-                          key={time}
-                          onClick={() => handleTimeClick(time)}
-                        >
-                          <div className="res-btn-content">{time}</div>
-                        </div>
-                      ))}
+                      {availableTimes ? (
+                        Object.entries(availableTimes).map(
+                          ([time, available]) => (
+                            <div
+                              className={`res-time-btn ${
+                                selectedTime === time ? "selected" : ""
+                              } ${!available ? "disabled" : ""}`}
+                              key={time}
+                              onClick={() => handleTimeClick(time)}
+                            >
+                              <div className="res-btn-content">{time}</div>
+                            </div>
+                          )
+                        )
+                      ) : (
+                        <p>No available times for the selected date.</p>
+                      )}
                     </div>
                   </div>
                   <div>
                     <div className="res-sub-title sub-title-margin">Menu</div>
                     <div className="res-menu-container">
-                      {filteredMenus.map((menu) => (
-                        <li key={menu.id} className="res-menu-li">
+                      {menus.map((menu) => (
+                        <li key={menu.menuId} className="res-menu-li">
                           <div className="res-menu-box">
                             <img
                               className="res-menu-img"
-                              src={menu.menu_photo}
-                              alt={menu.menu_name}
+                              src={menu.menuPhoto}
+                              alt={menu.menuName}
                             />
                             <div className="res-menu-info-box">
                               <div className="res-menu-title">
-                                {menu.menu_name}
+                                {menu.menuName}
                               </div>
                               <div className="res-menu-price">
-                                {menu.menu_price}원
+                                {menu.menuPrice}원
                               </div>
                               <div className="menu-quantity-controls">
                                 <button
                                   className="menu-picker-btn-minus"
-                                  onClick={() => handleMenuDecrement(menu.id)}
+                                  onClick={() =>
+                                    handleMenuDecrement(menu.menuId)
+                                  }
                                 >
                                   -
                                 </button>
-                                <span>{menuQuantities[menu.id]}</span>
+                                <span>{menuQuantities[menu.menuId]}</span>
                                 <button
                                   className="menu-picker-btn-plus"
-                                  onClick={() => handleMenuIncrement(menu.id)}
+                                  onClick={() =>
+                                    handleMenuIncrement(menu.menuId)
+                                  }
                                 >
                                   +
                                 </button>
@@ -413,26 +445,29 @@ function Reservation() {
                     <div className="res-total-container">
                       {menus.map(
                         (menu) =>
-                          menuQuantities[menu.id] > 0 && (
+                          menuQuantities[menu.menuId] > 0 && (
                             <div
-                              key={menu.id}
+                              key={menu.menuId}
                               className={`res-total-item ${
-                                menu.id % 2 === 0 ? "even-item" : "odd-item"
+                                menu.menuId % 2 === 0 ? "even-item" : "odd-item"
                               }`}
                             >
                               <table className="menu-table">
-                                <tr>
-                                  <td className="res-menu-name">
-                                    {menu.menu_name}
-                                  </td>
-                                  <td className="res-menu-quan">
-                                    X {menuQuantities[menu.id]}
-                                  </td>
-                                  <td className="res-menu-money">
-                                    {menu.menu_price * menuQuantities[menu.id]}{" "}
-                                    원
-                                  </td>
-                                </tr>
+                                <tbody>
+                                  <tr>
+                                    <td className="res-menu-name">
+                                      {menu.menuName}
+                                    </td>
+                                    <td className="res-menu-quan">
+                                      X {menuQuantities[menu.menuId]}
+                                    </td>
+                                    <td className="res-menu-money">
+                                      {menu.menuPrice *
+                                        menuQuantities[menu.menuId]}{" "}
+                                      원
+                                    </td>
+                                  </tr>
+                                </tbody>
                               </table>
                             </div>
                           )
@@ -508,7 +543,13 @@ function Reservation() {
                     <div className="res-enroll-btn">
                       <div
                         className={`res-btn-content ${
-                          checkBoxChecked && selectedDate && selectedTime && filteredMenus.length > 0 && checkMenuSelected() ? "" : "disabled"
+                          checkBoxChecked &&
+                          selectedDate &&
+                          selectedTime &&
+                          menus.length > 0 &&
+                          checkMenuSelected()
+                            ? ""
+                            : "disabled"
                         }`}
                         onClick={handleEnrollReservation}
                       >
