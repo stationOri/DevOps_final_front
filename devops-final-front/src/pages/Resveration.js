@@ -27,7 +27,6 @@ function Reservation() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedGuests, setSelectedGuests] = useState(1);
-  const [maxPpl, setMaxPpl] = useState(0);
   const [menuQuantities, setMenuQuantities] = useState({});
   const [checkBoxChecked, setCheckBoxChecked] = useState(false);
   const [reqText, setReqText] = useState("");
@@ -141,12 +140,12 @@ function Reservation() {
         return;
       }
 
-      const times = Object.keys(data.availabilityMap[formattedDate]);
-      const timeStates = Object.values(data.availabilityMap[formattedDate]);
+      // const times = Object.keys(data.availabilityMap[formattedDate]);
+      // const timeStates = Object.values(data.availabilityMap[formattedDate]);
 
-      times.forEach((time, index) => {
-        console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
-      });
+      // times.forEach((time, index) => {
+      //   console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
+      // });
 
       setAvailableTimes(data.availabilityMap[formattedDate]);
     } catch (error) {
@@ -156,15 +155,14 @@ function Reservation() {
 
   const fetchRestInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restInfo`);
+      const response = await fetch(
+        `http://localhost:8080/restaurants/info/res/${id}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant info");
       }
       const data = await response.json();
       setRestInfo(data);
-      if (data && data.length > 0) {
-        setMaxPpl(data[0].max_ppl);
-      }
     } catch (error) {
       console.error(error);
     }
@@ -187,7 +185,7 @@ function Reservation() {
   const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
 
   const LaterDate =
-    restInfo && restInfo.rest_reservation_rule === "WEEKS"
+    restInfo && restInfo.restReserveopenRule === "WEEKS"
       ? oneWeekLater
       : oneMonthLater;
 
@@ -228,8 +226,12 @@ function Reservation() {
   function toKoreanDateString(date) {
     if (!date) return null;
     const utcOffset = date.getTimezoneOffset() * 60000;
-    const koreanDate = new Date(date.getTime() + utcOffset + 9 * 60 * 60 * 1000);
-    return `${koreanDate.getFullYear()}-${String(koreanDate.getMonth() + 1).padStart(2, '0')}-${String(koreanDate.getDate()).padStart(2, '0')}`;
+    const koreanDate = new Date(
+      date.getTime() + utcOffset + 9 * 60 * 60 * 1000
+    );
+    return `${koreanDate.getFullYear()}-${String(
+      koreanDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(koreanDate.getDate()).padStart(2, "0")}`;
   }
 
   const handleEnrollReservation = () => {
@@ -246,8 +248,8 @@ function Reservation() {
     });
     console.log(reqText); // 요청사항 출력
     let depositAmount;
-    if (restInfo[0] && restInfo[0].rest_deposit_method === "A") {
-      depositAmount = restInfo[0].rest_deposit * selectedGuests;
+    if (restInfo && restInfo.restDepositMethod === "A") {
+      depositAmount = restInfo.restDeposit * selectedGuests;
     } else {
       depositAmount = calculateTotalPrice() * 0.2;
     }
@@ -363,7 +365,7 @@ function Reservation() {
                         value={selectedGuests}
                         onChange={handleGuestsChange}
                       >
-                        {[...Array(maxPpl)].map((_, i) => (
+                        {[...Array(restInfo.maxPpl)].map((_, i) => (
                           <option key={i + 1} value={i + 1}>
                             {i + 1}
                           </option>
@@ -371,9 +373,9 @@ function Reservation() {
                       </select>
                     </div>
                     <div className="res-deposit-method-info">
-                      {restInfo && restInfo.length > 0
-                        ? restInfo[0].rest_deposit_method === "A"
-                          ? `지정액 인당 ${restInfo[0].rest_deposit}원`
+                      {restInfo
+                        ? restInfo.restDepositMethod === "A"
+                          ? `지정액 인당 ${restInfo.restDeposit}원`
                           : `메뉴 20%.`
                         : "0원"}
                     </div>
@@ -498,9 +500,9 @@ function Reservation() {
                     <div className="res-pay-info">
                       <div className="res-pay-info-total">
                         예약금{" "}
-                        {restInfo && restInfo.length > 0
-                          ? restInfo[0].rest_deposit_method === "A"
-                            ? `${restInfo[0].rest_deposit * selectedGuests} 원`
+                        {restInfo
+                          ? restInfo.restDepositMethod === "A"
+                            ? `${restInfo.restDeposit * selectedGuests} 원`
                             : `${calculateTotalPrice() * 0.2} 원`
                           : "0원"}
                       </div>
