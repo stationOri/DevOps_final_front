@@ -1,24 +1,35 @@
-/* main.css */
-
-.mainWrapper {
+.usermainWrapper {
   display: flex;
-  flex-direction: row;
+  width: 100%;
 }
 
-.contentsWrapper {
+.behindsidebar {
+  width: 170px;
+}
+
+.behindsidebar.collapsed {
+  width: 50px;
+}
+
+.maincontentsWrapper {
+  display: flex;
+  width: 100%;
+}
+
+.innercontentsWrapper {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  transition: margin-left 0.3s ease-in-out;
-}
-
-.contentsWrapper.collapsed {
-  margin-left: 80px;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
 .mainSidebar {
-  width: 200px;
-  transition: width 0.3s ease-in-out;
+  width: 170px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .mainSidebar.collapsed {
@@ -29,4 +40,61 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.mainMapWrapper {
+  display: flex;
+  width: 80%;
+}
+
+.hotTrendingRestWrapper {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 50px 0;
+}
+
+.hotTrendingHeader {
+  font-size: 28px;
+  margin: 10px 0;
+}
+
+.rankingWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.rankingLeft {
+  display: flex;
+  align-items: center;
+}
+
+.RankingIndex {
+  font-size: 40px;
+  font-weight: 400;
+  margin: 0 10px;
+}
+
+.rankPhoto {
+  width: 200px;
+  height: 150px;
+  border-radius: 20px;
+  margin: 0 20px 0 10px;
+}
+
+.MainKeywordWrapperMini {
+  display: flex;
+}
+
+.MainRestName {
+  font-size: 18px;
+}
+
+.innerKeywords {
+  margin: 10px 5px;
 }
