@@ -93,3 +93,16 @@
 .signinModalButton > button {
   margin: 5px 0;
 }
+
+.button-image {
+  display: block;
+  width: 60%;
+  height: auto; 
+}
+.naversignbutton{
+  margin-top: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;         
+  border: none;   
+}

@@ -9,6 +9,7 @@ import Search from "../../assets/images/sidebar/search.png";
 import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
 import "../../css/components/user/SideBar.css";
 import SigninModal from "../Modal/SigninModal";
+import SigninNaverModal from "../Modal/SigninNaverModal";
 import CheckModal from "../Modal/CheckModal"
 import { useCheckModal } from "../Modal/CheckModalContext";
 
@@ -18,7 +19,7 @@ function SideBar() {
   const [isExtended, setIsExtended] = useState(true); // 사이드바 확장 상태를 관리하는 변수
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
-
+  const [naversigninshow,setNaverSigninshow]=useState(false);
   const { openCheckModal } = useCheckModal();
 
   const handleOpenModal = () => {
@@ -32,6 +33,10 @@ function SideBar() {
   // 회원가입 modal 함수
   const signinClose = () => setSigninshow(false);
   const signinShow = () => setSigninshow(true);
+
+  //네이버 회원가입 modal
+  const naversigninClose = () => setNaverSigninshow(false);
+  const naversigninShow = () => setNaverSigninshow(true);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -49,6 +54,10 @@ function SideBar() {
 
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
+      {/* <SigninNaverModal 
+        naversigninClose={naversigninClose}
+        naversigninShow={naversigninShow}
+      /> */}
       <SigninModal 
         signinClose={signinClose}
         signinshow={signinshow}
@@ -116,7 +125,11 @@ function SideBar() {
               </div>
               <div className="sidebarRow">
                 <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={signinShow}>회원가입</div>
+                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}   
+                onClick={() => {
+                signinShow();
+                naversigninShow();
+                }}>회원가입</div>
               </div>
             </>
           )}
