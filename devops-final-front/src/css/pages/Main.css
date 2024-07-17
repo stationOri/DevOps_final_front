@@ -42,10 +42,62 @@
   align-items: center;
 }
 
+/* 지도 */
+
 .mainMapWrapper {
   display: flex;
+  justify-content: space-between;
   width: 80%;
 }
+
+.mainRestDetailWrapper {
+  width: 100%;
+  padding-top: 20px;
+}
+
+.divforalignment {
+  margin-right: 20px;
+  height: 100%;
+  border-radius: 40px;
+  background-color: #f49a3314;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.mainRestExPhoto{
+  width: 260px;
+  height: 100px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+.maincardrestname {
+  font-size: 20px;
+  margin: 3px 0;
+}
+
+.maincardKeywordWrapper {
+  display: flex;
+  width: 80%;
+  margin: 2px 0;
+}
+
+.mainkeywordbox {
+  padding: 2px 10px;
+  border-radius:10px;
+  border: 1px solid #c5c4c4;
+  margin-right: 5px;
+  font-size: 13px;
+}
+
+.mainreviewCardWrapper {
+  display: flex;
+}
+
+/* 핫 */
 
 .hotTrendingRestWrapper {
   width: 80%;

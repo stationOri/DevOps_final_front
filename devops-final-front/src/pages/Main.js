@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/user/SideBar";
 import Loading from "../components/Loading";
+import ReviewCardMain from "../components/ReviewCardMain"
 import "../css/pages/Main.css";
 import Carousel from "../components/user/Carousel";
-import RestaurantLocationMap from "../components/RestaurantLocationMap";
+import ArrayRestaurantsMap from "../components/ArrayRestaurantsMap";
 import StarRatingsCarousel from "../components/user/StarRatingCarousel";
 
 function Main() {
@@ -12,6 +13,14 @@ function Main() {
   const [trendingFoods, setTrendingFoods] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isExtended, setIsExtended] = useState(true);
+
+  const review = {
+    "reviewGrade" : 5,
+    "userNickname" : "wonnn",
+    "likeNum" : 6,
+    "reviewData" : "안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다.안녕하세요 리뷰 테스트중입니다."
+  }
+
 
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
@@ -72,16 +81,21 @@ function Main() {
               </div>
               <div className="mainMapWrapper">
                 <div className="mainRestDetailWrapper">
-                  <img alt="" />
-                  <div className="maincardrestname"></div>
+                  <div className="divforalignment">
+                    <img className="mainRestExPhoto" src="https://www.bluer.co.kr/images/es_baf6fbd8c5ad4a9ba20a346711b5dc1c.jpg" alt="" />
+                  <div className="maincardrestname">avocado sandwich</div>
                   <div className="maincardKeywordWrapper">
-                    <div>keywords</div>
+                    <div className="mainkeywordbox">keywords</div>
+                    <div className="mainkeywordbox">keywords</div>
+                    <div className="mainkeywordbox">keywords</div>
                   </div>
                   <div className="mainreviewCardWrapper">
-                    {/* <ReviewCardMain /> */}
+                    <ReviewCardMain review={review}/>
+                    <ReviewCardMain review={review}/>
+                  </div>
                   </div>
                 </div>
-                <RestaurantLocationMap />
+                <ArrayRestaurantsMap />
               </div>
               <div className="hotTrendingRestWrapper">
                 <div className="hotTrendingHeader">🔥핫 트렌딩 식당🔥</div>
@@ -97,6 +111,7 @@ function Main() {
                       >
                         {index + 1}
                       </div>
+                    
                       <img className="rankPhoto" src={rest.rest_photo} alt="" />
                       <div className="MainRestNameWrapper">
                         <div className="MainRestName">{rest.rest_name}</div>
