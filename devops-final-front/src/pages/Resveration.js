@@ -122,28 +122,33 @@ function Reservation() {
 
   const fetchAvailableTimes = async (date) => {
     try {
+      const formattedDate = toKoreanDateString(new Date(date)); // 날짜를 KST로 변환
       const response = await fetch(
-        `http://localhost:8080/reservations/${id}/times/${date}`
+        `http://localhost:8080/reservations/${id}/times/${formattedDate}`
       );
       if (!response.ok) {
         throw new Error("사용 가능한 시간 가져오기 실패");
       }
       const data = await response.json();
 
-      if (!data || !data.availabilityMap || !data.availabilityMap[date]) {
+      if (
+        !data ||
+        !data.availabilityMap ||
+        !data.availabilityMap[formattedDate]
+      ) {
         setAvailableTimes({});
         console.warn(`서버에서 반환된 데이터 구조가 예상과 다릅니다:`, data);
         return;
       }
 
-      // const times = Object.keys(data.availabilityMap[date]);
-      // const timeStates = Object.values(data.availabilityMap[date]);
+      const times = Object.keys(data.availabilityMap[formattedDate]);
+      const timeStates = Object.values(data.availabilityMap[formattedDate]);
 
-      // times.forEach((time, index) => {
-      //   console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
-      // });
+      times.forEach((time, index) => {
+        console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
+      });
 
-      setAvailableTimes(data.availabilityMap[date]);
+      setAvailableTimes(data.availabilityMap[formattedDate]);
     } catch (error) {
       console.error("사용 가능한 시간 가져오기 오류:", error);
     }
@@ -167,8 +172,7 @@ function Reservation() {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    const formattedDate = date.toISOString().split("T")[0];
-    fetchAvailableTimes(formattedDate);
+    fetchAvailableTimes(date);
   };
 
   const handleTimeClick = (time) => {
@@ -221,18 +225,17 @@ function Reservation() {
     setCheckBoxChecked(event.target.checked);
   };
 
-  const formatDateToKoreanTime = (date) => {
-    const koreanDate = new Date(date.getTime() + 9 * 60 * 60 * 1000); // KST로 변환
-    const formattedDate = `${koreanDate.getFullYear()}-${String(
-      koreanDate.getMonth() + 1
-    ).padStart(2, "0")}-${String(koreanDate.getDate()).padStart(2, "0")}`;
-    return formattedDate;
-  };
+  function toKoreanDateString(date) {
+    if (!date) return null;
+    const utcOffset = date.getTimezoneOffset() * 60000;
+    const koreanDate = new Date(date.getTime() + utcOffset + 9 * 60 * 60 * 1000);
+    return `${koreanDate.getFullYear()}-${String(koreanDate.getMonth() + 1).padStart(2, '0')}-${String(koreanDate.getDate()).padStart(2, '0')}`;
+  }
 
   const handleEnrollReservation = () => {
     console.log("예약 완료");
     console.log(new Date().toISOString().split("T")[0]); // 예약 신청일
-    console.log(formatDateToKoreanTime(selectedDate)); // 예약 날짜
+    console.log(toKoreanDateString(selectedDate)); // 예약 날짜
     console.log(selectedTime); // 예약 시간
     console.log(selectedGuests); // 예약 인원
     menus.forEach((menu) => {
@@ -386,7 +389,7 @@ function Reservation() {
                                 selectedTime === time ? "selected" : ""
                               } ${!available ? "disabled" : ""}`}
                               key={time}
-                              onClick={() => handleTimeClick(time)}
+                              onClick={() => available && handleTimeClick(time)}
                             >
                               <div className="res-btn-content">{time}</div>
                             </div>
