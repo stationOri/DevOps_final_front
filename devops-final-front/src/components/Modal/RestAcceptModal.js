@@ -159,6 +159,8 @@ function RestAcceptModal({
           rest_id={rest_id}
           rejectshow={rejectshow}
           RejectClose={RejectClose}
+          reloadData={reloadData}
+          onUpdateStatus={onUpdateStatus}
         />
       )}
     </div>
