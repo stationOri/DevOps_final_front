@@ -2,14 +2,40 @@ import React, { useState } from "react";
 import "../../css/components/Modal/RestRejectModal.css";
 
 function RestRejectModal({
-  RejectClose, rejectshow,rest_id
+  RejectClose, rejectshow,rest_id, onUpdateStatus, reloadData
 }) {
   const [activeButton, setActiveButton] = useState("");
 
-  const handleRejectRestModal = () => {
-    // 거절 업데이트 하기
-    console.log(activeButton);
-    RejectClose();
+  const handleRejectRestModal = async () => {
+    try {
+      const url = `http://localhost:8080/restaurants/status/${rest_id}`;
+      const requestBody = { status: "C" };
+
+      console.log("다음과 같이 레스토랑 상태를 업데이트합니다:", url, requestBody);
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        throw new Error('레스토랑 상태 업데이트 실패');
+      }
+
+      console.log('Updated status:', rest_id, "C");
+
+      onUpdateStatus(rest_id, "C");
+
+      reloadData();
+
+      RejectClose();
+    } catch (error) {
+      console.error('레스토랑 상태 업데이트 오류:', error);
+      RejectClose();
+    }
   };
 
   const handleButtonClick = (reason) => {

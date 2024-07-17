@@ -18,7 +18,7 @@ function AdminRestReservation() {
     예약승인: true,
     방문완료: true,
   });
-  const [selectedReservation, setSelectedReservation] = useState(null); // 선택된 예약 상태를 추적하기 위한 상태 추가
+  const [selectedReservation, setSelectedReservation] = useState(null);
 
   const AdminCancelClose = () => setAdminCancelShow(false);
   const AdminCancelShow = () => setAdminCancelShow(true);

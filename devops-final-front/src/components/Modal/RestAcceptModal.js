@@ -12,15 +12,44 @@ function RestAcceptModal({
   rest_phone,
   rest_data,
   join_date,
+  onUpdateStatus,
+  reloadData // 부모 컴포넌트에서 전달된 함수
 }) {
   const [rejectshow, setRejectShow] = useState(false);
 
   const RejectClose = () => setRejectShow(false);
   const RejectShow = () => setRejectShow(true);
 
-  const handleAcceptRest = () => {
-    // 승인 업데이트 하기
-    AcceptClose();
+  const handleAcceptRest = async () => {
+    try {
+      const url = `http://localhost:8080/restaurants/status/${rest_id}`;
+      const requestBody = { status: "B" };
+
+      console.log("다음과 같이 레스토랑 상태를 업데이트합니다:", url, requestBody);
+
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        throw new Error('레스토랑 상태 업데이트 실패');
+      }
+
+      console.log('Updated status:', rest_id, "B");
+
+      onUpdateStatus(rest_id, "B");
+
+      reloadData();
+
+      AcceptClose();
+    } catch (error) {
+      console.error('레스토랑 상태 업데이트 오류:', error);
+      AcceptClose();
+    }
   };
 
   const handleRejectRest = () => {
@@ -127,12 +156,14 @@ function RestAcceptModal({
       </div>
       {rejectshow && (
         <RestRejectModal
-        rest_id={rest_id}
+          rest_id={rest_id}
           rejectshow={rejectshow}
           RejectClose={RejectClose}
+          reloadData={reloadData}
+          onUpdateStatus={onUpdateStatus}
         />
       )}
-      </div>
+    </div>
   );
 }
 
