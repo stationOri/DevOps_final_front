@@ -16,7 +16,7 @@ import calImg from "../assets/images/modal/cal.png";
 import pplImg from "../assets/images/modal/people.png";
 
 function Reservation() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isExtended, setIsExtended] = useState(true);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
@@ -52,6 +52,10 @@ function Reservation() {
       default:
         return day;
     }
+  };
+
+  const toggleSidebar = () => {
+    setIsExtended(!isExtended);
   };
 
   useEffect(() => {
@@ -261,304 +265,315 @@ function Reservation() {
       {loading ? (
         <Loading />
       ) : (
-        <div className={`mainWrapper ${isSidebarCollapsed ? "collapsed" : ""}`}>
-          <SideBar className="mainSidebar" />
-          <div
-            className={`contentsWrapper ${
-              isSidebarCollapsed ? "collapsed" : ""
-            }`}
-          >
-            <HeaderOrange />
-            <div className="reservation">
-              <div className="res-container">
-                <div className="rest-photo-map">
-                  <div className="res-rest-photo">
-                    <img
-                      className="rest-photo"
-                      src={restaurant.restPhoto}
-                      alt={restaurant.restName}
-                    />
-                  </div>
-                  <div className="res-map">
-                    <RestaurantLocationMap address={restaurant.restAddress} />
-                  </div>
-                </div>
-                <div className="res-rest-content">
-                  <div className="rest-info-box">
-                    <div className="rest-name-box">
-                      <div className="rest-name">{restaurant.restName}</div>
-                      <div className="res-rest-keyword">
-                        <span className="rest-keyword">
-                          #{restaurant.keyword1}{" "}
-                        </span>
-                        <span className="rest-keyword">
-                          #{restaurant.keyword2}{" "}
-                        </span>
-                        <span className="rest-keyword">
-                          #{restaurant.keyword3}{" "}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="res-horizon"></div>
-                    <div className="res-rest-intro-box flex-row">
-                      <div className="res-rest-location-wrap">
-                        <div className="rest-info-wrap">
-                          <img className="rest-info-img" src={locationImg} />
-                          <p className="rest-info-content">
-                            {restaurant.restAddress}
-                          </p>
-                        </div>
-                        <div className="rest-info-wrap-2">
-                          <img
-                            className="rest-info-img mt-5"
-                            src={opentimeImg}
-                          />
-                          <div>
-                            {opentimes.map((opentime) => (
-                              <div
-                                key={opentime.restaurantOpenId}
-                                className="rest-info-content"
-                              >
-                                {opentime.restDay} : {opentime.restOpen} ~{" "}
-                                {opentime.restClose}/ 브레이크타임 :{" "}
-                                {opentime.restBreakstart} ~{" "}
-                                {opentime.restBreakend}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div className="rest-info-wrap">
-                          <img className="rest-info-img" src={phoneImg} />
-                          <p className="rest-info-content">
-                            {restaurant.restPhone}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="res_rest_intro">
-                        <div className="rest-info-wrap-2">
-                          <img className="rest-info-img mt-5" src={noteImg} />
-                          <div className="rest-info-content">
-                            {restaurant.restIntro}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="res-enroll-date-time">
-                    <div className="res-enroll-date">
-                      <img className="res-cal-img" src={calImg} />
-                      <DatePicker
-                        selected={selectedDate}
-                        onChange={handleDateChange}
-                        minDate={new Date()}
-                        maxDate={LaterDate}
-                        className="picker"
-                        placeholderText="DATE"
-                        dateFormat="yyyy-MM-dd"
+        <div className="usermainWrapper">
+          <SideBar
+            className="mainSidebar"
+            toggleSidebar={toggleSidebar}
+            isExtended={isExtended}
+          />
+          <div className="maincontentsWrapper">
+            <div className={`behindsidebar ${isExtended ? "" : "collapsed"}`} />
+            <div
+              className={`innercontentsWrapper ${
+                isExtended ? "" : "collapsed"
+              }`}
+            >
+              <HeaderOrange />
+              <div className="reservation">
+                <div className="res-container">
+                  <div className="rest-photo-map">
+                    <div className="res-rest-photo">
+                      <img
+                        className="rest-photo"
+                        src={restaurant.restPhoto}
+                        alt={restaurant.restName}
                       />
                     </div>
-                    <div className="res-enroll-ppl">
-                      <img className="res-ppl-img" src={pplImg} />
-                      <select
-                        id="guestPicker"
-                        className="picker"
-                        value={selectedGuests}
-                        onChange={handleGuestsChange}
-                      >
-                        {[...Array(restInfo.maxPpl)].map((_, i) => (
-                          <option key={i + 1} value={i + 1}>
-                            {i + 1}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="res-deposit-method-info">
-                      {restInfo
-                        ? restInfo.restDepositMethod === "A"
-                          ? `지정액 인당 ${restInfo.restDeposit}원`
-                          : `메뉴 20%.`
-                        : "0원"}
+                    <div className="res-map">
+                      <RestaurantLocationMap address={restaurant.restAddress} />
                     </div>
                   </div>
-                  <div>
-                    <div className="res-sub-title">Available Time Slots</div>
-                    <div className="res-btn-container">
-                      {availableTimes ? (
-                        Object.entries(availableTimes).map(
-                          ([time, available]) => (
-                            <div
-                              className={`res-time-btn ${
-                                selectedTime === time ? "selected" : ""
-                              } ${!available ? "disabled" : ""}`}
-                              key={time}
-                              onClick={() => available && handleTimeClick(time)}
-                            >
-                              <div className="res-btn-content">{time}</div>
-                            </div>
-                          )
-                        )
-                      ) : (
-                        <p>No available times for the selected date.</p>
-                      )}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="res-sub-title sub-title-margin">Menu</div>
-                    <div className="res-menu-container">
-                      {menus.map((menu) => (
-                        <li key={menu.menuId} className="res-menu-li">
-                          <div className="res-menu-box">
+                  <div className="res-rest-content">
+                    <div className="rest-info-box">
+                      <div className="rest-name-box">
+                        <div className="rest-name">{restaurant.restName}</div>
+                        <div className="res-rest-keyword">
+                          <span className="rest-keyword">
+                            #{restaurant.keyword1}{" "}
+                          </span>
+                          <span className="rest-keyword">
+                            #{restaurant.keyword2}{" "}
+                          </span>
+                          <span className="rest-keyword">
+                            #{restaurant.keyword3}{" "}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="res-horizon"></div>
+                      <div className="res-rest-intro-box flex-row">
+                        <div className="res-rest-location-wrap">
+                          <div className="rest-info-wrap">
+                            <img className="rest-info-img" src={locationImg} />
+                            <p className="rest-info-content">
+                              {restaurant.restAddress}
+                            </p>
+                          </div>
+                          <div className="rest-info-wrap-2">
                             <img
-                              className="res-menu-img"
-                              src={menu.menuPhoto}
-                              alt={menu.menuName}
+                              className="rest-info-img mt-5"
+                              src={opentimeImg}
                             />
-                            <div className="res-menu-info-box">
-                              <div className="res-menu-title">
-                                {menu.menuName}
-                              </div>
-                              <div className="res-menu-price">
-                                {menu.menuPrice}원
-                              </div>
-                              <div className="menu-quantity-controls">
-                                <button
-                                  className="menu-picker-btn-minus"
-                                  onClick={() =>
-                                    handleMenuDecrement(menu.menuId)
-                                  }
+                            <div>
+                              {opentimes.map((opentime) => (
+                                <div
+                                  key={opentime.restaurantOpenId}
+                                  className="rest-info-content"
                                 >
-                                  -
-                                </button>
-                                <span>{menuQuantities[menu.menuId]}</span>
-                                <button
-                                  className="menu-picker-btn-plus"
-                                  onClick={() =>
-                                    handleMenuIncrement(menu.menuId)
-                                  }
-                                >
-                                  +
-                                </button>
-                              </div>
+                                  {opentime.restDay} : {opentime.restOpen} ~{" "}
+                                  {opentime.restClose}/ 브레이크타임 :{" "}
+                                  {opentime.restBreakstart} ~{" "}
+                                  {opentime.restBreakend}
+                                </div>
+                              ))}
                             </div>
                           </div>
-                        </li>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="res-sub-title">Total</div>
-                    <div className="res-total-container">
-                      {menus.map(
-                        (menu) =>
-                          menuQuantities[menu.menuId] > 0 && (
-                            <div
-                              key={menu.menuId}
-                              className={`res-total-item ${
-                                menu.menuId % 2 === 0 ? "even-item" : "odd-item"
-                              }`}
-                            >
-                              <table className="menu-table">
-                                <tbody>
-                                  <tr>
-                                    <td className="res-menu-name">
-                                      {menu.menuName}
-                                    </td>
-                                    <td className="res-menu-quan">
-                                      X {menuQuantities[menu.menuId]}
-                                    </td>
-                                    <td className="res-menu-money">
-                                      {menu.menuPrice *
-                                        menuQuantities[menu.menuId]}{" "}
-                                      원
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                          <div className="rest-info-wrap">
+                            <img className="rest-info-img" src={phoneImg} />
+                            <p className="rest-info-content">
+                              {restaurant.restPhone}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="res_rest_intro">
+                          <div className="rest-info-wrap-2">
+                            <img className="rest-info-img mt-5" src={noteImg} />
+                            <div className="rest-info-content">
+                              {restaurant.restIntro}
                             </div>
-                          )
-                      )}
-                      <br />
-                      <div className="res-total-price">
-                        Total : {calculateTotalPrice()} 원
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div>
-                    <div className="res-sub-title sub-title-margin">
-                      요청 사항
-                    </div>
-                    <div className="res-req">
-                      <textarea
-                        className="custom_textarea"
-                        value={reqText}
-                        onChange={(e) => setReqText(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="res-horizon" />
-                  <div className="res-to-pay-container">
-                    <div className="res-pay-info">
-                      <div className="res-pay-info-total">
-                        예약금{" "}
+                    <div className="res-enroll-date-time">
+                      <div className="res-enroll-date">
+                        <img className="res-cal-img" src={calImg} />
+                        <DatePicker
+                          selected={selectedDate}
+                          onChange={handleDateChange}
+                          minDate={new Date()}
+                          maxDate={LaterDate}
+                          className="picker"
+                          placeholderText="DATE"
+                          dateFormat="yyyy-MM-dd"
+                        />
+                      </div>
+                      <div className="res-enroll-ppl">
+                        <img className="res-ppl-img" src={pplImg} />
+                        <select
+                          id="guestPicker"
+                          className="picker"
+                          value={selectedGuests}
+                          onChange={handleGuestsChange}
+                        >
+                          {[...Array(restInfo.maxPpl)].map((_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="res-deposit-method-info">
                         {restInfo
                           ? restInfo.restDepositMethod === "A"
-                            ? `${restInfo.restDeposit * selectedGuests} 원`
-                            : `${calculateTotalPrice() * 0.2} 원`
+                            ? `지정액 인당 ${restInfo.restDeposit}원`
+                            : `메뉴 20%.`
                           : "0원"}
                       </div>
-                      <div className="res-refund-rule">
-                        아래는 예약 취소에 관련된 규정 사항입니다. 단순 변심에
-                        따른 취소는 불가능 하오니 확인하시고 체크 해주시길
-                        바랍니다.
-                      </div>
-                      <div className="res-refund-rule">
-                        <div>
-                          <span className="refund-info">
-                            ~ 이용 7일 전까지{" "}
-                          </span>{" "}
-                          예약금 전액 환불
-                        </div>
-                        <div>
-                          <span className="refund-info">
-                            ~ 이용 3일 전까지{" "}
-                          </span>{" "}
-                          예약금 50% 차감 환불
-                        </div>
-                        <div>
-                          <span className="refund-info">
-                            ~ 이용 1일 전까지{" "}
-                          </span>{" "}
-                          예약금 90% 차감 환불
-                        </div>
-                        <div>그 이후 취소 불가</div>
-                      </div>
-                      <div className="res-check">
-                        <input
-                          type="checkbox"
-                          checked={checkBoxChecked}
-                          onChange={handleCheckboxChange}
-                        />
-                        <span className="res-refund-rule">
-                          위 내용을 확인 했습니다.
-                        </span>
+                    </div>
+                    <div>
+                      <div className="res-sub-title">Available Time Slots</div>
+                      <div className="res-btn-container">
+                        {availableTimes ? (
+                          Object.entries(availableTimes).map(
+                            ([time, available]) => (
+                              <div
+                                className={`res-time-btn ${
+                                  selectedTime === time ? "selected" : ""
+                                } ${!available ? "disabled" : ""}`}
+                                key={time}
+                                onClick={() =>
+                                  available && handleTimeClick(time)
+                                }
+                              >
+                                <div className="res-btn-content">{time}</div>
+                              </div>
+                            )
+                          )
+                        ) : (
+                          <p>No available times for the selected date.</p>
+                        )}
                       </div>
                     </div>
-                  </div>
-                  <div className="btn-center">
-                    <div className="res-enroll-btn">
-                      <div
-                        className={`res-btn-content ${
-                          checkBoxChecked &&
-                          selectedDate &&
-                          selectedTime &&
-                          menus.length > 0 &&
-                          checkMenuSelected()
-                            ? ""
-                            : "disabled"
-                        }`}
-                        onClick={handleEnrollReservation}
-                      >
-                        결제
+                    <div>
+                      <div className="res-sub-title sub-title-margin">Menu</div>
+                      <div className="res-menu-container">
+                        {menus.map((menu) => (
+                          <li key={menu.menuId} className="res-menu-li">
+                            <div className="res-menu-box">
+                              <img
+                                className="res-menu-img"
+                                src={menu.menuPhoto}
+                                alt={menu.menuName}
+                              />
+                              <div className="res-menu-info-box">
+                                <div className="res-menu-title">
+                                  {menu.menuName}
+                                </div>
+                                <div className="res-menu-price">
+                                  {menu.menuPrice}원
+                                </div>
+                                <div className="menu-quantity-controls">
+                                  <button
+                                    className="menu-picker-btn-minus"
+                                    onClick={() =>
+                                      handleMenuDecrement(menu.menuId)
+                                    }
+                                  >
+                                    -
+                                  </button>
+                                  <span>{menuQuantities[menu.menuId]}</span>
+                                  <button
+                                    className="menu-picker-btn-plus"
+                                    onClick={() =>
+                                      handleMenuIncrement(menu.menuId)
+                                    }
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="res-sub-title">Total</div>
+                      <div className="res-total-container">
+                        {menus.map(
+                          (menu) =>
+                            menuQuantities[menu.menuId] > 0 && (
+                              <div
+                                key={menu.menuId}
+                                className={`res-total-item ${
+                                  menu.menuId % 2 === 0
+                                    ? "even-item"
+                                    : "odd-item"
+                                }`}
+                              >
+                                <table className="menu-table">
+                                  <tbody>
+                                    <tr>
+                                      <td className="res-menu-name">
+                                        {menu.menuName}
+                                      </td>
+                                      <td className="res-menu-quan">
+                                        X {menuQuantities[menu.menuId]}
+                                      </td>
+                                      <td className="res-menu-money">
+                                        {menu.menuPrice *
+                                          menuQuantities[menu.menuId]}{" "}
+                                        원
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            )
+                        )}
+                        <br />
+                        <div className="res-total-price">
+                          Total : {calculateTotalPrice()} 원
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="res-sub-title sub-title-margin">
+                        요청 사항
+                      </div>
+                      <div className="res-req">
+                        <textarea
+                          className="custom_textarea"
+                          value={reqText}
+                          onChange={(e) => setReqText(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="res-horizon" />
+                    <div className="res-to-pay-container">
+                      <div className="res-pay-info">
+                        <div className="res-pay-info-total">
+                          예약금{" "}
+                          {restInfo
+                            ? restInfo.restDepositMethod === "A"
+                              ? `${restInfo.restDeposit * selectedGuests} 원`
+                              : `${calculateTotalPrice() * 0.2} 원`
+                            : "0원"}
+                        </div>
+                        <div className="res-refund-rule">
+                          아래는 예약 취소에 관련된 규정 사항입니다. 단순 변심에
+                          따른 취소는 불가능 하오니 확인하시고 체크 해주시길
+                          바랍니다.
+                        </div>
+                        <div className="res-refund-rule">
+                          <div>
+                            <span className="refund-info">
+                              ~ 이용 7일 전까지{" "}
+                            </span>{" "}
+                            예약금 전액 환불
+                          </div>
+                          <div>
+                            <span className="refund-info">
+                              ~ 이용 3일 전까지{" "}
+                            </span>{" "}
+                            예약금 50% 차감 환불
+                          </div>
+                          <div>
+                            <span className="refund-info">
+                              ~ 이용 1일 전까지{" "}
+                            </span>{" "}
+                            예약금 90% 차감 환불
+                          </div>
+                          <div>그 이후 취소 불가</div>
+                        </div>
+                        <div className="res-check">
+                          <input
+                            type="checkbox"
+                            checked={checkBoxChecked}
+                            onChange={handleCheckboxChange}
+                          />
+                          <span className="res-refund-rule">
+                            위 내용을 확인 했습니다.
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="btn-center">
+                      <div className="res-enroll-btn">
+                        <div
+                          className={`res-btn-content ${
+                            checkBoxChecked &&
+                            selectedDate &&
+                            selectedTime &&
+                            menus.length > 0 &&
+                            checkMenuSelected()
+                              ? ""
+                              : "disabled"
+                          }`}
+                          onClick={handleEnrollReservation}
+                        >
+                          결제
+                        </div>
                       </div>
                     </div>
                   </div>

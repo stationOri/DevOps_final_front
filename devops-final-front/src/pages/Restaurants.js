@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 function Restaurants() {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isExtended, setIsExtended] = useState(true);
   const [loading, setLoading] = useState(true);
   const [restaurants, setRestaurants] = useState([]);
   const [opentimes, setOpentimes] = useState([]);
@@ -22,6 +22,10 @@ function Restaurants() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const restaurantsPerPage = 6;
+
+  const toggleSidebar = () => {
+    setIsExtended(!isExtended);
+  };
 
   const convertDayToKorean = (day) => {
     switch (day) {
@@ -88,12 +92,12 @@ function Restaurants() {
 
       const opentimesFormatted = data.map((opentime) => ({
         ...opentime,
-        restDay: convertDayToKorean(opentime.restDay)
+        restDay: convertDayToKorean(opentime.restDay),
       }));
 
       setOpentimes((prevOpentimes) => [
         ...prevOpentimes.filter((opentime) => opentime.restId !== restId),
-        ...opentimesFormatted
+        ...opentimesFormatted,
       ]);
     } catch (error) {
       console.error("Error fetching opentimes:", error);
@@ -207,7 +211,7 @@ function Restaurants() {
       const existingFavorite = favorites.find(
         (fav) => fav.restaurantId === restId && fav.userId === userId
       );
-  
+
       if (existingFavorite) {
         const response = await fetch(
           `http://localhost:8080/favorite/${existingFavorite.favoriteId}`,
@@ -218,8 +222,8 @@ function Restaurants() {
             },
           }
         );
-        console.log("찜취소: ",response);
-  
+        console.log("찜취소: ", response);
+
         if (response.ok) {
           fetchFavorites();
         } else {
@@ -235,8 +239,8 @@ function Restaurants() {
             },
           }
         );
-        console.log("찜추가: ",response);
-  
+        console.log("찜추가: ", response);
+
         if (response.ok) {
           fetchFavorites();
         } else {
@@ -253,120 +257,132 @@ function Restaurants() {
       {loading ? (
         <Loading />
       ) : (
-        <div className={`mainWrapper ${isSidebarCollapsed ? "collapsed" : ""}`}>
-          <SideBar className="mainSidebar" />
-          <div
-            className={`contentsWrapper ${
-              isSidebarCollapsed ? "collapsed" : ""
-            }`}
-          >
-            <HeaderOrange />
-            <div className="restaurants">
-              <div className="rest-search-container">
-                <div className="rest-search-name">
-                  <button
-                    className="rest-search-btn"
-                    onClick={handleSearchClick}
-                  >
-                    <FontAwesomeIcon icon={faSearch} />
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="rest-search-input"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    onKeyDown={handleSearchByEnter}
-                  />
+        <div className="usermainWrapper">
+          <SideBar
+            className="mainSidebar"
+            toggleSidebar={toggleSidebar}
+            isExtended={isExtended}
+          />
+          <div className="maincontentsWrapper">
+            <div className={`behindsidebar ${isExtended ? "" : "collapsed"}`} />
+            <div
+              className={`innercontentsWrapper ${
+                isExtended ? "" : "collapsed"
+              }`}
+            >
+              <HeaderOrange />
+              <div className="restaurants">
+                <div className="rest-search-container">
+                  <div className="rest-search-name">
+                    <button
+                      className="rest-search-btn"
+                      onClick={handleSearchClick}
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </button>
+                    <input
+                      type="text"
+                      placeholder="Search"
+                      className="rest-search-input"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      onKeyDown={handleSearchByEnter}
+                    />
+                  </div>
+                  <div className="rest-search-location">
+                    <select
+                      className="rest-location-dropdown"
+                      value={locationFilter}
+                      onChange={handleLocationChange}
+                    >
+                      <option value="">Location</option>
+                      {extractLocations().map((location, index) => (
+                        <option key={index} value={location}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div className="rest-search-location">
-                  <select
-                    className="rest-location-dropdown"
-                    value={locationFilter}
-                    onChange={handleLocationChange}
-                  >
-                    <option value="">Location</option>
-                    {extractLocations().map((location, index) => (
-                      <option key={index} value={location}>
-                        {location}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="rest-keyword-con">
-                <div  className="rest-keyword-container">
-                <div className="rest-keyword-box">
-                  <div className="rest-keyword-title">
-                    <div className="rest-keyword-title-text">
-                      <div>어떤 음식을</div>
-                      <div>좋아하세요?</div>
+                <div className="rest-keyword-con">
+                  <div className="rest-keyword-container">
+                    <div className="rest-keyword-box">
+                      <div className="rest-keyword-title">
+                        <div className="rest-keyword-title-text">
+                          <div>어떤 음식을</div>
+                          <div>좋아하세요?</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rest-keyword-btn-box">
+                      {keywords.map((keyword) => (
+                        <div
+                          key={keyword.id}
+                          className={`rest-keyword-btn ${
+                            keywordFilters.includes(keyword.keyword)
+                              ? "active"
+                              : ""
+                          }`}
+                          onClick={() => handleKeywordClick(keyword.keyword)}
+                        >
+                          {keyword.keyword}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-                <div className="rest-keyword-btn-box">
-                  {keywords.map((keyword) => (
-                    <div
-                      key={keyword.id}
-                      className={`rest-keyword-btn ${
-                        keywordFilters.includes(keyword.keyword) ? "active" : ""
-                      }`}
-                      onClick={() => handleKeywordClick(keyword.keyword)}
-                    >
-                      {keyword.keyword}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              </div>
-              <div className="rest-list-box">
-                {filteredRestaurants.length === 0 ? (
-                  <div className="rest-no-list">해당 식당이 없습니다</div>
-                ) : (
-                  filteredRestaurants
-                    .slice(
-                      (currentPage - 1) * restaurantsPerPage,
-                      currentPage * restaurantsPerPage
-                    )
-                    .map((restaurant) => {
-                      const restaurantOpentimes = opentimes.filter(
-                        (opentime) => Number(opentime.restId) === Number(restaurant.restId)
-                      );
+                <div className="rest-list-box">
+                  {filteredRestaurants.length === 0 ? (
+                    <div className="rest-no-list">해당 식당이 없습니다</div>
+                  ) : (
+                    filteredRestaurants
+                      .slice(
+                        (currentPage - 1) * restaurantsPerPage,
+                        currentPage * restaurantsPerPage
+                      )
+                      .map((restaurant) => {
+                        const restaurantOpentimes = opentimes.filter(
+                          (opentime) =>
+                            Number(opentime.restId) ===
+                            Number(restaurant.restId)
+                        );
 
-                      return (
-                        <div className="rest-card-li" key={restaurant.restId}>
-                          <RestCard
-                            userId={3}
-                            restId={restaurant.restId}
-                            img={restaurant.restPhoto}
-                            RestName={restaurant.restName}
-                            RestAddress={restaurant.restAddress}
-                            RestOpentimes={restaurantOpentimes}
-                            keyword1={restaurant.keyword1}
-                            keyword2={restaurant.keyword2}
-                            keyword3={restaurant.keyword3}
-                            isFavorite={
-                              favorites.some(
-                                (fav) =>
-                                  fav.restaurantId === restaurant.restId && fav.userId === userId
-                              )
-                                ? true
-                                : false
-                            }
-                            toggleFavorite={toggleFavorite}
-                          />
-                        </div>
-                      );
-                    })
-                )}
+                        return (
+                          <div className="rest-card-li" key={restaurant.restId}>
+                            <RestCard
+                              userId={3}
+                              restId={restaurant.restId}
+                              img={restaurant.restPhoto}
+                              RestName={restaurant.restName}
+                              RestAddress={restaurant.restAddress}
+                              RestOpentimes={restaurantOpentimes}
+                              keyword1={restaurant.keyword1}
+                              keyword2={restaurant.keyword2}
+                              keyword3={restaurant.keyword3}
+                              isFavorite={
+                                favorites.some(
+                                  (fav) =>
+                                    fav.restaurantId === restaurant.restId &&
+                                    fav.userId === userId
+                                )
+                                  ? true
+                                  : false
+                              }
+                              toggleFavorite={toggleFavorite}
+                            />
+                          </div>
+                        );
+                      })
+                  )}
+                </div>
+                <Pagination
+                  totalItems={filteredRestaurants.length}
+                  itemsPerPage={restaurantsPerPage}
+                  currentPage={currentPage}
+                  onPageChange={onPageChange}
+                  activeColor="#FF8A00"
+                />
               </div>
-              <Pagination
-                totalItems={filteredRestaurants.length}
-                itemsPerPage={restaurantsPerPage}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
-                activeColor="#FF8A00"
-              />
             </div>
           </div>
         </div>
