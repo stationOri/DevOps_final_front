@@ -3,7 +3,11 @@
   height: 100vh;
   border-right: 1px solid #dddddd;
   border-radius: 5px 10px 10px 5px;
-  position: relative;
+  position: fixed; /* fixed로 변경하여 사이드바를 고정 */
+  top: 0; /* 상단에 고정 */
+  left: 0; /* 좌측에 고정 */
+  background-color: white; /* 사이드바의 배경색 지정 */
+  z-index: 1000; /* 다른 요소 위에 위치하도록 z-index 설정 */
 }
 
 .sideBarWrapper.collapsed {

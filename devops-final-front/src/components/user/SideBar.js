@@ -13,10 +13,9 @@ import SigninNaverModal from "../Modal/SigninNaverModal";
 import CheckModal from "../Modal/CheckModal"
 import { useCheckModal } from "../Modal/CheckModalContext";
 
-function SideBar() {
+function SideBar({isExtended, toggleSidebar}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
-  const [isExtended, setIsExtended] = useState(true); // 사이드바 확장 상태를 관리하는 변수
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
   const [naversigninshow,setNaverSigninshow]=useState(false);
@@ -46,10 +45,6 @@ function SideBar() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUsername("Guest");
-  };
-
-  const toggleSidebar = () => {
-    setIsExtended(!isExtended);
   };
 
   return (
