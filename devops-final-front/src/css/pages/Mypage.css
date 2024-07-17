@@ -1,0 +1,292 @@
+.my-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 3%;
+  margin-right: 3%;
+}
+
+.profile-container{
+  margin-top: 30px;
+}
+
+.profile-title-box{
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  margin-left: 30px;
+}
+
+.profile-Img{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-info-Img{
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.my-res-Img{
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.my-res-info-img-wrap{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.profile-title{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.my-info{
+  display: flex;
+  flex-direction: column;
+  border: 0.5px solid #e3e3e343;
+  border-radius: 5px;
+  box-shadow: inset;
+  padding: 10px 20px;
+  margin-top: 20px;
+}
+
+.my-horizon{
+  display: flex;
+  width: 100%;
+  height: 0.5px;
+  background-color: #F89C5B;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.my-res-horizon{
+  display: flex;
+  width: 100%;
+  height: 0.5px;
+  background-color: #acacac;
+  margin-bottom: 10px;
+}
+
+.my-info-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 10px 40px;
+}
+
+.my-info-item{
+  padding: 10px;
+}
+
+.my-info-item-title{
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.my-info-item-content-box{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.my-info-update-btn{
+  margin-top: 10px;
+  text-decoration: underline;
+  color: gray;
+  font-weight: lighter;
+  cursor: pointer;
+}
+
+.my-res-info-box{
+  display: flex;
+  flex-direction: column;
+  align-items: space-between;
+  justify-content: center;
+  width: 220px;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 0 0.5px #F89C5B;
+  background-color: #FFFCFA;
+}
+
+.my-res-info-content-box{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.my-res-waiting-container{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  margin: 30px 40px;
+}
+
+.my-res-container{
+  min-height: 500px;
+  width: 70%;
+  border: 0.5px solid #e3e3e343;
+  border-radius: 5px;
+  box-shadow: 0.5px 0.5px 0.5px 0.5px #e3e3e343;
+  margin-right: 30px;
+  padding: 30px;
+}
+
+.my-page-res-content-box{
+  min-height: 415px
+}
+
+.my-res-map-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  }
+
+.my-res-box{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 10px;
+}
+
+.my-res-restphoto{
+  width: 150px;
+  margin-right: 20px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.my-res-info-wrap{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-right: 10px;
+}
+
+.my-res-refund-review{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  width: 200px;
+}
+
+.my-res-refund-box{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  min-height: 60px;
+}
+
+.my-res-info-rest-name{
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.my-res-info-res-status{
+  font-size: 12px;
+  font-weight: lighter;
+  color: #4E95D9;
+  margin: 5px 0;
+}
+
+.my-res-info-rest-report{
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.my-res-info-res-id{
+  font-size: 11px;
+  font-weight: lighter;
+  margin-top: 3px;
+}
+
+.my-res-info-refund-status{
+  font-size: 15px;
+}
+
+.my-res-info-refund-total{
+  font-size: 13px;
+  font-weight: lighter;
+  color: #545454;
+}
+
+.my-res-info-review-btn{
+  width: 60px;
+  font-size: 13px;
+  cursor: pointer;
+  background-color: #F89C5B;
+  color: white;
+  border: none;
+  text-align: center;
+}
+
+.my-res-info-res-btn{
+  font-size: 13px;
+  cursor: pointer;
+  color: #F89C5B;
+  background-color: white;
+  border: 1px solid #F89C5B;
+  text-align: center;
+}
+
+.my-page-res-pagination {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 0 0;
+}
+
+.my-page-res-pagination button {
+  color: #FF8A00;
+  border: none;
+  padding: 0px 8px;
+  margin: 0 5px;
+  cursor: pointer;
+  border: 1px solid #FF8A00;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.my-page-res-pagination button:hover {
+  background-color: #FF8A00;
+  color: white;
+}
+
+.my-page-res-pagination button.active {
+  background-color: #FF8A00;
+  color: white;
+}
+
+.my-waiting-container{
+  width: 30%;
+  min-width: 350px;
+  box-shadow: 0 0 0 0.5px #e3e3e3b0;
+  margin: 30px 10px;
+  border-radius: 14px;
+}
+
+.my-favorites-container{
+  height: 400px;
+  background-color: #8d6042;
+}
+
+.my-waiting-title{
+  font-size: 20px;
+  font-weight: bold;
+  margin: 30px 25px;
+}
+
+.my-review-most-container{
+  height: 600px;
+  background-color: #361414;
+}
