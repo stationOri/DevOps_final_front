@@ -16,7 +16,7 @@ function AdminRestAfterAccept() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/afterAccept`);
+      const response = await fetch(`http://localhost:8080/restaurants/afterAccept`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -84,7 +84,7 @@ function AdminRestAfterAccept() {
       <div className="restafteracceptTableWrapper">
         <div className="restacceptColumn">
           {leftColumnItems.map((rest) => (
-            <div className="restafteracceptRowWrapper" key={rest.id}>
+            <div className="restafteracceptRowWrapper" key={rest.rest_id}>
               <div className="restaccept">{rest.rest_name}</div>
               <button
                 className="restafteracceptbutton"
@@ -97,7 +97,7 @@ function AdminRestAfterAccept() {
         </div>
         <div className="restacceptColumn">
           {rightColumnItems.map((rest) => (
-            <div className="restafteracceptRowWrapper" key={rest.id}>
+            <div className="restafteracceptRowWrapper" key={rest.rest_id}>
               <div className="restaccept">{rest.rest_name}</div>
               <button
                 className="restafteracceptbutton"
@@ -119,7 +119,7 @@ function AdminRestAfterAccept() {
         <RestInfoModal
           InfoClose={closeInfoModal}
           infoshow={infoshow}
-          rest_id={selectedRest.id}
+          rest_id={selectedRest.rest_id}
           rest_name={selectedRest.rest_name}
           rest_num={selectedRest.rest_num}
           rest_owner={selectedRest.rest_owner}

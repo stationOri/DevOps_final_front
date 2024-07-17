@@ -26,7 +26,7 @@ function AdminRestReservation() {
   // 데이터 불러오기
   const getRestData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/reservation");
+      const response = await fetch('http://localhost:8080/reservations/reservation/admin');
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -201,8 +201,8 @@ function AdminRestReservation() {
               </thead>
               <tbody>
                 {currentItems.map((rest, index) => (
-                  <tr key={index} onClick={() => handleReservationClick(rest)}>
-                    {rest.status !== "빈열" ? <td>{rest.id}</td> : <td></td>}
+                  <tr key={index}>
+                    {rest.status !== "빈열" ? <td>{rest.res_id}</td> : <td></td>}
                     <td>
                       {rest.rest_name
                         ? `${rest.rest_name} (${rest.rest_id})`
