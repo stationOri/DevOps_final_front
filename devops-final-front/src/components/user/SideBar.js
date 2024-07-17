@@ -54,14 +54,16 @@ function SideBar() {
 
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
-      {/* <SigninNaverModal 
-        naversigninClose={naversigninClose}
-        naversigninShow={naversigninShow}
-      /> */}
+      
       <SigninModal 
         signinClose={signinClose}
         signinshow={signinshow}
       />
+      <SigninNaverModal 
+        naversigninClose={naversigninClose}
+        naversigninshow={naversigninshow}
+      />
+      
       <div className="sideBarHeader">
         <div className="iconWrapper">
           <img src={Logo} alt="" className="sidebarLogo"/>

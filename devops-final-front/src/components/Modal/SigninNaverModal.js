@@ -4,7 +4,7 @@ import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/SigninModal.css";
 import buttonImage from '../../assets/images/modal/navergreen.png';
 import axios from 'axios';
-function SigninNaverModal({ naversigninClose, naversigninShow }) {
+function SigninNaverModal({ naversigninClose, naversigninshow }) {
   const navigate = useNavigate();
 
   const handleGoToNaverLogin = async () => {
@@ -20,7 +20,7 @@ function SigninNaverModal({ naversigninClose, naversigninShow }) {
 
   return (
     <div
-      id={naversigninShow ? "signinbackgroundon" : "signinbackgroundoff"}
+      id={naversigninshow ? "signinbackgroundon" : "signinbackgroundoff"}
       onClick={(e) => {
         if (
           e.target.id === "signinbackgroundon" ||
@@ -30,7 +30,7 @@ function SigninNaverModal({ naversigninClose, naversigninShow }) {
         }
       }}
     >
-      <div className={`signinModal ${naversigninShow ? "signinshow" : "signinhide"}`}>
+      <div className={`signinModal ${naversigninshow ? "signinshow" : "signinhide"}`}>
         <div className="signinModalHeader">
           <img src={Logo} alt="" className="signinori"/>
           <button className='signinclosebtn' onClick={naversigninClose}>
@@ -46,7 +46,6 @@ function SigninNaverModal({ naversigninClose, naversigninShow }) {
                 <img src={buttonImage} alt="네이버 간편로그인" className="button-image" /> 
             </button>
         </div>
-
       </div>
     </div>
   );
