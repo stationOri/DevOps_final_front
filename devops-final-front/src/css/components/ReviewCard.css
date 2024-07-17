@@ -53,6 +53,11 @@
   overflow-y: auto;
 }
 
+.review-data-boxformain {
+  margin: 0 20px;
+  overflow-y: auto;
+}
+
 .review-data-box::-webkit-scrollbar {
   width: 5px;
 }
@@ -189,3 +194,16 @@
 .liked:hover span {
   color: #fefefe;
 }
+
+
+/* 메인 리뷰 */
+
+.review-card-boxformain {
+  display: flex;
+  flex-direction: column;
+  width: 230px;
+  background-color: #F7F7F7;
+  border-radius: 10px;
+  margin: 0 10px 10px 10px;
+}
+

@@ -3,6 +3,7 @@ import "../css/components/ReviewCard.css";
 import StarRatings from "./StarRatings";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import StarRatingsCarousel from "./user/StarRatingCarousel";
 
 const ReviewCard = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -11,16 +12,16 @@ const ReviewCard = ({ review }) => {
   };
 
   const reviewContent = review.reviewData;
-  const isLongText = reviewContent.length > 105;
+  const isLongText = reviewContent.length > 30;
 
   return (
     <div className="review-card-container">
-      <StarRatings rating={review.reviewGrade} />
-      <div className="review-card-box">
-        <div className="review-data-box">
+      <StarRatingsCarousel rating={review.reviewGrade} />
+      <div className="review-card-boxformain">
+        <div className="review-data-boxformain">
           <p>
             {isExpanded ? reviewContent : 
-              isLongText ? `${reviewContent.substring(0, 105)}...` : reviewContent}
+              isLongText ? `${reviewContent.substring(0, 30)}...` : reviewContent}
             {isLongText && (
               <span className="read-more" onClick={toggleReadMore}>
                 {isExpanded ? " Show less" : " Read more"}
