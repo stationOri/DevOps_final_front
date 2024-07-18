@@ -110,10 +110,6 @@ function SideBar({isExtended, toggleSidebar}) {
             <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>식당 조회</div>
           </div>
           <div className="sidebarRow">
-            <img src={Reservation} alt="" className="sidebarIcon"/>
-            <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>예약</div>
-          </div>
-          <div className="sidebarRow">
             <img src={Chat} alt="" className="sidebarIcon"/>
             <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>1:1 문의</div>
           </div>
