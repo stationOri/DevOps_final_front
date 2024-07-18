@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminUserSideBar from "./AdminUserSideBar";
 import "../../css/components/adminn/AdminUserControl.css";
+import AdminUserList from "../adminn/AdminUserList"
 
 function AdminUserControl() {
   const [activeButton, setActiveButton] = useState("유저 목록");
@@ -8,7 +9,7 @@ function AdminUserControl() {
   const renderContent = () => {
     switch (activeButton) {
       case "유저 목록":
-        return <div>유저 목록 컴포넌트</div>;
+        return <AdminUserList />;
       case "신고 내역":
         return <div>신고 내역 컴포넌트</div>;
       case "블랙리스트":
