@@ -369,18 +369,22 @@ function Reservation() {
                       </div>
                       <div className="res-enroll-ppl">
                         <img className="res-ppl-img" src={pplImg} />
-                        <select
-                          id="guestPicker"
-                          className="picker"
-                          value={selectedGuests}
-                          onChange={handleGuestsChange}
-                        >
-                          {[...Array(restInfo.maxPpl)].map((_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              {i + 1}
-                            </option>
-                          ))}
-                        </select>
+                        {restInfo && restInfo.maxPpl ? (
+                          <select
+                            id="guestPicker"
+                            className="picker"
+                            value={selectedGuests}
+                            onChange={handleGuestsChange}
+                          >
+                            {[...Array(restInfo.maxPpl)].map((_, i) => (
+                              <option key={i + 1} value={i + 1}>
+                                {i + 1}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <p>Loading guests info...</p>
+                        )}
                       </div>
                       <div className="res-deposit-method-info">
                         {restInfo
