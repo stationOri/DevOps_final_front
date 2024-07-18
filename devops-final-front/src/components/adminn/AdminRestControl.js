@@ -5,6 +5,7 @@ import AdminRestAccept from "./AdminRestAccept";
 import AdminRestAfterAccept from "./AdminRestAfterAccept";
 import AdminRestReservation from "./AdminRestReservation";
 import AdminRestReport from "./AdminRestReport";
+import RestBlacklist from "./RestBlacklist";
 
 
 function AdminRestControl() {
@@ -21,7 +22,7 @@ function AdminRestControl() {
       case "신고 내역":
         return <AdminRestReport />;
       case "블랙리스트":
-        return <div>블랙리스트 컴포넌트</div>;
+        return <RestBlacklist />;
       default:
         return <AdminRestAccept />;
     }
