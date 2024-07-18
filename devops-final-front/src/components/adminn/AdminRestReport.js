@@ -2,6 +2,7 @@ import "../../css/components/adminn/AdminRestReservation.css";
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination";
 import Search from "../../assets/images/sidebar/search.png";
+import ReportAcceptModal from "../Modal/ReportAcceptModal";
 
 function AdminRestReport() {
   const [readyRest, setReadyRest] = useState([]);
@@ -10,7 +11,7 @@ function AdminRestReport() {
   const itemsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
-  const [admincancelshow, setAdminCancelShow] = useState(false);
+  const [reportacceptshow, setReportAcceptShow] = useState(false);
   const [statusFilters, setStatusFilters] = useState({
     처리대기: true,
     승인: false,
@@ -18,8 +19,8 @@ function AdminRestReport() {
   });
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  const AdminCancelClose = () => setAdminCancelShow(false);
-  const AdminCancelShow = () => setAdminCancelShow(true);
+  const ReportAcceptClose = () => setReportAcceptShow(false);
+  const ReportAcceptShow = () => setReportAcceptShow(true);
 
   const getRestData = async () => {
     try {
@@ -106,7 +107,7 @@ function AdminRestReport() {
 
   const handleReservationClick = (reservation) => {
     setSelectedReservation(reservation);
-    AdminCancelShow();
+    ReportAcceptShow();
   };
 
   const filledItems = fillEmptyItems(filteredItems, itemsPerPage);
@@ -233,6 +234,10 @@ function AdminRestReport() {
         itemsPerPage={itemsPerPage}
         currentPage={currentPage}
         onPageChange={handlePageChange}
+      />
+      <ReportAcceptModal 
+      reportacceptshow={reportacceptshow}
+      ReportAcceptClose={ReportAcceptClose}
       />
     </div>
   );

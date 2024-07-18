@@ -25,8 +25,6 @@ function RestRejectModal({
         throw new Error('레스토랑 상태 업데이트 실패');
       }
 
-      console.log('Updated status:', rest_id, "C");
-
       onUpdateStatus(rest_id, "C");
 
       reloadData();
