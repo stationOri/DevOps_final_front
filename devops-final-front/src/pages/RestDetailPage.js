@@ -28,7 +28,7 @@ function RestDetailPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isExtended, setIsExtended] = useState(true);
 
   const userId = 3;
 
@@ -38,6 +38,10 @@ function RestDetailPage() {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const toggleSidebar = () => {
+    setIsExtended(!isExtended);
   };
 
   const navigate = useNavigate();
@@ -72,7 +76,12 @@ function RestDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all([fetchRestaurant(), fetchOpentimes(), fetchMenus(), fetchReviews()]);
+        await Promise.all([
+          fetchRestaurant(),
+          fetchOpentimes(),
+          fetchMenus(),
+          fetchReviews(),
+        ]);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -106,7 +115,7 @@ function RestDetailPage() {
 
       const opentimesFormatted = data.map((opentime) => ({
         ...opentime,
-        restDay: convertDayToKorean(opentime.restDay)
+        restDay: convertDayToKorean(opentime.restDay),
       }));
 
       setOpentimes(opentimesFormatted);
@@ -118,7 +127,9 @@ function RestDetailPage() {
 
   const fetchMenus = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/restaurants/menu/${id}`);
+      const response = await fetch(
+        `http://localhost:8080/restaurants/menu/${id}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch menus");
       }
@@ -131,7 +142,9 @@ function RestDetailPage() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/review/rest/${id}/user/${userId}`);
+      const response = await fetch(
+        `http://localhost:8080/review/rest/${id}/user/${userId}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
@@ -151,10 +164,7 @@ function RestDetailPage() {
   }
 
   const paginate = (newPage) => {
-    if (
-      newPage < 1 ||
-      newPage > Math.ceil(reviews.length / reviewsPerPage)
-    ) {
+    if (newPage < 1 || newPage > Math.ceil(reviews.length / reviewsPerPage)) {
       return;
     }
     setCurrentPage(newPage);
@@ -162,194 +172,202 @@ function RestDetailPage() {
 
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-  const currentReviews = reviews.slice(
-    indexOfFirstReview,
-    indexOfLastReview
-  );
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
 
   return (
     <div>
       {loading ? (
         <Loading />
       ) : (
-        <div className={`mainWrapper ${isSidebarCollapsed ? "collapsed" : ""}`}>
-          <SideBar className="mainSidebar" />
-          <div
-            className={`contentsWrapper ${
-              isSidebarCollapsed ? "collapsed" : ""
-            }`}
-          >
-            <HeaderOrange />
-            <div className="detail">
-              <EmptyEnrollModal
-                isOpen={isModalOpen}
-                onClose={closeModal}
-                name={restaurant.rest_name}
-              />
-              <div className="rest-container">
-                <div className="rest-photo-box">
-                  <img
-                    className="rest-photo"
-                    src={restaurant.restPhoto}
-                    alt={restaurant.restName}
-                  />
-                </div>
-                <div className="rest-info-box">
-                  <div className="rest-name-box">
-                    <div className="rest-name">{restaurant.restName}</div>
-                    <div className="rest-btn-box">
-                      <div className="empty-btn" onClick={openModal}>
-                        <img className="empty-img" src={emptyImg} />
-                        <div>빈자리 알림 요청</div>
-                      </div>
-                      <div className="ask-btn">
-                        <div className="btn-content">1:1 문의</div>
-                      </div>
-                      {restaurant.revWait === "A" && (
-                        <div className="res-btn">
-                          <div className="btn-content">웨이팅</div>
+        <div className="usermainWrapper">
+          <SideBar
+            className="mainSidebar"
+            toggleSidebar={toggleSidebar}
+            isExtended={isExtended}
+          />
+          <div className="maincontentsWrapper">
+            <div className={`behindsidebar ${isExtended ? "" : "collapsed"}`} />
+            <div
+              className={`innercontentsWrapper ${
+                isExtended ? "" : "collapsed"
+              }`}
+            >
+              <HeaderOrange />
+              <div className="detail">
+                <EmptyEnrollModal
+                  isOpen={isModalOpen}
+                  onClose={closeModal}
+                  name={restaurant.rest_name}
+                />
+                <div className="rest-container">
+                  <div className="rest-photo-box">
+                    <img
+                      className="rest-photo"
+                      src={restaurant.restPhoto}
+                      alt={restaurant.restName}
+                    />
+                  </div>
+                  <div className="rest-info-box">
+                    <div className="rest-name-box">
+                      <div className="rest-name">{restaurant.restName}</div>
+                      <div className="rest-btn-box">
+                        <div className="empty-btn" onClick={openModal}>
+                          <img className="empty-img" src={emptyImg} />
+                          <div>빈자리 알림 요청</div>
                         </div>
-                      )}
-                      {restaurant.revWait === "B" && (
-                        <div className="res-btn">
-                        <div className="btn-content" onClick={moveFunc}>예약</div>
-                      </div>
-                      )}
-                      {restaurant.revWait === "C" && (
-                        <>
+                        <div className="ask-btn">
+                          <div className="btn-content">1:1 문의</div>
+                        </div>
+                        {restaurant.revWait === "A" && (
                           <div className="res-btn">
                             <div className="btn-content">웨이팅</div>
                           </div>
+                        )}
+                        {restaurant.revWait === "B" && (
                           <div className="res-btn">
-                            <div className="btn-content" onClick={moveFunc}>예약</div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div></div>
-                  <StarRatings rating={restaurant.restGrade} />
-                  <div className="rest-intro-box">
-                    <div>
-                      <span className="rest-keyword">
-                        #{restaurant.keyword1}{" "}
-                      </span>
-                      <span className="rest-keyword">
-                        #{restaurant.keyword2}{" "}
-                      </span>
-                      <span className="rest-keyword">
-                        #{restaurant.keyword3}{" "}
-                      </span>
-                    </div>
-                    <p>{restaurant.restIntro}</p>
-                  </div>
-                </div>
-                <div className="rest-box">
-                  <div className="rest-title">Announcement</div>
-                  <div className="rest-announce-box">
-                    <div className="quotes-img-container quotes-img-1">
-                      <img
-                        className="quotes-img"
-                        src={quotesImg1}
-                        alt="quote 1"
-                      />
-                    </div>
-                    <p>{restaurant.restPost}</p>
-                    <div className="quotes-img-container quotes-img-2">
-                      <img
-                        className="quotes-img"
-                        src={quotesImg2}
-                        alt="quote 2"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="rest-box">
-                  <div className="rest-title">Menu</div>
-                  <div>
-                    <div className="menu-container">
-                      {menus.map((menu) => (
-                        <li key={menu.id} className="menu-li">
-                          <div className="menu-box">
-                            <img
-                              className="menu-img"
-                              src={menu.menuPhoto}
-                              alt={menu.menuName}
-                            />
-                            <div className="menu-info-box">
-                              <p className="menu-title">{menu.menuName}</p>
-                              <p className="menu-price">{menu.menuPrice}원</p>
+                            <div className="btn-content" onClick={moveFunc}>
+                              예약
                             </div>
                           </div>
-                        </li>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="rest-box">
-                  <div className="rest-title">Hours and Location</div>
-                  <div className="rest-location-box">
-                    <div className="rest-map">
-                      <RestaurantLocationMap
-                        address={restaurant.restAddress}
-                      />
-                    </div>
-                    <div className="rest-location-wrap">
-                      <div className="rest-info-wrap">
-                        <img className="rest-info-img" src={locationImg} />
-                        <p className="rest-info-content">
-                          {restaurant.restAddress}
-                        </p>
+                        )}
+                        {restaurant.revWait === "C" && (
+                          <>
+                            <div className="res-btn">
+                              <div className="btn-content">웨이팅</div>
+                            </div>
+                            <div className="res-btn">
+                              <div className="btn-content" onClick={moveFunc}>
+                                예약
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
-                      <div className="rest-info-wrap-2">
-                        <img className="rest-info-img" src={opentimeImg} />
-                        <div>
-                          {opentimes.map((opentime) => (
-                            <div
-                              key={opentime.id}
-                              className="rest-info-content"
-                            >
-                              {opentime.restDay} : {opentime.restOpen} ~{" "}
-                              {opentime.restClose} / 브레이크타임 :{" "}
-                              {opentime.restBreakstart} ~{" "}
-                              {opentime.restBreakend}
+                    </div>
+                    <div></div>
+                    <StarRatings rating={restaurant.restGrade} />
+                    <div className="rest-intro-box">
+                      <div>
+                        <span className="rest-keyword">
+                          #{restaurant.keyword1}{" "}
+                        </span>
+                        <span className="rest-keyword">
+                          #{restaurant.keyword2}{" "}
+                        </span>
+                        <span className="rest-keyword">
+                          #{restaurant.keyword3}{" "}
+                        </span>
+                      </div>
+                      <p>{restaurant.restIntro}</p>
+                    </div>
+                  </div>
+                  <div className="rest-box">
+                    <div className="rest-title">Announcement</div>
+                    <div className="rest-announce-box">
+                      <div className="quotes-img-container quotes-img-1">
+                        <img
+                          className="quotes-img"
+                          src={quotesImg1}
+                          alt="quote 1"
+                        />
+                      </div>
+                      <p>{restaurant.restPost}</p>
+                      <div className="quotes-img-container quotes-img-2">
+                        <img
+                          className="quotes-img"
+                          src={quotesImg2}
+                          alt="quote 2"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rest-box">
+                    <div className="rest-title">Menu</div>
+                    <div>
+                      <div className="menu-container">
+                        {menus.map((menu) => (
+                          <li key={menu.id} className="menu-li">
+                            <div className="menu-box">
+                              <img
+                                className="menu-img"
+                                src={menu.menuPhoto}
+                                alt={menu.menuName}
+                              />
+                              <div className="menu-info-box">
+                                <p className="menu-title">{menu.menuName}</p>
+                                <p className="menu-price">{menu.menuPrice}원</p>
+                              </div>
                             </div>
-                          ))}
+                          </li>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="rest-box">
+                    <div className="rest-title">Hours and Location</div>
+                    <div className="rest-location-box">
+                      <div className="rest-map">
+                        <RestaurantLocationMap
+                          address={restaurant.restAddress}
+                        />
+                      </div>
+                      <div className="rest-location-wrap">
+                        <div className="rest-info-wrap">
+                          <img className="rest-info-img" src={locationImg} />
+                          <p className="rest-info-content">
+                            {restaurant.restAddress}
+                          </p>
+                        </div>
+                        <div className="rest-info-wrap-2">
+                          <img className="rest-info-img" src={opentimeImg} />
+                          <div>
+                            {opentimes.map((opentime) => (
+                              <div
+                                key={opentime.id}
+                                className="rest-info-content"
+                              >
+                                {opentime.restDay} : {opentime.restOpen} ~{" "}
+                                {opentime.restClose} / 브레이크타임 :{" "}
+                                {opentime.restBreakstart} ~{" "}
+                                {opentime.restBreakend}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="rest-info-wrap">
+                          <img className="rest-info-img" src={phoneImg} />
+                          <p className="rest-info-content">
+                            {restaurant.restPhone}
+                          </p>
                         </div>
                       </div>
-                      <div className="rest-info-wrap">
-                        <img className="rest-info-img" src={phoneImg} />
-                        <p className="rest-info-content">
-                          {restaurant.restPhone}
-                        </p>
-                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="rest-box">
-                  <div className="rest-title">Reviews</div>
-                  <div className="rest-reviews-with-pagination">
-                    <div
-                      className="pagination-btn"
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      <img className="review-pagination-img" src={leftImg} />
-                    </div>
-                    <div className="rest-review-container">
-                      {currentReviews.map((review) => (
-                        <ReviewCard key={review.id} review={review} />
-                      ))}
-                    </div>
-                    <div
-                      className="pagination-btn"
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={
-                        currentPage ===
-                        Math.ceil(reviews.length / reviewsPerPage)
-                      }
-                    >
-                      <img className="review-pagination-img" src={rightImg} />
+                  <div className="rest-box">
+                    <div className="rest-title">Reviews</div>
+                    <div className="rest-reviews-with-pagination">
+                      <div
+                        className="pagination-btn"
+                        onClick={() => paginate(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        <img className="review-pagination-img" src={leftImg} />
+                      </div>
+                      <div className="rest-review-container">
+                        {currentReviews.map((review) => (
+                          <ReviewCard key={review.id} review={review} />
+                        ))}
+                      </div>
+                      <div
+                        className="pagination-btn"
+                        onClick={() => paginate(currentPage + 1)}
+                        disabled={
+                          currentPage ===
+                          Math.ceil(reviews.length / reviewsPerPage)
+                        }
+                      >
+                        <img className="review-pagination-img" src={rightImg} />
+                      </div>
                     </div>
                   </div>
                 </div>
