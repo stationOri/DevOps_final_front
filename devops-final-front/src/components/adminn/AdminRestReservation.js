@@ -62,6 +62,7 @@ function AdminRestReservation() {
       ...statusFilters,
       [e.target.value]: e.target.checked,
     });
+    setCurrentPage(1); // 필터가 변경되면 현재 페이지를 1 페이지로 설정
   };
 
   const filterItems = () => {
@@ -84,6 +85,7 @@ function AdminRestReservation() {
     );
 
     setFilteredItems(filtered);
+    setCurrentPage(1); // 필터가 적용되면 현재 페이지를 1 페이지로 설정
   };
 
   const fillEmptyItems = (array, itemsPerPage) => {
