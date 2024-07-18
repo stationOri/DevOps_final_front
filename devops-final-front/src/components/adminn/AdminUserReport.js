@@ -2,38 +2,35 @@ import "../../css/components/adminn/AdminRestReservation.css";
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination";
 import Search from "../../assets/images/sidebar/search.png";
-import AdminResCancelModal from "../Modal/AdminResCancelModal";
+import ReportAcceptModal from "../Modal/ReportAcceptModal";
 
-function AdminRestReservation() {
+function AdminUserReport() {
   const [readyRest, setReadyRest] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
-  const [admincancelshow, setAdminCancelShow] = useState(false);
+  const [reportacceptshow, setReportAcceptShow] = useState(false);
   const [statusFilters, setStatusFilters] = useState({
-    예약대기: true,
-    예약취소: true,
-    예약승인: true,
-    방문완료: true,
+    처리대기: true,
+    승인: false,
+    반려: false,
   });
   const [selectedReservation, setSelectedReservation] = useState(null);
 
-  const AdminCancelClose = () => setAdminCancelShow(false);
-  const AdminCancelShow = () => setAdminCancelShow(true);
+  const ReportAcceptClose = () => setReportAcceptShow(false);
+  const ReportAcceptShow = () => setReportAcceptShow(true);
 
-  // 데이터 불러오기
   const getRestData = async () => {
     try {
-      const response = await fetch('http://localhost:8080/reservations/reservation/admin');
+      const response = await fetch("http://localhost:4000/userreport");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
       console.log("Fetched data:", json);
       setReadyRest(json || []);
-      setFilteredItems([]);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -62,7 +59,7 @@ function AdminRestReservation() {
       ...statusFilters,
       [e.target.value]: e.target.checked,
     });
-    setCurrentPage(1); // 필터가 변경되면 현재 페이지를 1 페이지로 설정
+    setCurrentPage(1);
   };
 
   const filterItems = () => {
@@ -70,10 +67,9 @@ function AdminRestReservation() {
 
     filtered = filtered.filter((item) => {
       if (
-        (statusFilters.예약대기 && item.status === "예약대기") ||
-        (statusFilters.예약취소 && item.status === "예약취소") ||
-        (statusFilters.예약승인 && item.status === "예약승인") ||
-        (statusFilters.방문완료 && item.status === "방문완료")
+        (statusFilters.처리대기 && item.report_status === "처리대기") ||
+        (statusFilters.승인 && item.report_status === "승인") ||
+        (statusFilters.반려 && item.report_status === "반려")
       ) {
         return true;
       }
@@ -81,11 +77,11 @@ function AdminRestReservation() {
     });
 
     filtered = filtered.filter((item) =>
-      item.rest_id.toString().includes(searchTerm)
+      item.user_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setFilteredItems(filtered);
-    setCurrentPage(1); // 필터가 적용되면 현재 페이지를 1 페이지로 설정
+    setCurrentPage(1); 
   };
 
   const fillEmptyItems = (array, itemsPerPage) => {
@@ -95,14 +91,14 @@ function AdminRestReservation() {
       const itemsToAdd = itemsPerPage - remainder;
       for (let i = 0; i < itemsToAdd; i++) {
         filledArray.push({
-          id: filledArray.length + 1,
-          rest_name: "",
-          rest_id: "",
-          user_id: "",
-          res_num: "",
-          res_datetime: "",
-          req_datetime: "",
-          status: "빈열",
+          user_report_id: filledArray.length + 1,
+          user_name: "이름없음",
+          report_date: "",
+          review_content: "",
+          report_content: "",
+          reporter_id: "",
+          report_status: "빈열",
+          admin_id: null
         });
       }
     }
@@ -111,7 +107,7 @@ function AdminRestReservation() {
 
   const handleReservationClick = (reservation) => {
     setSelectedReservation(reservation);
-    AdminCancelShow(); // 모달을 열어 선택된 예약 정보를 보여줄 수 있도록 함
+    ReportAcceptShow();
   };
 
   const filledItems = fillEmptyItems(filteredItems, itemsPerPage);
@@ -124,52 +120,45 @@ function AdminRestReservation() {
       <div className="restAcceptbfWrapper">
         <div className="resfirstrowWrapper">
           <div className="headerfortext">
-            <div className="restacceptTitle">예약 목록</div>
-            <p className="restacceptP">예약의 전체 목록이 보여집니다.</p>
+            <div className="restacceptTitle">리뷰 신고 목록</div>
+            <p className="restacceptP">
+              점주의 악성 리뷰 신고 목록입니다. 신고 내용을 누르면 전체 내용이
+              보여집니다.
+            </p>
           </div>
         </div>
         <div className="ressecondrowWRapper">
           <div className="rescheckboxWrapper">
-            <div>예약 상태 :</div>
+            <div>처리 상태 :</div>
             <label>
               <input
                 type="checkbox"
                 name="status"
-                value="예약대기"
-                checked={statusFilters.예약대기}
+                value="처리대기"
+                checked={statusFilters.처리대기}
                 onChange={handleStatusChange}
               />
-              예약대기
+              처리대기
             </label>
             <label>
               <input
                 type="checkbox"
                 name="status"
-                value="예약취소"
-                checked={statusFilters.예약취소}
+                value="승인"
+                checked={statusFilters.승인}
                 onChange={handleStatusChange}
               />
-              예약취소
+              승인
             </label>
             <label>
               <input
                 type="checkbox"
                 name="status"
-                value="예약승인"
-                checked={statusFilters.예약승인}
+                value="반려"
+                checked={statusFilters.반려}
                 onChange={handleStatusChange}
               />
-              예약승인
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="status"
-                value="방문완료"
-                checked={statusFilters.방문완료}
-                onChange={handleStatusChange}
-              />
-              방문완료
+              반려
             </label>
           </div>
           <div className="headerforsearch">
@@ -177,7 +166,7 @@ function AdminRestReservation() {
             <input
               type="text"
               className="restsearchinput"
-              placeholder="매장 ID 검색"
+              placeholder="사용자 이름 검색"
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -185,59 +174,49 @@ function AdminRestReservation() {
         </div>
       </div>
       <hr />
-      {!loading && (
+      {!loading ? (
         <div className="restResTableWrapper">
           <div className="restresTableWrapper">
             <table className="tableforadminres">
               <thead>
                 <tr className="cnforbgc">
-                  <th scope="col">예약 ID</th>
-                  <th scope="col">매장명(매장 ID)</th>
-                  <th scope="col">사용자 ID</th>
-                  <th scope="col">인원 수</th>
-                  <th scope="col">예약 날짜</th>
-                  <th scope="col">신청 날짜</th>
-                  <th scope="col">예약 상태</th>
-                  <th scope="col" style={{ width: "65px" }}></th>
+                  <th scope="col">사용자 이름(신고 날짜)</th>
+                  <th scope="col">리뷰 내용</th>
+                  <th scope="col">신고 내용</th>
+                  <th scope="col">신고자 ID</th>
+                  <th scope="col">처리</th>
+                  <th scope="col">관리자 ID</th>
                 </tr>
               </thead>
               <tbody>
-                {currentItems.map((rest, index) => (
+                {currentItems.map((user, index) => (
                   <tr key={index}>
-                    {rest.status !== "빈열" ? <td>{rest.res_id}</td> : <td></td>}
-                    <td>
-                      {rest.rest_name
-                        ? `${rest.rest_name} (${rest.rest_id})`
-                        : ""}
-                    </td>
-                    <td>{rest.user_id}</td>
-                    <td>{rest.res_num}</td>
-                    <td>{rest.res_datetime}</td>
-                    <td>{rest.req_datetime}</td>
-                    {rest.status !== "빈열" ? (
-                      <td>{rest.status}</td>
-                    ) : (
-                      <td></td>
-                    )}
-                    <td className="cnforbgc" style={{ width: "65px" }}>
-                      {rest.status === "예약승인" && (
+                        { user.report_status === "빈열" ?
+                        <td></td> : 
+                        <td>{user.user_name} ({user.report_date})</td>}
+                    <td>{user.review_content}</td>
+                    <td>{user.report_content}</td>
+                    <td>{user.reporter_id}</td>
+                      {user.report_status !== "빈열" ? 
+                        <td>
+                        <p>{user.report_status}</p>
                         <button
                           className="adminrescancel"
-                          onClick={(e) => {
-                            e.stopPropagation(); // 부모 클릭 방지
-                            handleReservationClick(rest);
-                          }}
+                          onClick={() => handleReservationClick(user)}
                         >
-                          예약취소
+                          신고 상태 변경
                         </button>
-                      )}
-                    </td>
+                        </td> : <td></td>
+                      }
+                    <td>{user.admin_id || ""}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         </div>
+      ) : (
+        <p>Loading...</p>
       )}
       <Pagination
         totalItems={filteredItems.length}
@@ -245,15 +224,12 @@ function AdminRestReservation() {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
-      {selectedReservation && (
-        <AdminResCancelModal
-          reservation={selectedReservation}
-          admincancelshow={admincancelshow}
-          AdminCancelClose={AdminCancelClose}
-        />
-      )}
+      <ReportAcceptModal 
+        reportacceptshow={reportacceptshow}
+        ReportAcceptClose={ReportAcceptClose}
+      />
     </div>
   );
 }
 
-export default AdminRestReservation;
+export default AdminUserReport;

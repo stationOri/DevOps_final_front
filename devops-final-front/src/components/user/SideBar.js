@@ -2,7 +2,6 @@ import React, { useEffect,useState } from 'react';
 import Logo from "../../assets/images/oriblue.png";
 import Home from "../../assets/images/sidebar/home.png";
 import Restaurant from "../../assets/images/sidebar/restaurant.png";
-import Reservation from "../../assets/images/sidebar/reservation.png";
 import Chat from "../../assets/images/sidebar/chat.png";
 import Login from "../../assets/images/sidebar/login.png";
 import Search from "../../assets/images/sidebar/search.png";
