@@ -30,7 +30,7 @@ const ReviewCard = ({ review }) => {
           </p>
         </div>
         <div className="review-info-box">
-          <p className="reviewer-name">{review.userNickname}</p>
+          <p className="reviewer-namemain">{review.userNickname}</p>
           <div className="review-like-box">
             <button className="button-like">
               <div className="review-like-btn">
