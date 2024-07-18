@@ -197,6 +197,7 @@ function RestDetailPage() {
                 <EmptyEnrollModal
                   isOpen={isModalOpen}
                   onClose={closeModal}
+                  userId={userId}
                   name={restaurant.rest_name}
                 />
                 <div className="rest-container">
