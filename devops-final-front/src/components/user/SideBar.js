@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import Logo from "../../assets/images/oriblue.png";
 import Home from "../../assets/images/sidebar/home.png";
 import Restaurant from "../../assets/images/sidebar/restaurant.png";
@@ -12,7 +12,12 @@ import SigninModal from "../Modal/SigninModal";
 import SigninNaverModal from "../Modal/SigninNaverModal";
 import CheckModal from "../Modal/CheckModal"
 import { useCheckModal } from "../Modal/CheckModalContext";
+import {jwtDecode} from "jwt-decode";
+import { useLocation } from 'react-router-dom';
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 function SideBar({isExtended, toggleSidebar}) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
@@ -20,6 +25,20 @@ function SideBar({isExtended, toggleSidebar}) {
   const [signinshow, setSigninshow] = useState(false);
   const [naversigninshow,setNaverSigninshow]=useState(false);
   const { openCheckModal } = useCheckModal();
+  const query = useQuery();
+  const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const userinfo = jwtDecode(token);
+        setUsername(userinfo.userName);
+
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, [token]);
 
   const handleOpenModal = () => {
     openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.');

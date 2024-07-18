@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Logo from "../../assets/images/oriblue.png";
 import Food from "../../assets/images/sidebar/food.png";
 import Rest from "../../assets/images/sidebar/rest.png";
@@ -10,10 +10,18 @@ import Waiting from "../../assets/images/sidebar/waiting.png";
 import Login from "../../assets/images/sidebar/login.png";
 import CheckModal from "../Modal/CheckModal";
 import { useCheckModal } from "../Modal/CheckModalContext";
+import {jwtDecode} from "jwt-decode";
+import { useLocation } from 'react-router-dom';
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 function SideBarRest({ onMenuClick }) {
   const [isExtended, setIsExtended] = useState(true); 
   const { openCheckModal } = useCheckModal();
+  const query = useQuery();
+  const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
+  const [username,setusername]=useState("Guest");
 
   const handleOpenModal = () => {
     openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.');
@@ -30,12 +38,24 @@ function SideBarRest({ onMenuClick }) {
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      try {
+        const userinfo = jwtDecode(token);
+        setusername(userinfo.userName);
+
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, [token]);
+
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
       <div className="sideBarHeader">
         <div className="iconWrapper">
           <img src={Logo} alt="" className="sidebarLogo"/>
-          {isExtended && <div className="guestText">1234</div>}
+          {isExtended && <div className="guestText">{username}</div>}
         </div>
       </div>
       <button className="extendbtn" onClick={toggleSidebar}>
