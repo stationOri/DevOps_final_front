@@ -25,20 +25,27 @@ function SideBar({isExtended, toggleSidebar}) {
   const [naversigninshow,setNaverSigninshow]=useState(false);
   const { openCheckModal } = useCheckModal();
   const query = useQuery();
-  const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
-
+  const token = query.get('token'); 
+  
   useEffect(() => {
     if (token) {
       try {
+        localStorage.setItem('token', token);
         const userinfo = jwtDecode(token);
         setUsername(userinfo.userName);
+        const signinok=query.get('signin');
+        if(signinok==="true"){
+          setSigninshow(true);
+        }else{
+          setIsLoggedIn(true);
+        }
 
       } catch (error) {
         console.error("Invalid token", error);
       }
     }
   }, [token]);
-
+  
   const handleOpenModal = () => {
     openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.');
   };
@@ -138,7 +145,7 @@ function SideBar({isExtended, toggleSidebar}) {
                 <img src={Login} alt="" className="sidebarIcon"/>
                 <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}   
                 onClick={() => {
-                signinShow();
+                
                 naversigninShow();
                 }}>회원가입</div>
               </div>
