@@ -22,7 +22,7 @@ function Main() {
 
   const getBannerFood = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restaurant`);
+      const response = await fetch(`http://localhost:4000/maincarouselrestaurant`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
