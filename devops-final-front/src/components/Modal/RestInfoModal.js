@@ -40,7 +40,7 @@ function RestInfoModal({
                 X
               </button>
             </div>
-            <div className="acceptModalContent">
+            <div className="restacceptModalContent">
               <div className="zeroacceptrow">
                 <div className="accepthintText">식당 id</div>
                 <input

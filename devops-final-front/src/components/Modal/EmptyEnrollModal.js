@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../css/components/Modal/EmptyEnrollModal.css";
@@ -9,7 +10,7 @@ import restIcon from "../../assets/images/modal/rest.png";
 import SuccessModal from "./SuccessModal";
 import { useSuccessModal } from "./SuccessModalContext";
 
-const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
+const EmptyEnrollModal = ({ isOpen, onClose, userId, name }) => {
   const { id } = useParams();
   const [opentimes, setOpentimes] = useState([]);
   const [restInfo, setRestInfo] = useState(null);
@@ -20,6 +21,29 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
   const [maxPpl, setMaxPpl] = useState(0);
   const { openSuccessModal } = useSuccessModal();
 
+  const convertDayToKorean = (day) => {
+    switch (day) {
+      case "MON":
+        return "월요일";
+      case "TUE":
+        return "화요일";
+      case "WED":
+        return "수요일";
+      case "THU":
+        return "목요일";
+      case "FRI":
+        return "금요일";
+      case "SAT":
+        return "토요일";
+      case "SUN":
+        return "일요일";
+      case "HOL":
+        return "공휴일";
+      default:
+        return day;
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       fetchOpentimes();
@@ -29,82 +53,83 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
 
   const fetchOpentimes = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/opentime`);
+      const response = await fetch(`http://localhost:8080/opentime/${id}`);
       if (!response.ok) {
-        throw new Error("Failed to fetch opentime");
+        throw new Error("Failed to fetch opentimes");
       }
       const data = await response.json();
-      setOpentimes(data);
+
+      const opentimesFormatted = data.map((opentime) => ({
+        ...opentime,
+        restDay: convertDayToKorean(opentime.restDay),
+      }));
+
+      setOpentimes(opentimesFormatted);
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchAvailableTimes = async (date) => {
+    try {
+      const formattedDate = toKoreanDateString(new Date(date)); // 날짜를 KST로 변환
+      const response = await fetch(
+        `http://localhost:8080/reservations/${id}/times/${formattedDate}`
+      );
+      if (!response.ok) {
+        throw new Error("사용 가능한 시간 가져오기 실패");
+      }
+      const data = await response.json();
+
+      if (
+        !data ||
+        !data.availabilityMap ||
+        !data.availabilityMap[formattedDate]
+      ) {
+        setAvailableTimes({});
+        console.warn(`서버에서 반환된 데이터 구조가 예상과 다릅니다:`, data);
+        return;
+      }
+
+      // const times = Object.keys(data.availabilityMap[formattedDate]);
+      // const timeStates = Object.values(data.availabilityMap[formattedDate]);
+
+      // times.forEach((time, index) => {
+      //   console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
+      // });
+
+      setAvailableTimes(data.availabilityMap[formattedDate]);
+    } catch (error) {
+      console.error("사용 가능한 시간 가져오기 오류:", error);
     }
   };
 
   const fetchRestInfo = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restInfo`);
+      const response = await fetch(
+        `http://localhost:8080/restaurants/info/res/${id}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant info");
       }
       const data = await response.json();
       setRestInfo(data);
-      if (data && data.length > 0) {
-        setMaxPpl(data[0].max_ppl);
-      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const getDayOfWeek = (date) => {
-    const dayOfWeek = new Date(date).getDay();
-    const days = ["일", "월", "화", "수", "목", "금", "토"];
-    return days[dayOfWeek];
-  };
-
-  const calculateAvailableTimes = (opentime, interval) => {
-    const start = new Date(`2024-01-01T${opentime.rest_open}:00`);
-    const end = new Date(`2024-01-01T${opentime.rest_close}:00`);
-    const breakStart = new Date(`2024-01-01T${opentime.rest_breakstart}:00`);
-    const breakEnd = new Date(`2024-01-01T${opentime.rest_breakend}:00`);
-    const times = [];
-    const intervalInMinutes = interval === "ONEHOUR" ? 60 : 30;
-
-    let currentTime = new Date(start);
-
-    while (currentTime < end) {
-      if (!(currentTime >= breakStart && currentTime < breakEnd)) {
-        times.push(currentTime.toTimeString().substring(0, 5));
-      }
-      currentTime.setMinutes(currentTime.getMinutes() + intervalInMinutes);
-    }
-    return times;
-  };
-
   const handleDateChange = (date) => {
     setSelectedDate(date);
-
-    const dayOfWeek = getDayOfWeek(date);
-    const filteredOpentime = opentimes.find(
-      (opentime) =>
-        opentime.rest_id === parseInt(id) && opentime.rest_day === dayOfWeek
-    );
-
-    if (filteredOpentime && restInfo) {
-      const interval = restInfo[0].rest_reserve_interval;
-      const times = calculateAvailableTimes(filteredOpentime, interval);
-      setAvailableTimes(times);
-    } else {
-      setAvailableTimes([]);
-    }
+    fetchAvailableTimes(date);
   };
 
-  const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
+  const handleTimeClick = (time) => {
+    setSelectedTime(time);
   };
 
   const handleGuestIncrement = () => {
-    if (selectedGuests < maxPpl) {
+    if (selectedGuests < restInfo.maxPpl) {
       setSelectedGuests(selectedGuests + 1);
     }
   };
@@ -115,18 +140,44 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
     }
   };
 
-  const day = new Date(+selectedDate+ 3240*10000).toISOString().split('T')[0];
-
   const oneWeekLater = new Date(new Date().setDate(new Date().getDate() + 7));
   const oneMonthLater = new Date(new Date().setDate(new Date().getDate() + 30));
 
-  const LaterDate = restInfo && restInfo.rest_reservation_rule === "WEEKS" ? oneWeekLater : oneMonthLater;
+  const LaterDate =
+    restInfo && restInfo.restReserveopenRule === "WEEKS"
+      ? oneWeekLater
+      : oneMonthLater;
 
-  const handleOpenModal = () => {
+  function toKoreanDateString(date) {
+    if (!date) return null;
+    const utcOffset = date.getTimezoneOffset() * 60000;
+    const koreanDate = new Date(
+      date.getTime() + utcOffset + 9 * 60 * 60 * 1000
+    );
+    return `${koreanDate.getFullYear()}-${String(
+      koreanDate.getMonth() + 1
+    ).padStart(2, "0")}-${String(koreanDate.getDate()).padStart(2, "0")}`;
+  }
+
+  const handleOpenModal = async () => {
+    try {
+      await axios.post(`http://localhost:8080/vacant`, {
+        userId: userId,
+        restId: id,
+        date: toKoreanDateString(selectedDate),
+        time: selectedTime,
+        people: selectedGuests,
+      });
+    } catch (error) {
+      console.error("빈자리 알림 요청 오류:", error);
+      return;
+    }
+    console.log("빈자리 알림 요청 완료");
+
     openSuccessModal(
-      '빈자리 알림 요청 완료', 
-      '예약자 이름',
-      day,
+      "빈자리 알림 요청 완료",
+      "예약자 이름",
+      toKoreanDateString(selectedDate),
       selectedTime,
       selectedGuests,
       onClose
@@ -160,7 +211,7 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
             <div className="empty-enroll-picker">
               <div className="empty-enroll-date-time">
                 <div className="empty-enroll-date">
-                <DatePicker
+                  <DatePicker
                     selected={selectedDate}
                     onChange={handleDateChange}
                     minDate={new Date()}
@@ -175,14 +226,18 @@ const EmptyEnrollModal = ({ isOpen, onClose, name }) => {
                     id="timePicker"
                     className="picker"
                     value={selectedTime}
-                    onChange={handleTimeChange}
+                    onChange={(e) => handleTimeClick(e.target.value)}
                   >
                     <option value="">TIME</option>
-                    {availableTimes.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
+                    {availableTimes ? (
+                      Object.entries(availableTimes).map(([time, status]) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))
+                    ) : (
+                      <option value="">none</option>
+                    )}
                   </select>
                 </div>
               </div>

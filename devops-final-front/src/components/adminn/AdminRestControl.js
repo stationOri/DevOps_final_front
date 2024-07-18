@@ -4,6 +4,9 @@ import "../../css/components/adminn/AdminRestControl.css"
 import AdminRestAccept from "./AdminRestAccept";
 import AdminRestAfterAccept from "./AdminRestAfterAccept";
 import AdminRestReservation from "./AdminRestReservation";
+import AdminRestReport from "./AdminRestReport";
+import RestBlacklist from "./RestBlacklist";
+
 
 function AdminRestControl() {
   const [activeButton, setActiveButton] = useState("승인 대기");
@@ -17,9 +20,9 @@ function AdminRestControl() {
       case "예약 내역":
         return <AdminRestReservation />;
       case "신고 내역":
-        return <div>신고 내역 컴포넌트</div>;
+        return <AdminRestReport />;
       case "블랙리스트":
-        return <div>블랙리스트 컴포넌트</div>;
+        return <RestBlacklist />;
       default:
         return <AdminRestAccept />;
     }

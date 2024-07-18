@@ -80,7 +80,7 @@ function RestAcceptModal({
                 X
               </button>
             </div>
-            <div className="acceptModalContent">
+            <div className="restacceptModalContent">
               <div className="firstacceptrow">
                 <div className="accepthintText">매장 이름</div>
                 <input

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 import "../css/pages/Mypage.css";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/user/SideBar";
@@ -10,6 +11,8 @@ import phoneImg from "../assets/images/mypage/phone.png";
 import mailImg from "../assets/images/mypage/mail.png";
 import calImg from "../assets/images/modal/cal.png";
 import peopleImg from "../assets/images/modal/people.png";
+import alarmImg from "../assets/images/mypage/alarm.png";
+import infoImg from "../assets/images/mypage/info.png";
 
 function Mypage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -20,6 +23,7 @@ function Mypage() {
   const [user, setUser] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [waiting, setWaiting] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const reservationsPerPage = 3;
 
@@ -30,6 +34,7 @@ function Mypage() {
   useEffect(() => {
     fetchUser();
     fetchReservations();
+    fetchWaiting();
   }, [id]);
 
   const fetchUser = async () => {
@@ -59,6 +64,20 @@ function Mypage() {
     } catch (error) {
       console.error(error);
       setError(error.message);
+    }
+  };
+
+  const fetchWaiting = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/waiting/user/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch waiting");
+      }
+      const data = await response.json();
+      setWaiting(data);
+    } catch (error) {
+      setWaiting(null);
+      console.error("Error fetching waiting:", error);
     }
   };
 
@@ -98,6 +117,41 @@ function Mypage() {
       return <button className="my-res-info-review-btn">리뷰</button>;
     } else {
       return <button className="my-res-info-res-btn">예약 취소</button>;
+    }
+  };
+
+  const getStatusMessage = (status) => {
+    switch (status) {
+      case "IN_QUEUE":
+        return "대기";
+      case "WALKIN_REQUESTED":
+        return "입장 요청";
+      case "WALKIN":
+        return "입장완료";
+      case "QUEUE_CANCELED":
+        return "대기 취소";
+      case "NOSHOW":
+        return "노쇼";
+      default:
+        return "없음";
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      await axios.put(
+        `http://localhost:8080/waiting/${waiting.waitingId}`,
+        "QUEUE_CANCELED",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("웨이팅 취소 완료");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error canceling the reservation:", error);
     }
   };
 
@@ -235,7 +289,73 @@ function Mypage() {
                     </div>
                   </div>
                   <div className="my-waiting-container">
-                    <div className="my-waiting-title">웨이팅 신청 완료</div>
+                    {waiting ? (
+                      <div>
+                        <div className="my-waiting-title">
+                          <span className="my-waiting-point">웨이팅 신청</span>{" "}
+                          완료
+                        </div>
+                        <div className="my-waiting-num-box">
+                          <div>대기번호</div>
+                          <div className="al-c">
+                            <div className="my-waiting-point fs-40">
+                              {waiting.waitingNum}
+                            </div>
+                            <div>번</div>
+                          </div>
+                        </div>
+                        <div className="al-c my-waiting-info-text">
+                          <img src={infoImg} className="profile-Img" />
+                          {waiting.waitingStatus === "QUEUE_CANCELED" ? (
+                            <div>대기를 취소했습니다.</div>
+                          ) : (
+                            <div>현재 내 앞 대기 {waiting.waitingLeft} 팀 </div>
+                          )}
+                        </div>
+                        <div className="my-waiting-rest-info">
+                          <div className="ju-sb">
+                            <div>매장명</div>
+                            <div>{waiting.restName}</div>
+                          </div>
+                          <div className="ju-sb">
+                            <div>인원</div>
+                            <div>{waiting.waitingPpl} 명</div>
+                          </div>
+                          <div className="ju-sb">
+                            <div>신청 상태</div>
+                            <div>{getStatusMessage(waiting.waitingStatus)}</div>
+                          </div>
+                        </div>
+                        <div className="al-c my-waiting-info-text">
+                          <img src={alarmImg} className="profile-Img" />
+                          <div>
+                            {waiting.waitingStatus === "QUEUE_CANCELED" ? (
+                              <div>대기를 취소했습니다.</div>
+                            ) : waiting.waitingLeft !== 0 ? (
+                              <div>
+                                현재 예상 대기시간은{" "}
+                                <span className="fs-20">
+                                  {waiting.waitingLeft * 10}분
+                                </span>{" "}
+                                입니다.
+                              </div>
+                            ) : (
+                              <div>지금 입장하세요!</div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="my-waiting-info-btn-box">
+                          <div
+                            className="my-waiting-info-btn"
+                            onClick={handleCancel}
+                          >
+                            <div>취소</div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="my-waiting-no">웨이팅이 없습니다.</div>
+                    )}
                   </div>
                 </div>
                 <div className="my-favorites-container"></div>
