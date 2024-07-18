@@ -28,7 +28,8 @@ function UserSignup() {
     }
   }, []);
   const sendEmail=()=>{
-    axios.post('http://localhost:8080/mail/send', email)
+    const mail= email;
+    axios.post('http://localhost:8080/mail/send', mail)
     .then(response => {
       console.log('mail success:', response.data);
       // 성공적으로 회원가입이 처리되었을 경우의 처리
