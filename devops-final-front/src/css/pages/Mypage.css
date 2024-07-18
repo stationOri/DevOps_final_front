@@ -284,6 +284,94 @@
   font-size: 20px;
   font-weight: bold;
   margin: 30px 25px;
+  margin-bottom: 14px;
+}
+
+.my-waiting-num-box{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: black;
+  color: white;
+  padding: 18px 33px;
+  font-size: 23px;
+  margin: 18px;
+  border-radius: 20px;
+}
+
+.my-waiting-point{
+  color: #FF8A00;
+}
+
+.al-c{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.ju-sb{
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.fs-40{
+  font-size: 40px;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-bottom: 3px;
+}
+
+.fs-20{
+  font-size: 20px;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.my-waiting-rest-info{
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 0 0.5px #FF8A00;
+  background-color: #FFFCFA;
+  margin: 20px 25px;
+  padding: 35px 30px;
+}
+
+.my-waiting-info-text{
+  font-size: 16px;
+  font-weight: lighter;
+  margin-left: 20px;
+  color: #F89C5B;
+}
+
+.my-waiting-info-btn-box{
+  display: flex;
+  justify-content: center;
+}
+
+.my-waiting-info-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 230px;
+  height: 40px;
+  color: #ffffff;
+  border: 1px solid #ff8a00;
+  border-radius: 7px;
+  margin: 0px 3px;
+  background: #ff8a00;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 20px;
+}
+
+.my-waiting-no{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 22px;
+  font-weight: lighter;
 }
 
 .my-review-most-container{
