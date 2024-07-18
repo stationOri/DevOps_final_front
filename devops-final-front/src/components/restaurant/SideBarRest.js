@@ -37,10 +37,11 @@ function SideBarRest({ onMenuClick }) {
       onMenuClick(text); // 클릭된 메뉴명을 RestMain으로 전달
     }
   };
-
+  
   useEffect(() => {
     if (token) {
       try {
+        localStorage.setItem('token', token);
         const userinfo = jwtDecode(token);
         setusername(userinfo.userName);
 
