@@ -16,8 +16,7 @@ import { useLocation } from 'react-router-dom';
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-function SideBarRest({ onMenuClick }) {
-  const [isExtended, setIsExtended] = useState(true); 
+function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
   const { openCheckModal } = useCheckModal();
   const query = useQuery();
   const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
@@ -25,10 +24,6 @@ function SideBarRest({ onMenuClick }) {
 
   const handleOpenModal = () => {
     openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.');
-  };
-
-  const toggleSidebar = () => {
-    setIsExtended(!isExtended);
   };
 
   const handleSidebarTextClick = (text) => {
