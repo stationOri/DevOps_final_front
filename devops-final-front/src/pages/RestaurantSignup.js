@@ -92,7 +92,7 @@ function RestaurantSignin() {
               type="text"
               className="input2"
               placeholder="담당자 이름"
-              value={username}
+              value={restName}
               disabled
             />
           </div>
@@ -107,7 +107,7 @@ function RestaurantSignin() {
               type="text"
               className="input1short"
               placeholder="'-'제외"
-              value={userPhone}
+              value={restPhone}
               disabled
             />
             {/* <button className="phoneCheck">
