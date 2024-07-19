@@ -6,10 +6,9 @@ function InputModal() {
   const { modalState, closeInputModal } = useInputModal();
   const { show, header, review_id, user_id, rest_id } = modalState;
 
-  const handleReport = async () => {
-    const content = document.querySelector('.reportinput').value;
-    if (header === "식당 신고") await postRestReport(rest_id, user_id, content);
-    if (header === "리뷰 신고") await postUserReport(review_id, content);
+  const handleReport = () => {
+    if (header === "식당 신고") postRestReport();
+    if (header === "리뷰 신고") postUserReport();
     closeInputModal();
   };
 
@@ -63,6 +62,8 @@ function InputModal() {
       console.error('Error posting user report:', error);
     }
   };
+  
+  
 
   return (
     <div>
@@ -83,7 +84,7 @@ function InputModal() {
             <div className="InputhintText">신고 내용을 자세하게 작성해주세요.</div>
             <div className='InputModalWrapper'>
               <div className='inputhinttext'>신고내용</div>
-              <input type='text' placeholder='최대 200자 까지 작성 가능합니다.' className='reportinput'/>
+              <input type='text' placeholder='최대 200자 까지 작성 가능합니다.' maxLength={200} className='reportinput'/>
             </div>
             <div className='inputmodalbuttonWrapper'>
               <button className="InputModalreport" onClick={handleReport}>신고</button>
