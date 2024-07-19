@@ -2,9 +2,36 @@ import "../css/pages/RestaurantSignup.css"
 import Oriblue from "../assets/images/oriblue.png"
 import File from "../components/File"
 import HeaderOrange from "../components/HeaderOrange"
+import {jwtDecode} from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
+import React, { useState,useEffect } from 'react';
 
 function RestaurantSignin() {
-  
+  const [email, setEmail] = useState('');
+  const [restName, setRestName] = useState('');
+  const [restPhone, setRestPhone] = useState('');
+  const [restName2,setRestName2]=useState('');
+  const [restData,setRestData]=useState(null);
+  const [restImage,setRestImage]=useState(null);
+  const navigate = useNavigate(); 
+  useEffect(() => {
+    // 토큰을 localStorage에서 가져오기
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      try {
+        const userinfo = jwtDecode(storedToken);
+        setEmail(userinfo.object.registerDto.email);
+        setRestName(userinfo.object.registerDto.userName);
+        setRestPhone(userinfo.object.registerDto.phone);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, []);
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
   return (
     <div className="fullWrapper">
     <HeaderOrange></HeaderOrange>
@@ -25,14 +52,16 @@ function RestaurantSignin() {
               type="text"
               className="input1"
               placeholder="담당자 이메일"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <button className="emailCheckBtn">
+            {/* <button className="emailCheckBtn">
             이메일 중복 확인
-            </button>
+            </button> */}
             </div>
           </div>
         </div>
-        <div className="row child2">
+        {/* <div className="row child2">
           <div className="wrapper2"> 
             <div className="explainText">
               비밀번호*
@@ -53,7 +82,7 @@ function RestaurantSignin() {
               placeholder="비밀번호 확인"
             />
           </div>
-        </div>
+        </div> */}
         <div className="row">
           <div className="wrapper2"> 
             <div className="explainText">
@@ -63,6 +92,8 @@ function RestaurantSignin() {
               type="text"
               className="input2"
               placeholder="담당자 이름"
+              value={username}
+              disabled
             />
           </div>
         </div>
@@ -76,13 +107,15 @@ function RestaurantSignin() {
               type="text"
               className="input1short"
               placeholder="'-'제외"
+              value={userPhone}
+              disabled
             />
-            <button className="phoneCheck">
+            {/* <button className="phoneCheck">
               인증번호 요청
-            </button>
+            </button> */}
             </div>
           </div>
-          <div className="input2btn2short"> 
+          {/* <div className="input2btn2short"> 
             <div className="explainText">
               인증번호*
             </div>
@@ -96,7 +129,7 @@ function RestaurantSignin() {
               확인
             </button>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="row child2">
           <div className="wrapper2"> 

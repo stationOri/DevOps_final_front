@@ -4,14 +4,17 @@ import HeaderOrange from "../components/HeaderOrange"
 import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
+import { useNavigate } from 'react-router-dom';
+
 
 function UserSignup() {
   const [email, setEmail] = useState('');
   const [userName, setuserName] = useState('');
   const [userNickname, setuserNickname] = useState('');
   const [userPhone, setuserPhone] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [verificationok, setVerificationok]=useState(false);
+  const navigate = useNavigate(); 
+  // const [verificationCode, setVerificationCode] = useState('');
+  // const [verificationok, setVerificationok]=useState(false);
   useEffect(() => {
     // 토큰을 localStorage에서 가져오기
     const storedToken = localStorage.getItem('token');
@@ -37,49 +40,66 @@ function UserSignup() {
     axios.post('http://localhost:8080/mail/send', null, mail)
     .then(response => {
       console.log('mail success:', response.data);
+      navigate('/');
       // 성공적으로 회원가입이 처리되었을 경우의 처리
     })
     .catch(error => {
       console.error('mail failed:', error);
+      alert("회원가입에 실패하였습니다.")
       // 회원가입 실패 시의 처리
     });
   }
-  const verifyEmail=()=>{
-    const code={
-      params:{
-        code: verificationCode
-      }
+  // const verifyEmail=()=>{
+  //   const code={
+  //     params:{
+  //       code: verificationCode
+  //     }
       
-    }
-    axios.post('http://localhost:8080/mail/verify', null, code)
-    .then(response => {
-      console.log('verify success:', response.data);
-      setVerificationok(true);
-      // 성공적으로 회원가입이 처리되었을 경우의 처리
-    })
-    .catch(error => {
-      console.error('verify failed:', error);
-      // 회원가입 실패 시의 처리
-    });
-  }
+  //   }
+  //   axios.post('http://localhost:8080/mail/verify', null, code)
+  //   .then(response => {
+  //     console.log('verify success:', response.data);
+  //     setVerificationok(true);
+  //     // 성공적으로 회원가입이 처리되었을 경우의 처리
+  //   })
+  //   .catch(error => {
+  //     console.error('verify failed:', error);
+  //     // 회원가입 실패 시의 처리
+  //   });
+  // }
+  const validateEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
   const handleSignup = () => {
+    if (!validateEmail(email)) {
+      alert('유효하지 않은 이메일 주소입니다.');
+      return;
+    }
+
     const signupData = {
       email,
       userName,
       userNickname,
       userPhone,
     };
-    if(verificationok){
+    
       axios.post('http://localhost:8080/register/user', signupData)
       .then(response => {
-        console.log('Signup success:', response.data);
+        if(response.data>0){
+          console.log('Signup success:', response.data);
+          alert('[회원가입 완료] 로그인 해주세요.');
+          navigate("/");
+        }else{
+          alert('[회원가입 실패] 중복된 핸드폰 번호입니다' );
+        }
+       
         // 성공적으로 회원가입이 처리되었을 경우의 처리
       })
       .catch(error => {
         console.error('Signup failed:', error);
-        // 회원가입 실패 시의 처리
       });
-    }
+    
     
   };
   return (
@@ -123,10 +143,12 @@ function UserSignup() {
               onChange={(e) => setEmail(e.target.value)}
               
             />
+            </div>
+            {/*
             <button className="phoneCheck" onClick={sendEmail}>
               인증번호 요청
             </button>
-            </div>
+            
           </div>
           <div className="input2btn2short"> 
             <div className="explainText">
@@ -143,7 +165,9 @@ function UserSignup() {
               확인
             </button>
             </div>
+             */}
           </div>
+         
         </div>
   
         {/* <div className="row child2">
