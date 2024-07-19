@@ -48,10 +48,10 @@ function SideBar({isExtended, toggleSidebar}) {
   
   const handleOpenModal = (review_id, user_id, rest_id) => {
     openInputModal({
-      header: "리뷰 신고",
-    review_id: review_id,
-    user_id: user_id,
-    rest_id: rest_id,
+      header: "식당 신고",
+      review_id: review_id,
+      user_id: user_id,
+      rest_id: rest_id,
     });
   };
 

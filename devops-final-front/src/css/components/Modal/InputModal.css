@@ -50,6 +50,10 @@
   flex-direction: column;
 }
 
+.inputmodalbuttonWrapper > button {
+  height: 30px;
+}
+
 .InputModalreport {
   background-color: #Ff8a00;
   border: none;
