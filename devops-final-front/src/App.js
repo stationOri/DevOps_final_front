@@ -14,6 +14,7 @@ import Reservation from "./pages/Resveration";
 import Chat from "./pages/Chat"
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
 import { InputModalProvider } from "./components/Modal/InputModalContext";
+import { NoticeModalProvider } from "./components/Modal/NoticeModalContext";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
     <CheckModalProvider>
     <MenuModalProvider>
     <InputModalProvider>
+    <NoticeModalProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />}></Route>
@@ -35,6 +37,7 @@ function App() {
         <Route path="/chat" element={<Chat />}></Route>
       </Routes>
     </BrowserRouter>
+    </NoticeModalProvider>
     </InputModalProvider>
     </MenuModalProvider>
     </CheckModalProvider>
