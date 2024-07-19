@@ -13,12 +13,14 @@ import Restaurants from "./pages/Restaurants";
 import Reservation from "./pages/Resveration";
 import Chat from "./pages/Chat"
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
+import { InputModalProvider } from "./components/Modal/InputModalContext";
 
 function App() {
   return (
     <SuccessModalProvider>
     <CheckModalProvider>
     <MenuModalProvider>
+    <InputModalProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Main />}></Route>
@@ -33,6 +35,7 @@ function App() {
         <Route path="/chat" element={<Chat />}></Route>
       </Routes>
     </BrowserRouter>
+    </InputModalProvider>
     </MenuModalProvider>
     </CheckModalProvider>
     </SuccessModalProvider>

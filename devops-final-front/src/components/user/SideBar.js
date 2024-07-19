@@ -9,8 +9,8 @@ import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
 import "../../css/components/user/SideBar.css";
 import SigninModal from "../Modal/SigninModal";
 import SigninNaverModal from "../Modal/SigninNaverModal";
-import CheckModal from "../Modal/CheckModal"
-import { useCheckModal } from "../Modal/CheckModalContext";
+import InputModal from "../Modal/InputModal"
+import { useInputModal } from "../Modal/InputModalContext";
 import {jwtDecode} from "jwt-decode";
 import { useLocation } from 'react-router-dom';
 
@@ -23,7 +23,7 @@ function SideBar({isExtended, toggleSidebar}) {
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
   const [naversigninshow,setNaverSigninshow]=useState(false);
-  const { openCheckModal } = useCheckModal();
+  const { openInputModal } = useInputModal();
   const query = useQuery();
   const token = query.get('token'); 
   
@@ -46,8 +46,13 @@ function SideBar({isExtended, toggleSidebar}) {
     }
   }, [token]);
   
-  const handleOpenModal = () => {
-    openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.');
+  const handleOpenModal = (review_id, user_id, rest_id) => {
+    openInputModal({
+      header: "리뷰 신고",
+    review_id: review_id,
+    user_id: user_id,
+    rest_id: rest_id,
+    });
   };
 
   // login modal 함수
@@ -154,7 +159,7 @@ function SideBar({isExtended, toggleSidebar}) {
         </div>
         <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`} onClick={handleOpenModal}>관리자 문의</button>
       </div>
-      <CheckModal />
+      <InputModal />
     </div>
   );
 }
