@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Logo from "../../assets/images/oriblue.png";
 import Home from "../../assets/images/sidebar/home.png";
 import Restaurant from "../../assets/images/sidebar/restaurant.png";
@@ -9,45 +9,47 @@ import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
 import "../../css/components/user/SideBar.css";
 import SigninModal from "../Modal/SigninModal";
 import SigninNaverModal from "../Modal/SigninNaverModal";
-import CheckModal from "../Modal/CheckModal"
-import { useCheckModal } from "../Modal/CheckModalContext";
-import {jwtDecode} from "jwt-decode";
-import { useLocation } from 'react-router-dom';
+import NoticeModal from "../Modal/NoticeModal";
+import { useNoticeModal } from "../Modal/NoticeModalContext";
+import { jwtDecode } from "jwt-decode";
+import { useLocation } from "react-router-dom";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-function SideBar({isExtended, toggleSidebar}) {
+function SideBar({ isExtended, toggleSidebar }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
-  const [naversigninshow,setNaverSigninshow]=useState(false);
-  const { openCheckModal } = useCheckModal();
+  const [naversigninshow, setNaverSigninshow] = useState(false);
+  const { openNoticeModal } = useNoticeModal();
   const query = useQuery();
-  const token = query.get('token'); 
-  
+  const token = query.get("token");
+
   useEffect(() => {
     if (token) {
       try {
-        localStorage.setItem('token', token);
+        localStorage.setItem("token", token);
         const userinfo = jwtDecode(token);
         setUsername(userinfo.userName);
-        const signinok=query.get('signin');
-        if(signinok==="true"){
+        const signinok = query.get("signin");
+        if (signinok === "true") {
           setSigninshow(true);
-        }else{
+        } else {
           setIsLoggedIn(true);
         }
-
       } catch (error) {
         console.error("Invalid token", error);
       }
     }
   }, [token]);
-  
-  const handleOpenModal = () => {
-    openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.로그인이 되어있지 않습니다.');
+
+  const handleEditNoticeModal = (contents, rest_id) => {
+    openNoticeModal({
+      contents: "수정해봐!",
+      rest_id: rest_id,
+    });
   };
 
   // login modal 함수
@@ -73,27 +75,25 @@ function SideBar({isExtended, toggleSidebar}) {
   };
 
   return (
-    <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
-      
-      <SigninModal 
-        signinClose={signinClose}
-        signinshow={signinshow}
-      />
-      <SigninNaverModal 
+    <div className={`sideBarWrapper ${isExtended ? "extended" : "collapsed"}`}>
+      <SigninModal signinClose={signinClose} signinshow={signinshow} />
+      <SigninNaverModal
         naversigninClose={naversigninClose}
         naversigninshow={naversigninshow}
       />
-      
+
       <div className="sideBarHeader">
         <div className="iconWrapper">
-          <img src={Logo} alt="" className="sidebarLogo"/>
+          <img src={Logo} alt="" className="sidebarLogo" />
           {isExtended && <div className="guestText">{username}</div>}
         </div>
-        <div className={`sidebarsearchboxWrapper ${isExtended ? '' : 'hidden'}`}>
-          <img src={Search} alt="" className="searchLogo"/>
+        <div
+          className={`sidebarsearchboxWrapper ${isExtended ? "" : "hidden"}`}
+        >
+          <img src={Search} alt="" className="searchLogo" />
           {isExtended && (
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="sidebarsearchbox"
               placeholder="Search"
             />
@@ -101,60 +101,84 @@ function SideBar({isExtended, toggleSidebar}) {
         </div>
       </div>
       <button className="extendbtn" onClick={toggleSidebar}>
-        <img src={ExtendBtn} alt="" className="extendbtnImg"/>
+        <img src={ExtendBtn} alt="" className="extendbtnImg" />
       </button>
       <div className="sidebarContent">
-          <div className="sidebarRow">
-            <div className={`ctgText ${isExtended ? '' : 'hidden'}`}>MAIN</div>
+        <div className="sidebarRow">
+          <div className={`ctgText ${isExtended ? "" : "hidden"}`}>MAIN</div>
+        </div>
+        <div className="sidebarRow">
+          <img src={Home} alt="" className="sidebarIcon" />
+          <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>홈</div>
+        </div>
+        <div className="sidebarRow">
+          <img src={Restaurant} alt="" className="sidebarIcon rest" />
+          <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
+            식당 조회
           </div>
-          <div className="sidebarRow">
-            <img src={Home} alt="" className="sidebarIcon"/>
-            <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>홈</div>
+        </div>
+        <div className="sidebarRow">
+          <img src={Chat} alt="" className="sidebarIcon" />
+          <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
+            1:1 문의
           </div>
-          <div className="sidebarRow">
-            <img src={Restaurant} alt="" className="sidebarIcon rest"/>
-            <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>식당 조회</div>
-          </div>
-          <div className="sidebarRow">
-            <img src={Chat} alt="" className="sidebarIcon"/>
-            <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>1:1 문의</div>
-          </div>
-        
+        </div>
+
         <div className="userContent">
           <div className="sidebarRow">
-            <div className={`ctgText ${isExtended ? '' : 'hidden'}`}>USER</div>
+            <div className={`ctgText ${isExtended ? "" : "hidden"}`}>USER</div>
           </div>
           {isLoggedIn ? (
             <>
               <div className="sidebarRow">
-                <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}>마이페이지</div>
+                <img src={Login} alt="" className="sidebarIcon" />
+                <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
+                  마이페이지
+                </div>
               </div>
               <div className="sidebarRow">
-                <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={handleLogout}>로그아웃</div>
+                <img src={Login} alt="" className="sidebarIcon" />
+                <div
+                  className={`sidebarText ${isExtended ? "" : "hidden"}`}
+                  onClick={handleLogout}
+                >
+                  로그아웃
+                </div>
               </div>
             </>
           ) : (
             <>
               <div className="sidebarRow">
-                <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={loginShow}>로그인</div>
+                <img src={Login} alt="" className="sidebarIcon" />
+                <div
+                  className={`sidebarText ${isExtended ? "" : "hidden"}`}
+                  onClick={loginShow}
+                >
+                  로그인
+                </div>
               </div>
               <div className="sidebarRow">
-                <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`}   
-                onClick={() => {
-                
-                naversigninShow();
-                }}>회원가입</div>
+                <img src={Login} alt="" className="sidebarIcon" />
+                <div
+                  className={`sidebarText ${isExtended ? "" : "hidden"}`}
+                  onClick={() => {
+                    naversigninShow();
+                  }}
+                >
+                  회원가입
+                </div>
               </div>
             </>
           )}
         </div>
-        <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`} onClick={handleOpenModal}>관리자 문의</button>
+        <button
+          className={`sidebaraskButton ${isExtended ? "" : "hidden"}`}
+          onClick={handleEditNoticeModal}
+        >
+          관리자 문의
+        </button>
       </div>
-      <CheckModal />
+      <NoticeModal />
     </div>
   );
 }
