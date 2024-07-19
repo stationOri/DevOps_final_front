@@ -28,8 +28,13 @@ function UserSignup() {
     }
   }, []);
   const sendEmail=()=>{
-    const mail= email;
-    axios.post('http://localhost:8080/mail/send', mail)
+    const mail={
+      params:{
+        mail: email
+      }
+      
+    }
+    axios.post('http://localhost:8080/mail/send', null, mail)
     .then(response => {
       console.log('mail success:', response.data);
       // 성공적으로 회원가입이 처리되었을 경우의 처리
@@ -40,7 +45,13 @@ function UserSignup() {
     });
   }
   const verifyEmail=()=>{
-    axios.post('http://localhost:8080/mail/verify', verificationCode)
+    const code={
+      params:{
+        code: verificationCode
+      }
+      
+    }
+    axios.post('http://localhost:8080/mail/verify', null, code)
     .then(response => {
       console.log('verify success:', response.data);
       setVerificationok(true);
