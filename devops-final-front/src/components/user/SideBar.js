@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/oriblue.png";
 import Home from "../../assets/images/sidebar/home.png";
 import Restaurant from "../../assets/images/sidebar/restaurant.png";
@@ -17,15 +18,34 @@ import { useLocation } from "react-router-dom";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
+
 function SideBar({ isExtended, toggleSidebar }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
   const [naversigninshow, setNaverSigninshow] = useState(false);
+  const [userId, setUserId] = useState("");
+  const [chatType, setChatType] = useState("");
   const { openNoticeModal } = useNoticeModal();
   const query = useQuery();
   const token = query.get("token");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    console.log("storedToken:", storedToken);
+    if (storedToken) {
+      try {
+        const userinfo = jwtDecode(storedToken);        
+        setUserId(userinfo.object.loginDto.id);
+        setChatType(userinfo.object.loginDto.chatType);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -104,14 +124,14 @@ function SideBar({ isExtended, toggleSidebar }) {
         <img src={ExtendBtn} alt="" className="extendbtnImg" />
       </button>
       <div className="sidebarContent">
-        <div className="sidebarRow">
+        <div className="sidebarRow" onClick={() => navigate("/")}>
           <div className={`ctgText ${isExtended ? "" : "hidden"}`}>MAIN</div>
         </div>
-        <div className="sidebarRow">
+        <div className="sidebarRow" onClick={() => navigate("/")}>
           <img src={Home} alt="" className="sidebarIcon" />
           <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>홈</div>
         </div>
-        <div className="sidebarRow">
+        <div className="sidebarRow" onClick={() => navigate("/restaurants")}>
           <img src={Restaurant} alt="" className="sidebarIcon rest" />
           <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
             식당 조회
@@ -130,7 +150,7 @@ function SideBar({ isExtended, toggleSidebar }) {
           </div>
           {isLoggedIn ? (
             <>
-              <div className="sidebarRow">
+              <div className="sidebarRow" onClick={() => navigate(`/mypage/${userId}`)}>
                 <img src={Login} alt="" className="sidebarIcon" />
                 <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
                   마이페이지
