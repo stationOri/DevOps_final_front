@@ -34,11 +34,11 @@ function SideBar({ isExtended, toggleSidebar }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    console.log("storedToken:", storedToken);
+    const storedToken = localStorage.getItem("token");
+    // console.log("storedToken:", storedToken);
     if (storedToken) {
       try {
-        const userinfo = jwtDecode(storedToken);        
+        const userinfo = jwtDecode(storedToken);
         setUserId(userinfo.object.loginDto.id);
         setChatType(userinfo.object.loginDto.chatType);
       } catch (error) {
@@ -48,16 +48,28 @@ function SideBar({ isExtended, toggleSidebar }) {
   }, []);
 
   useEffect(() => {
-    if (token) {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        const userinfo = jwtDecode(storedToken);
+        setUsername(userinfo.userName);
+        setIsLoggedIn(true); // 로그인 상태로 설정
+        const signinok = query.get("signin");
+        if (signinok === "true") {
+          setSigninshow(true);
+        }
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    } else if (token) {
       try {
         localStorage.setItem("token", token);
         const userinfo = jwtDecode(token);
         setUsername(userinfo.userName);
+        setIsLoggedIn(true); // 로그인 상태로 설정
         const signinok = query.get("signin");
         if (signinok === "true") {
           setSigninshow(true);
-        } else {
-          setIsLoggedIn(true);
         }
       } catch (error) {
         console.error("Invalid token", error);
@@ -150,7 +162,10 @@ function SideBar({ isExtended, toggleSidebar }) {
           </div>
           {isLoggedIn ? (
             <>
-              <div className="sidebarRow" onClick={() => navigate(`/mypage/${userId}`)}>
+              <div
+                className="sidebarRow"
+                onClick={() => navigate(`/mypage/${userId}`)}
+              >
                 <img src={Login} alt="" className="sidebarIcon" />
                 <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
                   마이페이지
