@@ -394,7 +394,6 @@
 
 .my-review-most-container{
   display: flex;
-  height: 880px;
   margin: 10px -100px;
 }
 
@@ -418,11 +417,63 @@
   box-shadow: 0 0 0.5px 1px #FAC78C;
   border-radius: 20px;
   width: 600px;
-  height: 90%;
 }
 
 .my-most-container{
   display: flex;
+  flex-direction: column;
   width: 50%;
-  background-color: #FF8A00;
+}
+
+.my-most-graph-container{
+  height: 300px;
+  margin-top: -30px;
+}
+
+.my-most-card-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.my-most-card-box{
+  box-shadow: 0 0 0 0.5px #9392914f;
+  display: flex;
+  width: 610px;
+  height: 130px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+}
+
+.my-most-card-rest-info{
+  padding: 20px;
+}
+
+.my-most-card-rest-img{
+  width: 230px;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px 0 0 15px;
+}
+
+.my-most-card-icon{
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+.my-most-card-content{
+  display: flex;
+  margin-left: 20px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.my-most-card-title{
+  font-size: 17px;
+  font-weight: bold;
+  margin-left: 20px;
+  margin-bottom: 10px;
 }
