@@ -198,13 +198,13 @@ function AdminUserReport() {
                     <td>{user.report_content}</td>
                     <td>{user.reporter_id}</td>
                       {user.report_status !== "빈열" ? 
-                        <td>
+                        <td style={{width:"63px"}}>
                         <p>{user.report_status}</p>
                         <button
                           className="adminrescancel"
                           onClick={() => handleReservationClick(user)}
                         >
-                          신고 상태 변경
+                          신고처리
                         </button>
                         </td> : <td></td>
                       }

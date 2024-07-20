@@ -205,7 +205,7 @@ function AdminRestReport() {
                       <td>{rest.report_data}</td>
                       <td>{rest.reporter_id}</td>
                       {rest.status !== "빈열" ? (
-                        <td>
+                        <td style={{width:"65px"}}>
                           <p>{rest.status}</p>
                           {rest.status === "처리대기" && (
                             <button
@@ -215,7 +215,7 @@ function AdminRestReport() {
                                 handleReservationClick(rest);
                               }}
                             >
-                              신고 상태 변경
+                              신고처리
                             </button>
                           )}
                         </td>
