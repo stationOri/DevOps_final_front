@@ -6,6 +6,7 @@ import React, { useState, useEffect } from "react";
 import Loading from "../Loading";
 import Cal from "../../assets/images/modal/cal.png";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // DatePicker CSS 파일을 임포트
 
 function Reservation() {
   const [loading, setLoading] = useState(true);
@@ -13,8 +14,8 @@ function Reservation() {
   const [restId, setRestId] = useState(2);
   const [upperText, setUpperText] = useState("");
   const [lowerText, setLowerText] = useState("");
-  const [team, setTeam] = useState([]); //오늘 시간대별 예약 갯수
-  const [num, setNum] = useState(0); //오늘 예약 갯수
+  const [team, setTeam] = useState([]); // 오늘 시간대별 예약 갯수
+  const [num, setNum] = useState(0); // 오늘 예약 갯수
   const [waitingList, setWaitingList] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -40,34 +41,8 @@ function Reservation() {
     setSelectedDate(date);
     // fetchAvailableTimes(date);
   };
-  const LaterDate = new Date(new Date().setDate(new Date().getDate() + 30));
-  // restInfo && restInfo.restReserveopenRule === "WEEKS"
-  //   ? oneWeekLater
-  //   : oneMonthLater;
 
-  // const getWaitStatus = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8080/restaurants/info/waitingstatus/${restId}`
-  //     );
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch");
-  //     }
-  //     const text = await response.text();
-  //     if (text === "A") {
-  //       setUpperText("현재 웨이팅 접수 중지중입니다.");
-  //       setLowerText("웨이팅 접수를 시작해주세요.");
-  //     } else if (text === "B") {
-  //       setUpperText("현재 웨이팅 접수 종료중입니다.");
-  //       setLowerText("웨이팅 접수를 시작해주세요.");
-  //     } else if (text === "C") {
-  //       setUpperText("현재 웨이팅 접수 중입니다.");
-  //       setLowerText("웨이팅 접수 시작이 불가능합니다.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error revWait status:", error);
-  //   }
-  // };
+  const LaterDate = new Date(new Date().setDate(new Date().getDate() + 30));
 
   const renderStatusContent = (status, waitingId) => {
     switch (status) {
@@ -89,6 +64,11 @@ function Reservation() {
     fetchData();
   }, [restId]);
 
+  // 찾기 버튼 클릭 핸들러
+  const handleFindClick = () => {
+    console.log("Selected Date:", selectedDate);
+  };
+
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (
@@ -103,8 +83,7 @@ function Reservation() {
               </div>
               <div className="rest-content-boxwai">
                 <div>
-                  이번 달 <span className="spanfornoshow">노쇼</span> 예약금
-                  총액
+                  이번 달 <span className="spanfornoshow">노쇼</span> 예약금 총액
                 </div>
                 <div>
                   <span className="spanformoney">500,000</span> 원
@@ -145,7 +124,7 @@ function Reservation() {
                   dateFormat="yyyy-MM-dd"
                 />
               </div>
-              <button className="findbtn">찾기</button>
+              <button className="findbtn" onClick={handleFindClick}>찾기</button>
             </div>
             <table className="bookingtable">
               <thead>
