@@ -113,7 +113,7 @@
 .waitingTable {
   margin: 20px 0;
   width: 100%;
-  border: 1px solid #dddddd;
+  /* border: 1px solid #dddddd; */
   border-collapse: collapse; 
   border-spacing: 0;
 }
@@ -126,4 +126,14 @@
 .waitingTable td {
   text-align: center;
   height: 40px;
+}
+
+.requestBtnOrange {
+  border: 2px solid #f89C5B;
+  background-color: #FEF3E7;
+  margin: 0 5px;
+}
+
+.waitingTable tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
