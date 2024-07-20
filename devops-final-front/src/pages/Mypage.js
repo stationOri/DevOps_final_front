@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../css/pages/Mypage.css";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/user/SideBar";
 import Loading from "../components/Loading";
+import MostReservedRestaurantsChart from "../components/user/MostReservedRestaurantsChart";
 
 import profileImg from "../assets/images/mypage/profile.png";
-import phoneImg from "../assets/images/mypage/phone.png";
+import phoneImg from "../assets/images/detail/phone.png";
 import mailImg from "../assets/images/mypage/mail.png";
 import calImg from "../assets/images/modal/cal.png";
 import peopleImg from "../assets/images/modal/people.png";
@@ -19,6 +20,7 @@ import MyReviewCard from "../components/MyReviewCard";
 import Pagination from "../components/Pagination";
 import rightImg from "../assets/images/detail/right.png";
 import leftImg from "../assets/images/detail/left.png";
+import locationImg from "../assets/images/detail/location.png";
 
 function Mypage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -32,6 +34,7 @@ function Mypage() {
   const [waiting, setWaiting] = useState([]);
   const [isWaitingLoading, setIsWaitingLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
+  const [mostRest, setMostRest] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
   const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
@@ -39,6 +42,8 @@ function Mypage() {
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
   const favoritesPerPage = 3;
+
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
@@ -52,6 +57,7 @@ function Mypage() {
     fetchUser();
     fetchReservations();
     fetchFavorites();
+    fetchMost();
     fetchWaiting();
     fetchReviews();
   }, [id]);
@@ -99,6 +105,19 @@ function Mypage() {
       setWaiting(null);
       setIsWaitingLoading(false);
       console.error("Error fetching waiting:", error);
+    }
+  };
+
+  const fetchMost = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/restaurants/most/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch visited restaurants");
+      }
+      const data = await response.json();
+      setMostRest(data);
+    } catch (error) {
+      console.error("Error fetching most visited restaurants:", error);
     }
   };
 
@@ -544,7 +563,31 @@ function Mypage() {
                       />
                     </div>
                   </div>
-                  <div className="my-most-container"></div>
+                  <div className="my-most-container">
+                    <div className="my-most-graph-container">
+                      <MostReservedRestaurantsChart userId={id} />
+                    </div>
+                    <div className="my-most-card-container">
+                      {mostRest.map((rest) => (
+                        <div className="my-most-card-box" key={rest.restId}>
+                          <div>
+                            <img className="my-most-card-rest-img" src={rest.restPhoto} onClick = {() => navigate(`/restaurants/${rest.restId}`)}/>
+                          </div>
+                          <div className="my-most-card-rest-info">
+                            <div className="my-most-card-title">{rest.restName}</div>
+                            <div className="my-most-card-content">
+                              <img src={phoneImg} className="my-most-card-icon"/>
+                              <div>{rest.restPhone}</div>
+                            </div>
+                            <div className="my-most-card-content">
+                              <img src={locationImg} className="my-most-card-icon" />
+                              <div>{rest.restAddress}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
