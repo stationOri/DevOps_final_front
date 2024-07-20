@@ -18,7 +18,6 @@ const EmptyEnrollModal = ({ isOpen, onClose, userId, name }) => {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [availableTimes, setAvailableTimes] = useState([]);
-  const [maxPpl, setMaxPpl] = useState(0);
   const { openSuccessModal } = useSuccessModal();
 
   const convertDayToKorean = (day) => {

@@ -16,6 +16,7 @@ import emptyImg from "../assets/images/detail/empty.png";
 import quotesImg1 from "../assets/images/detail/quotes.png";
 import quotesImg2 from "../assets/images/detail/quotes2.png";
 import EmptyEnrollModal from "../components/Modal/EmptyEnrollModal";
+import WaitingEnrollModal from "../components/Modal/WaitingEnrollModal";
 
 function RestDetailPage() {
   const { id } = useParams();
@@ -28,6 +29,7 @@ function RestDetailPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isWaitingModalOpen, setIsWaitingModalOpen] = useState(false);
   const [isExtended, setIsExtended] = useState(true);
 
   const userId = 3;
@@ -36,8 +38,13 @@ function RestDetailPage() {
     setIsModalOpen(true);
   };
 
+  const openWaitingModal = () => {
+    setIsWaitingModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsWaitingModalOpen(false);
   };
 
   const toggleSidebar = () => {
@@ -198,7 +205,13 @@ function RestDetailPage() {
                   isOpen={isModalOpen}
                   onClose={closeModal}
                   userId={userId}
-                  name={restaurant.rest_name}
+                  name={restaurant.restName}
+                />
+                <WaitingEnrollModal
+                  isOpen={isWaitingModalOpen}
+                  onClose={closeModal}
+                  userId={userId}
+                  name={restaurant.restName}
                 />
                 <div className="rest-container">
                   <div className="rest-photo-box">
@@ -220,24 +233,24 @@ function RestDetailPage() {
                           <div className="btn-content">1:1 문의</div>
                         </div>
                         {restaurant.revWait === "A" && (
-                          <div className="res-btn">
+                          <div className="res-btn" onClick={openWaitingModal}>
                             <div className="btn-content">웨이팅</div>
                           </div>
                         )}
                         {restaurant.revWait === "B" && (
-                          <div className="res-btn">
-                            <div className="btn-content" onClick={moveFunc}>
+                          <div className="res-btn" onClick={moveFunc}>
+                            <div className="btn-content">
                               예약
                             </div>
                           </div>
                         )}
                         {restaurant.revWait === "C" && (
                           <>
-                            <div className="res-btn">
+                            <div className="res-btn" onClick={openWaitingModal}>
                               <div className="btn-content">웨이팅</div>
                             </div>
-                            <div className="res-btn">
-                              <div className="btn-content" onClick={moveFunc}>
+                            <div className="res-btn" onClick={moveFunc}>
+                              <div className="btn-content">
                                 예약
                               </div>
                             </div>

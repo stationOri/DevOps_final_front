@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  width: 80%;
   margin-left: 3%;
   margin-right: 3%;
 }
@@ -276,8 +277,25 @@
 }
 
 .my-favorites-container{
-  height: 400px;
-  background-color: #8d6042;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 600px;
+  margin-left: -50px;
+  margin-right: -50px;
+}
+
+.my-favorite-card-wrap{
+  display: flex;
+  justify-content: center;
+}
+
+.favorite-list{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin: 10px;
+  min-width: 960px;
 }
 
 .my-waiting-title{
@@ -375,6 +393,36 @@
 }
 
 .my-review-most-container{
-  height: 600px;
-  background-color: #361414;
+  display: flex;
+  height: 880px;
+  margin: 10px -100px;
+}
+
+.my-review-container{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  margin-bottom: 30px;
+}
+
+.my-review-box{
+  display: flex;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.my-review-wrap{
+  margin: 10px;
+  margin-bottom: 40px;
+  box-shadow: 0 0 0.5px 1px #FAC78C;
+  border-radius: 20px;
+  width: 600px;
+  height: 90%;
+}
+
+.my-most-container{
+  display: flex;
+  width: 50%;
+  background-color: #FF8A00;
 }

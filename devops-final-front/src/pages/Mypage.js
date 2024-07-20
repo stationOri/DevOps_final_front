@@ -13,6 +13,12 @@ import calImg from "../assets/images/modal/cal.png";
 import peopleImg from "../assets/images/modal/people.png";
 import alarmImg from "../assets/images/mypage/alarm.png";
 import infoImg from "../assets/images/mypage/info.png";
+import RestCard from "../components/RestCard";
+import DatePicker from "react-datepicker";
+import MyReviewCard from "../components/MyReviewCard";
+import Pagination from "../components/Pagination";
+import rightImg from "../assets/images/detail/right.png";
+import leftImg from "../assets/images/detail/left.png";
 
 function Mypage() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -24,22 +30,35 @@ function Mypage() {
   const [reservations, setReservations] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [waiting, setWaiting] = useState([]);
+  const [isWaitingLoading, setIsWaitingLoading] = useState(true);
+  const [reviews, setReviews] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
+  const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
+
   const reservationsPerPage = 3;
+  const reviewPerPage = 2;
+  const favoritesPerPage = 3;
 
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
   };
 
+  const onPageChange = (pageNumber) => {
+    setReviewCurrentPage(pageNumber);
+  };
+
   useEffect(() => {
     fetchUser();
     fetchReservations();
+    fetchFavorites();
     fetchWaiting();
+    fetchReviews();
   }, [id]);
 
   const fetchUser = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/users/${id}`);
+      const response = await fetch(`http://localhost:8080/user/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch user");
       }
@@ -75,22 +94,40 @@ function Mypage() {
       }
       const data = await response.json();
       setWaiting(data);
+      setIsWaitingLoading(false);
     } catch (error) {
       setWaiting(null);
+      setIsWaitingLoading(false);
       console.error("Error fetching waiting:", error);
     }
   };
 
   const fetchFavorites = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/favorite/${id}`);
+      const response = await fetch(`http://localhost:8080/favorite/${id}/rest`);
       if (!response.ok) {
         throw new Error("Failed to fetch favorites");
       }
       const data = await response.json();
       setFavorites(data);
+      console.log("Favorites:", data);
     } catch (error) {
       console.error("Error fetching favorites:", error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/review/user/${id}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user review");
+      }
+      const data = await response.json();
+      setReviews(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
     }
   };
 
@@ -102,6 +139,15 @@ function Mypage() {
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const favpaginate = (pageNumber) => {
+    if (pageNumber < 1) {
+      setFavoritesCurrentPage(1);
+    } else if (pageNumber > Math.ceil(favorites.length / favoritesPerPage)) {
+      setFavoritesCurrentPage(Math.ceil(favorites.length / favoritesPerPage));
+    } else {
+      setFavoritesCurrentPage(pageNumber);
+    }
+  };
 
   const renderReservationAction = (reservation) => {
     if (reservation.paymentStatus === "REFUND_READY") {
@@ -152,6 +198,53 @@ function Mypage() {
       window.location.reload();
     } catch (error) {
       console.error("Error canceling the reservation:", error);
+    }
+  };
+
+  const toggleFavorite = async (restId, isFavorite) => {
+    try {
+      const existingFavorite = favorites.find(
+        (favorite) => favorite.restId === restId
+      );
+      console.log("existingFavorite:", existingFavorite)
+        
+      if (existingFavorite) {
+        const response = await fetch(
+          `http://localhost:8080/favorite/${id}/rest/${restId}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("찜취소: ", response);
+
+        if (response.ok) {
+          fetchFavorites();
+        } else {
+          throw new Error("Failed to remove favorite");
+        }
+      } else {
+        const response = await fetch(
+          `http://localhost:8080/favorite/${id}/rest/${restId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log("찜추가: ", response);
+
+        if (response.ok) {
+          fetchFavorites();
+        } else {
+          throw new Error("Failed to add favorite");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error.message);
     }
   };
 
@@ -289,7 +382,9 @@ function Mypage() {
                     </div>
                   </div>
                   <div className="my-waiting-container">
-                    {waiting ? (
+                    {isWaitingLoading ? (
+                      <div className="my-waiting-no">웨이팅이 없습니다.</div>
+                    ) : waiting ? (
                       <div>
                         <div className="my-waiting-title">
                           <span className="my-waiting-point">웨이팅 신청</span>{" "}
@@ -358,9 +453,99 @@ function Mypage() {
                     )}
                   </div>
                 </div>
-                <div className="my-favorites-container"></div>
-
-                <div className="my-review-most-container"></div>
+                <div className="my-favorites-container">
+                  <div
+                    className="pagination-btn"
+                    onClick={() => favpaginate(favoritesCurrentPage - 1)}
+                    disabled={favoritesCurrentPage === 1}
+                  >
+                    <img
+                      className="review-pagination-img"
+                      src={leftImg}
+                      alt="Previous Page"
+                    />
+                  </div>
+                  <div className="my-favorite-card-wrap">
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      <div className="favorite-list">
+                        {favorites.length === 0 ? (
+                          <div className="no-favorites">
+                            찜한 식당이 없습니다.
+                          </div>
+                        ) : (
+                          favorites
+                            .slice(
+                              (favoritesCurrentPage - 1) * favoritesPerPage,
+                              favoritesCurrentPage * favoritesPerPage
+                            )
+                            .map((favorite) => (
+                              <RestCard
+                                key={favorite.restId}
+                                userId={id}
+                                restId={favorite.restId}
+                                img={favorite.restPhoto}
+                                RestName={favorite.restName}
+                                RestAddress={favorite.restAddress}
+                                RestOpentimes={favorite.restOpentimes}
+                                keyword1={favorite.keyword1}
+                                keyword2={favorite.keyword2}
+                                keyword3={favorite.keyword3}
+                                isFavorite={favorite.favorite}
+                                toggleFavorite={toggleFavorite}
+                              />
+                            ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className="pagination-btn"
+                    onClick={() => favpaginate(favoritesCurrentPage + 1)}
+                    disabled={
+                      favoritesCurrentPage ===
+                      Math.ceil(favorites.length / favoritesPerPage)
+                    }
+                  >
+                    <img
+                      className="review-pagination-img"
+                      src={rightImg}
+                      alt="Next Page"
+                    />
+                  </div>
+                </div>
+                <div className="my-review-most-container">
+                  <div className="my-review-container">
+                    <div className="my-review-box">
+                      <div>My Reviews</div>
+                      <DatePicker
+                        selected={new Date()}
+                        onChange={(date) => console.log(date)}
+                        className="picker"
+                        dateFormat="yyyy-MM-dd"
+                      />
+                    </div>
+                    <div className="my-review-wrap">
+                      {reviews
+                        .slice(
+                          (reviewCurrentPage - 1) * reviewPerPage,
+                          reviewCurrentPage * reviewPerPage
+                        )
+                        .map((review) => (
+                          <MyReviewCard key={review.reviewId} review={review} />
+                        ))}
+                      <Pagination
+                        totalItems={reviews.length}
+                        itemsPerPage={reviewPerPage}
+                        currentPage={reviewCurrentPage}
+                        onPageChange={onPageChange}
+                        activeColor="#FF8A00"
+                      />
+                    </div>
+                  </div>
+                  <div className="my-most-container"></div>
+                </div>
               </div>
             </div>
           </div>
