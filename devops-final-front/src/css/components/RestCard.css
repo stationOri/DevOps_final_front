@@ -2,7 +2,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 7px;
   width: 300px;
-  height: 490px;
+  height: 495px;
   margin-bottom: 30px;
 }
 
@@ -23,8 +23,12 @@
   border-radius: 7px 7px 0 0;
 }
 
+.rest-card-opentimes{
+  min-height: 108px;
+}
+
 .rest-card-opentime{
-  font-size: 10px;
+  font-size: 9px;
   font-weight: lighter;
 }
 
@@ -35,13 +39,15 @@
 .rest-card-name{
   font-size: 19px;
   font-weight: bold;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
+  min-height: 58px;
 }
 
 .rest-card-address{
   font-size: 15px;
   font-weight: lighter;
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+  min-height: 54px;
 }
 
 .rest-card-key-heart{
