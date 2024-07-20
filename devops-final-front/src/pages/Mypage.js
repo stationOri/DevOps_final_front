@@ -79,7 +79,7 @@ function Mypage() {
 
   const fetchReservations = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/reservations`);
+      const response = await fetch(`http://localhost:8080/reservations/user/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch reservations");
       }
@@ -341,7 +341,7 @@ function Mypage() {
                     <div className="my-horizon" />
                     <div className="my-page-res-content-box">
                       {currentReservations.map((reservation) => (
-                        <div key={reservation.id} className="my-res-map-box">
+                        <div key={reservation.resId} className="my-res-map-box">
                           <div className="my-res-box">
                             <div>
                               <img
@@ -375,7 +375,7 @@ function Mypage() {
                                   식당 신고
                                 </div>
                                 <div className="my-res-info-res-id">
-                                  reservation id: {reservation.id}
+                                  reservation id: {reservation.resId}
                                 </div>
                               </div>
                             </div>
@@ -537,13 +537,13 @@ function Mypage() {
                 <div className="my-review-most-container">
                   <div className="my-review-container">
                     <div className="my-review-box">
-                      <div>My Reviews</div>
-                      <DatePicker
+                      <div className="my-review-title">My Reviews</div>
+                      {/* <DatePicker
                         selected={new Date()}
                         onChange={(date) => console.log(date)}
                         className="picker"
                         dateFormat="yyyy-MM-dd"
-                      />
+                      /> */}
                     </div>
                     <div className="my-review-wrap">
                       {reviews

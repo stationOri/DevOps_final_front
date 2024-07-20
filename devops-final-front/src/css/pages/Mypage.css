@@ -161,6 +161,7 @@
 
 .my-res-restphoto{
   width: 150px;
+  height: 120px;
   margin-right: 20px;
   object-fit: cover;
   border-radius: 10px;
@@ -280,7 +281,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 600px;
+  height: 580px;
   margin-left: -50px;
   margin-right: -50px;
 }
@@ -394,7 +395,7 @@
 
 .my-review-most-container{
   display: flex;
-  margin: 10px -80px;
+  margin: 10px -40px;
 }
 
 .my-review-container{
@@ -402,6 +403,11 @@
   flex-direction: column;
   width: 50%;
   margin-bottom: 30px;
+}
+
+.my-review-title{
+  font-style: italic;
+  margin-left: -40px;
 }
 
 .my-review-box{
@@ -416,7 +422,7 @@
   margin-bottom: 40px;
   box-shadow: 0 0 0.5px 1px #FAC78C;
   border-radius: 20px;
-  width: 600px;
+  width: 550px;
 }
 
 .my-most-container{
