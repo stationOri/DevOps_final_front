@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import HeaderOrange from "../components/HeaderOrange";
 import SideBarRest from '../components/restaurant/SideBarRest';
 import MenuManagement from "../components/restaurant/MenuManagement"
+import Reservation from '../components/restaurant/Reservation';
+import WaitingManagement from '../components/restaurant/WaitingManagement';
 import "../css/pages/RestMain.css";
 
 function RestMain() {
@@ -46,14 +48,6 @@ function RestMain() {
 
 function RestaurantInfo() {
   return <div>식당 정보 페이지입니다.</div>;
-}
-
-function Reservation() {
-  return <div>예약 페이지입니다.</div>;
-}
-
-function WaitingManagement() {
-  return <div>웨이팅 관리 페이지입니다.</div>;
 }
 
 function ContactUs() {
