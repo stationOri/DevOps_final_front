@@ -3,6 +3,7 @@ import "../../css/components/adminn/AdminRestAfterAccept.css";
 import Pagination from "../Pagination";
 import RestInfoModal from "../Modal/RestInfoModal";
 import Search from "../../assets/images/sidebar/search.png";
+import Loading from "../Loading"; // Ensure this path is correct based on your project structure
 
 function AdminRestAfterAccept() {
   const [readyRest, setReadyRest] = useState([]);
@@ -64,57 +65,63 @@ function AdminRestAfterAccept() {
 
   return (
     <div className="restacceptrootWrapper">
-      <div className="restAcceptexWrapper">
-        <div className="headerfortext">
-          <div className="restacceptTitle">승인 완료 매장 목록</div>
-          <p className="restacceptP">가게 이름 클릭 시 가게 정보 표시</p>
-        </div>
-        <div className="headerforsearch">
-          <img src={Search} alt="" className="searchimginrestsearch" />
-          <input
-            type="text"
-            className="restsearchinput"
-            placeholder="매장명 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+      {loading ? (
+        <Loading />  // 로딩 인디케이터
+      ) : (
+        <>
+          <div className="restAcceptexWrapper">
+            <div className="headerfortext">
+              <div className="restacceptTitle">승인 완료 매장 목록</div>
+              <p className="restacceptP">가게 이름 클릭 시 가게 정보 표시</p>
+            </div>
+            <div className="headerforsearch">
+              <img src={Search} alt="" className="searchimginrestsearch" />
+              <input
+                type="text"
+                className="restsearchinput"
+                placeholder="매장명 검색"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+          <hr />
+          <div className="restafteracceptTableWrapper">
+            <div className="restacceptColumn">
+              {leftColumnItems.map((rest) => (
+                <div className="restafteracceptRowWrapper" key={rest.rest_id}>
+                  <div className="restaccept">{rest.rest_name}</div>
+                  <button
+                    className="restafteracceptbutton"
+                    onClick={() => openInfoModal(rest)}
+                  >
+                    매장 확인
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="restacceptColumn">
+              {rightColumnItems.map((rest) => (
+                <div className="restafteracceptRowWrapper" key={rest.rest_id}>
+                  <div className="restaccept">{rest.rest_name}</div>
+                  <button
+                    className="restafteracceptbutton"
+                    onClick={() => openInfoModal(rest)}
+                  >
+                    매장 확인
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <Pagination
+            totalItems={filteredItems.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
           />
-        </div>
-      </div>
-      <hr />
-      <div className="restafteracceptTableWrapper">
-        <div className="restacceptColumn">
-          {leftColumnItems.map((rest) => (
-            <div className="restafteracceptRowWrapper" key={rest.rest_id}>
-              <div className="restaccept">{rest.rest_name}</div>
-              <button
-                className="restafteracceptbutton"
-                onClick={() => openInfoModal(rest)}
-              >
-                매장 확인
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="restacceptColumn">
-          {rightColumnItems.map((rest) => (
-            <div className="restafteracceptRowWrapper" key={rest.rest_id}>
-              <div className="restaccept">{rest.rest_name}</div>
-              <button
-                className="restafteracceptbutton"
-                onClick={() => openInfoModal(rest)}
-              >
-                매장 확인
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      <Pagination
-        totalItems={filteredItems.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
+        </>
+      )}
       {infoshow && selectedRest && (
         <RestInfoModal
           InfoClose={closeInfoModal}
