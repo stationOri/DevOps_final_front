@@ -1,0 +1,115 @@
+.UpperBoxRestheight {
+  width: 100%;
+  display: flex;
+  height: 230px;
+  justify-content: space-between;
+}
+
+.upperboxleft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+
+.upperboxright {
+  width: 48%;
+}
+
+.rest-content-boxwai {
+  width: 100%;
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px #ececec;
+  margin-top: 15px;
+}
+
+.rest-content-boxwai div {
+  font-size: 15px;
+}
+
+.reserinfobox {
+  height: 70px;
+}
+
+.innerHrLinewai {
+  border-top: 1px solid #ff8a00;
+  width: 90%;
+  margin: 10px 0;
+}
+
+.spanforOrangerev {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ff8a00;
+}
+
+.spanfornoshow {
+  font-size: 22px;
+  font-weight: 500;
+  color: #ff8a00;
+}
+
+.spanformoney {
+  font-size: 30px;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.accountbox {
+  cursor: pointer;
+  font-size: 14px;
+  margin: 10px 0;
+  text-decoration: underline;
+}
+
+.dateselectWrapper {
+  margin: 15px 0 20px;
+  display: flex;
+}
+
+.dateborderWrapper {
+  width: 145px;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  height: 35px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.calphoto {
+  width: 28px;
+  margin: 0 5px;
+}
+
+.findbtn {
+  border: none;
+  background-color: #ff8a00;
+  color: white;
+  height: 35px;
+  width: 60px;
+  margin: 0 10px;
+}
+
+.bookingtable {
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid #dddddd;
+}
+
+.insmallrev {
+  border: none;
+  height: 35px;
+  margin-bottom: 0;
+}
+
+.insmallrev:focus {
+  box-shadow: none;
+}

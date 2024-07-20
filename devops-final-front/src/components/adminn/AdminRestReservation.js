@@ -73,7 +73,7 @@ function AdminRestReservation() {
         (statusFilters.예약대기 && item.status === "예약대기") ||
         (statusFilters.예약취소 && item.status === "예약취소") ||
         (statusFilters.예약승인 && item.status === "예약승인") ||
-        (statusFilters.방문완료 && item.status === "방문완료")
+        (statusFilters.방문완료 && item.status === "방문")
       ) {
         return true;
       }
