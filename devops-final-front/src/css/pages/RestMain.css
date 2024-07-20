@@ -10,9 +10,6 @@
 .mainsidebar.collapsed {
   width: 50px;
 }
-
-
-
 .contentsWrapper {
   /* width: calc(100% - 170px); */
   flex: 1;
@@ -20,4 +17,11 @@
 
 .contentsWrapper.collapsed {
   width: calc(100% - 50px); 
+}
+
+.restmainrealcontents {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

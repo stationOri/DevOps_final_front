@@ -66,7 +66,7 @@ function AdminRestAfterAccept() {
   return (
     <div className="restacceptrootWrapper">
       {loading ? (
-        <Loading />  // 로딩 인디케이터
+        <Loading />
       ) : (
         <>
           <div className="restAcceptexWrapper">
