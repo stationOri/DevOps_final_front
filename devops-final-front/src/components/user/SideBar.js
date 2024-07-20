@@ -35,24 +35,12 @@ function SideBar({ isExtended, toggleSidebar }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    // console.log("storedToken:", storedToken);
-    if (storedToken) {
-      try {
-        const userinfo = jwtDecode(storedToken);
-        setUserId(userinfo.object.loginDto.id);
-        setChatType(userinfo.object.loginDto.chatType);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
     if (storedToken) {
       try {
         const userinfo = jwtDecode(storedToken);
         setUsername(userinfo.userName);
+        setUserId(userinfo.object.loginDto.id);
+        setChatType(userinfo.object.loginDto.chatType);
         setIsLoggedIn(true); // 로그인 상태로 설정
         const signinok = query.get("signin");
         if (signinok === "true") {
