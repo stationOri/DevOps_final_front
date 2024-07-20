@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../css/pages/Mypage.css";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/user/SideBar";
 import Loading from "../components/Loading";
+import MostReservedRestaurantsChart from "../components/user/MostReservedRestaurantsChart";
 
 import profileImg from "../assets/images/mypage/profile.png";
 import phoneImg from "../assets/images/detail/phone.png";
@@ -41,6 +42,8 @@ function Mypage() {
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
   const favoritesPerPage = 3;
+
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
@@ -561,12 +564,14 @@ function Mypage() {
                     </div>
                   </div>
                   <div className="my-most-container">
-                    <div className="my-most-graph-container">그래프</div>
+                    <div className="my-most-graph-container">
+                      <MostReservedRestaurantsChart userId={id} />
+                    </div>
                     <div className="my-most-card-container">
                       {mostRest.map((rest) => (
                         <div className="my-most-card-box" key={rest.restId}>
                           <div>
-                            <img className="my-most-card-rest-img" src={rest.restPhoto} />
+                            <img className="my-most-card-rest-img" src={rest.restPhoto} onClick = {() => navigate(`/restaurants/${rest.restId}`)}/>
                           </div>
                           <div className="my-most-card-rest-info">
                             <div className="my-most-card-title">{rest.restName}</div>
@@ -575,7 +580,7 @@ function Mypage() {
                               <div>{rest.restPhone}</div>
                             </div>
                             <div className="my-most-card-content">
-                              <img src={locationImg} className="my-most-card-icon"/>
+                              <img src={locationImg} className="my-most-card-icon" />
                               <div>{rest.restAddress}</div>
                             </div>
                           </div>
