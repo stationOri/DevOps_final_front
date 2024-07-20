@@ -19,15 +19,17 @@ function useQuery() {
 function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
   const { openCheckModal } = useCheckModal();
   const query = useQuery();
+  const [restId, setRestId] = useState("");
   const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
-  const [username,setusername]=useState("Guest");
+  const [username,setUsername]=useState("Guest");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   const handleOpenModal = () => {
     openCheckModal('관리자 문의 실패', '로그인이 되어있지 않습니다.');
   };
 
   const handleSidebarTextClick = (text) => {
-    console.log(`Clicked on: ${text}`);
     if (onMenuClick) {
       onMenuClick(text); // 클릭된 메뉴명을 RestMain으로 전달
     }
@@ -38,8 +40,31 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
       try {
         localStorage.setItem('token', token);
         const userinfo = jwtDecode(token);
-        setusername(userinfo.userName);
+        setUsername(userinfo.userName);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    }
+  }, [token]);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      try {
+        const userinfo = jwtDecode(storedToken);
+        setUsername(userinfo.userName);
+        setRestId(userinfo.RestId);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("Invalid token", error);
+      }
+    } else if (token) {
+      try {
+        localStorage.setItem("token", token);
+        const userinfo = jwtDecode(token);
+        setUsername(userinfo.userName);
+        setRestId(userinfo.RestId);
+        setIsLoggedIn(true);
       } catch (error) {
         console.error("Invalid token", error);
       }

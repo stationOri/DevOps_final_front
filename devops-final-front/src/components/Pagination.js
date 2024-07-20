@@ -4,6 +4,21 @@ import LeftPage from "../assets/images/left-chevron.png";
 
 function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange, activeColor }) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const maxVisiblePages = 10; // Maximum number of page buttons to show
+
+  const getPageRange = () => {
+    const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      const start = Math.max(1, endPage - maxVisiblePages + 1);
+      return Array.from({ length: endPage - start + 1 }, (_, i) => start + i);
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+  };
+
+  const pageRange = getPageRange();
 
   return (
     <div className="paginationWrapper">
@@ -14,14 +29,14 @@ function Pagination({ totalItems, itemsPerPage, currentPage, onPageChange, activ
       >
         <img src={LeftPage} alt="Previous" className="paginationIcon" />
       </button>
-      {Array.from({ length: totalPages }, (_, index) => (
+      {pageRange.map(page => (
         <button
-          key={index + 1}
-          onClick={() => onPageChange(index + 1)}
-          className={`paginationButton ${currentPage === index + 1 ? "active" : ""}`}
-          style={{ backgroundColor: currentPage === index + 1 ? activeColor : 'white' }}
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`paginationButton ${currentPage === page ? "active" : ""}`}
+          style={{ backgroundColor: currentPage === page ? activeColor : 'white' }}
         >
-          {index + 1}
+          {page}
         </button>
       ))}
       <button

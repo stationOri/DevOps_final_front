@@ -32,6 +32,8 @@ function RestaurantSignin() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
+
+  
   return (
     <div className="fullWrapper">
     <HeaderOrange></HeaderOrange>

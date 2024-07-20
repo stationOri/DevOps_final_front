@@ -2,6 +2,7 @@ import "../../css/components/adminn/AdminRestAccept.css";
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination";  // 페이지네이션 컴포넌트 임포트
 import RestAcceptModal from "../Modal/RestAcceptModal";
+import Loading from "../Loading";
 
 function AdminRestAccept() {
   const [readyRest, setReadyRest] = useState([]);
@@ -55,25 +56,31 @@ function AdminRestAccept() {
 
   return (
     <div className="restacceptrootWrapper">
-      <div className="restAcceptbfWrapper">
-        <div className="restacceptTitle">승인 대기 매장 목록</div>
-        <p className="restacceptP">가게 이름 클릭 시 가게 등록 정보 표시</p>
-      </div>
-      <hr />
-      <div className="restacceptTableWrapper">
-        {currentItems.map((rest) => (
-          <div className="restacceptRowWrapper" key={rest.restId}>
-            <div className="restaccept">{rest.rest_name}</div>
-            <button className="restacceptbutton" rest_id={rest.restId} onClick={() => AcceptShow(rest)}>승인</button>
+      {loading ? (
+        <Loading/>
+      ) : (
+        <>
+          <div className="restAcceptbfWrapper">
+            <div className="restacceptTitle">승인 대기 매장 목록</div>
+            <p className="restacceptP">가게 이름 클릭 시 가게 등록 정보 표시</p>
           </div>
-        ))}
-      </div>
-      <Pagination
-        totalItems={readyRest.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
+          <hr />
+          <div className="restacceptTableWrapper">
+            {currentItems.map((rest) => (
+              <div className="restacceptRowWrapper" key={rest.restId}>
+                <div className="restaccept">{rest.rest_name}</div>
+                <button className="restacceptbutton" rest_id={rest.restId} onClick={() => AcceptShow(rest)}>승인</button>
+              </div>
+            ))}
+          </div>
+          <Pagination
+            totalItems={readyRest.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
       {selectedRest && (
         <RestAcceptModal
           acceptshow={acceptshow}
