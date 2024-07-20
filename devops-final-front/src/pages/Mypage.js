@@ -35,6 +35,7 @@ function Mypage() {
   const [isWaitingLoading, setIsWaitingLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
   const [mostRest, setMostRest] = useState([]);
+  const [resCount, setResCount] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
   const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
@@ -60,6 +61,7 @@ function Mypage() {
     fetchMost();
     fetchWaiting();
     fetchReviews();
+    fetchResCount();
   }, [id]);
 
   const fetchUser = async () => {
@@ -85,6 +87,21 @@ function Mypage() {
       }
       const data = await response.json();
       setReservations(data);
+      setLoading(false);
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+    }
+  };
+
+  const fetchResCount = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/reservations/user/${id}/counts`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch reservations");
+      }
+      const data = await response.json();
+      setResCount(data);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -320,15 +337,15 @@ function Mypage() {
                       <div className="my-res-info-box">
                         <div className="my-res-info-content-box">
                           <div>진행중인 예약</div>
-                          <div>3건</div>
+                          <div>{resCount?.nowCount}건</div>
                         </div>
                         <div className="my-res-info-content-box">
                           <div>완료된 예약</div>
-                          <div>3건</div>
+                          <div>{resCount?.pastCount}건</div>
                         </div>
                         <div className="my-res-info-content-box">
                           <div>방문한 가게</div>
-                          <div>3건</div>
+                          <div>{resCount?.restCount}건</div>
                         </div>
                       </div>
                     </div>
