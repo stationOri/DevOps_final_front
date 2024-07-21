@@ -30,12 +30,42 @@
   margin-top: 15px;
 }
 
+.spanforcounting {
+  color: #ff8a00;
+  font-size: 16px;
+  font-weight: 500;
+}
+
 .rest-content-boxwai div {
   font-size: 15px;
 }
 
 .reserinfobox {
-  height: 70px;
+  width: 90%;
+  min-height: 70px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+}
+
+.resernoinfobox{
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  color: #555555;
+}
+
+.rowWrapper {
+  display: flex;
+  width: 100%;
+}
+.forRow {
+  width: 25%;
+}
+.innerslot {
+  margin: 0 5px;
 }
 
 .innerHrLinewai {
@@ -98,10 +128,31 @@
   margin: 0 10px;
 }
 
+.tableBorder {
+  border-bottom: 2px solid #dddddd;
+  border-right: 2px solid #dddddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
+.tableBorderend {
+  border-bottom: 2px solid #dddddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
 .bookingtable {
   margin-top: 10px;
   width: 100%;
-  border: 1px solid #dddddd;
+  display: flex;
+}
+
+.colWarpper {
+  width: 25%;
 }
 
 .insmallrev {
@@ -112,4 +163,19 @@
 
 .insmallrev:focus {
   box-shadow: none;
+}
+
+.rowWrapper2 {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #555555;
+}
+
+.rowWrapper2 button {
+  margin-top: 20px;
+  color: #555555;
+  border: 1px solid #c3c3c3;
 }
