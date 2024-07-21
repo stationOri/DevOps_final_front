@@ -187,44 +187,50 @@ function AdminRestReport() {
                   <th scope="col">관리자 ID</th>
                 </tr>
               </thead>
-              <tbody>
-                {currentItems.map((rest, index) => (
-                  <tr key={index}>
-                    {rest.status !== "빈열" ? (
-                      <td>
-                        {rest.rest_name}({rest.report_date})
-                      </td>
-                    ) : (
-                      <td></td>
-                    )}
-                    <td>{rest.report_data}</td>
-                    <td>{rest.reporter_id}</td>
-                    {rest.status !== "빈열" ? (
-                      <td>
-                        <p>{rest.status}</p>
-                        {rest.status === "처리대기" && (
-                          <button
-                            className="adminrescancel"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleReservationClick(rest);
-                            }}
-                          >
-                            신고 상태 변경
-                          </button>
-                        )}
-                      </td>
-                    ) : (
-                      <td></td>
-                    )}
-                    {rest.admin_id ? (
-                      <td className="cnforbgc">{rest.admin_id}</td>
-                    ) : (
-                      <td className="cnforbgc"></td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
+
+              {currentItems.length === 0 ? (
+                <td colSpan={5}
+                style={{textAlign:"center", fontSize:"15px"}}>표시할 항목이 없습니다.</td>
+              ) : (
+                <tbody>
+                  {currentItems.map((rest, index) => (
+                    <tr key={index}>
+                      {rest.status !== "빈열" ? (
+                        <td>
+                          {rest.rest_name}({rest.report_date})
+                        </td>
+                      ) : (
+                        <td></td>
+                      )}
+                      <td>{rest.report_data}</td>
+                      <td>{rest.reporter_id}</td>
+                      {rest.status !== "빈열" ? (
+                        <td style={{width:"65px"}}>
+                          <p>{rest.status}</p>
+                          {rest.status === "처리대기" && (
+                            <button
+                              className="adminrescancel"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleReservationClick(rest);
+                              }}
+                            >
+                              신고처리
+                            </button>
+                          )}
+                        </td>
+                      ) : (
+                        <td></td>
+                      )}
+                      {rest.admin_id ? (
+                        <td className="cnforbgc">{rest.admin_id}</td>
+                      ) : (
+                        <td className="cnforbgc"></td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              )}
             </table>
           </div>
         </div>
@@ -235,9 +241,9 @@ function AdminRestReport() {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
-      <ReportAcceptModal 
-      reportacceptshow={reportacceptshow}
-      ReportAcceptClose={ReportAcceptClose}
+      <ReportAcceptModal
+        reportacceptshow={reportacceptshow}
+        ReportAcceptClose={ReportAcceptClose}
       />
     </div>
   );

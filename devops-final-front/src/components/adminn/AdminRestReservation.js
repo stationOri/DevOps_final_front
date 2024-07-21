@@ -26,7 +26,9 @@ function AdminRestReservation() {
   // 데이터 불러오기
   const getRestData = async () => {
     try {
-      const response = await fetch('http://localhost:8080/reservations/reservation/admin');
+      const response = await fetch(
+        "http://localhost:8080/reservations/reservation/admin"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -201,40 +203,55 @@ function AdminRestReservation() {
                   <th scope="col" style={{ width: "65px" }}></th>
                 </tr>
               </thead>
-              <tbody>
-                {currentItems.map((rest, index) => (
-                  <tr key={index}>
-                    {rest.status !== "빈열" ? <td>{rest.res_id}</td> : <td></td>}
-                    <td>
-                      {rest.rest_name
-                        ? `${rest.rest_name} (${rest.rest_id})`
-                        : ""}
-                    </td>
-                    <td>{rest.user_id}</td>
-                    <td>{rest.res_num}</td>
-                    <td>{rest.res_datetime}</td>
-                    <td>{rest.req_datetime}</td>
-                    {rest.status !== "빈열" ? (
-                      <td>{rest.status}</td>
-                    ) : (
-                      <td></td>
-                    )}
-                    <td className="cnforbgc" style={{ width: "65px" }}>
-                      {rest.status === "예약승인" && (
-                        <button
-                          className="adminrescancel"
-                          onClick={(e) => {
-                            e.stopPropagation(); // 부모 클릭 방지
-                            handleReservationClick(rest);
-                          }}
-                        >
-                          예약취소
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+              {currentItems.length === 0 ? (
+                <td colSpan={8}
+                style={{
+                  textAlign:"center",
+                  fontSize:"15px"
+                }}
+                >표시할 예약 내역이 없습니다.</td>
+              ) : (
+                <>
+                  {currentItems.map((rest, index) => (
+                    <tbody>
+                      <tr key={index}>
+                        {rest.status !== "빈열" ? (
+                          <td>{rest.res_id}</td>
+                        ) : (
+                          <td></td>
+                        )}
+                        <td>
+                          {rest.rest_name
+                            ? `${rest.rest_name} (${rest.rest_id})`
+                            : ""}
+                        </td>
+                        <td>{rest.user_id}</td>
+                        <td>{rest.res_num}</td>
+                        <td>{rest.res_datetime}</td>
+                        <td>{rest.req_datetime}</td>
+                        {rest.status !== "빈열" ? (
+                          <td>{rest.status}</td>
+                        ) : (
+                          <td></td>
+                        )}
+                        <td className="cnforbgc" style={{ width: "65px" }}>
+                          {rest.status === "예약승인" && (
+                            <button
+                              className="adminrescancel"
+                              onClick={(e) => {
+                                e.stopPropagation(); // 부모 클릭 방지
+                                handleReservationClick(rest);
+                              }}
+                            >
+                              예약취소
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  ))}
+                </>
+              )}
             </table>
           </div>
         </div>

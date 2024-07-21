@@ -21,6 +21,7 @@ function AdminRestAccept() {
   const getRestData = async () => {
     try {
       const response = await fetch('http://localhost:8080/restaurants/beforeAccept');
+      // const response = await fetch('http://localhost:4000/beforeAccept')
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -66,12 +67,23 @@ function AdminRestAccept() {
           </div>
           <hr />
           <div className="restacceptTableWrapper">
+            {currentItems.length === 0 ?
+            <div style={{
+              width:"100%",
+              textAlign:"center",
+              marginTop:"200px"
+            }}>
+              승인을 대기중인 매장이 없습니다.
+            </div> :
+            <>
             {currentItems.map((rest) => (
               <div className="restacceptRowWrapper" key={rest.restId}>
                 <div className="restaccept">{rest.rest_name}</div>
                 <button className="restacceptbutton" rest_id={rest.restId} onClick={() => AcceptShow(rest)}>승인</button>
               </div>
             ))}
+            </>
+          }
           </div>
           <Pagination
             totalItems={readyRest.length}
