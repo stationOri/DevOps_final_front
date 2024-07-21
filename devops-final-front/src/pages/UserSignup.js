@@ -76,7 +76,11 @@ function UserSignup() {
       alert('유효하지 않은 이메일 주소입니다.');
       return;
     }
-
+    
+    if (!email || !userNickname ) {
+      alert('모든 필수 항목을 입력해주세요.');
+      return;
+    }
     const signupData = {
       email,
       userName,
@@ -88,10 +92,13 @@ function UserSignup() {
       .then(response => {
         if(response.data>0){
           console.log('Signup success:', response.data);
-          alert('[회원가입 완료] 로그인 해주세요.');
+          alert('[사용자 회원가입 완료] 로그인 해주세요.');
           navigate("/");
-        }else{
+        }else if(response.data===0){
           alert('[회원가입 실패] 중복된 핸드폰 번호입니다' );
+        }
+        else{
+          alert('[회원가입 실패] 회원가입에 실패하였습니다.' );
         }
        
         // 성공적으로 회원가입이 처리되었을 경우의 처리
