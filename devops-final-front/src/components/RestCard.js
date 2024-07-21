@@ -37,13 +37,15 @@ const RestCard = ({
         <div className="rest-card-info">
           <div className="rest-card-name">{RestName}</div>
           <div className="rest-card-address">{RestAddress}</div>
-          {RestOpentimes.map((opentime, index) => (
-            <div key={index}>
-              <div className="rest-card-opentime">
-                {opentime.restDay}: {opentime.restOpen} - {opentime.restClose}
+          <div className="rest-card-opentimes">
+            {RestOpentimes.map((opentime, index) => (
+              <div key={index}>
+                <div className="rest-card-opentime">
+                  {opentime.restDay}: {opentime.restOpen} - {opentime.restClose}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
           <div className="rest-card-key-heart">
             <div className="rest-card-keyword">
               <span className="rest-keyword">#{keyword1} </span>

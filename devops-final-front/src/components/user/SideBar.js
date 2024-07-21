@@ -14,6 +14,7 @@ import NoticeModal from "../Modal/NoticeModal";
 import { useNoticeModal } from "../Modal/NoticeModalContext";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
+import LoginModal from "../Modal/LoginModal";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -34,25 +35,18 @@ function SideBar({ isExtended, toggleSidebar }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     const storedToken = localStorage.getItem("token");
-    // console.log("storedToken:", storedToken);
     if (storedToken) {
       try {
         const userinfo = jwtDecode(storedToken);
+        if(!isLoggedIn){
+          setUsername("Guest")
+        }else{
+          setUsername(userinfo.userName);
+        }
         setUserId(userinfo.object.loginDto.id);
         setChatType(userinfo.object.loginDto.chatType);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        const userinfo = jwtDecode(storedToken);
-        setUsername(userinfo.userName);
         setIsLoggedIn(true); // 로그인 상태로 설정
         const signinok = query.get("signin");
         if (signinok === "true") {
@@ -63,6 +57,7 @@ function SideBar({ isExtended, toggleSidebar }) {
       }
     } else if (token) {
       try {
+        console.log("새로운 토큰 디코딩 중")
         localStorage.setItem("token", token);
         const userinfo = jwtDecode(token);
         setUsername(userinfo.userName);
@@ -87,7 +82,7 @@ function SideBar({ isExtended, toggleSidebar }) {
   // login modal 함수
   const loginClose = () => setLoginshow(false);
   const loginShow = () => setLoginshow(true);
-
+  
   // 회원가입 modal 함수
   const signinClose = () => setSigninshow(false);
   const signinShow = () => setSigninshow(true);
@@ -109,10 +104,8 @@ function SideBar({ isExtended, toggleSidebar }) {
   return (
     <div className={`sideBarWrapper ${isExtended ? "extended" : "collapsed"}`}>
       <SigninModal signinClose={signinClose} signinshow={signinshow} />
-      <SigninNaverModal
-        naversigninClose={naversigninClose}
-        naversigninshow={naversigninshow}
-      />
+      <SigninNaverModal naversigninClose={naversigninClose} naversigninshow={naversigninshow}/>
+      <LoginModal loginClose={loginClose} loginshow={loginshow} />
 
       <div className="sideBarHeader">
         <div className="iconWrapper">

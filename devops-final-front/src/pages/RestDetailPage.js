@@ -32,6 +32,7 @@ function RestDetailPage() {
   const [isWaitingModalOpen, setIsWaitingModalOpen] = useState(false);
   const [isExtended, setIsExtended] = useState(true);
 
+  const navigate = useNavigate();
   const userId = 3;
 
   const openModal = () => {
@@ -50,8 +51,6 @@ function RestDetailPage() {
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
   };
-
-  const navigate = useNavigate();
 
   const moveFunc = () => {
     navigate("/reservation/" + id);
@@ -128,7 +127,7 @@ function RestDetailPage() {
       setOpentimes(opentimesFormatted);
     } catch (error) {
       console.error("Error fetching opentimes:", error);
-      setError(error.message);
+      setOpentimes([]);
     }
   };
 
@@ -162,12 +161,8 @@ function RestDetailPage() {
     }
   };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (!restaurant) {
-    return <div>No restaurant found</div>;
+  if (loading || !restaurant || error) {
+    return <Loading />;
   }
 
   const paginate = (newPage) => {
@@ -239,9 +234,7 @@ function RestDetailPage() {
                         )}
                         {restaurant.revWait === "B" && (
                           <div className="res-btn" onClick={moveFunc}>
-                            <div className="btn-content">
-                              예약
-                            </div>
+                            <div className="btn-content">예약</div>
                           </div>
                         )}
                         {restaurant.revWait === "C" && (
@@ -250,9 +243,7 @@ function RestDetailPage() {
                               <div className="btn-content">웨이팅</div>
                             </div>
                             <div className="res-btn" onClick={moveFunc}>
-                              <div className="btn-content">
-                                예약
-                              </div>
+                              <div className="btn-content">예약</div>
                             </div>
                           </>
                         )}
@@ -368,9 +359,13 @@ function RestDetailPage() {
                         <img className="review-pagination-img" src={leftImg} />
                       </div>
                       <div className="rest-review-container">
-                        {currentReviews.map((review) => (
-                          <ReviewCard key={review.id} review={review} />
-                        ))}
+                        {currentReviews.length === 0 ? (
+                          <div className="rest-no-review">리뷰가 없습니다</div>
+                        ) : (
+                          currentReviews.map((review) => (
+                            <ReviewCard key={review.id} review={review} />
+                          ))
+                        )}
                       </div>
                       <div
                         className="pagination-btn"

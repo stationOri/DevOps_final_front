@@ -4,6 +4,7 @@ import File from "../components/File"
 import HeaderOrange from "../components/HeaderOrange"
 import {jwtDecode} from "jwt-decode";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import React, { useState,useEffect } from 'react';
 
 function RestaurantSignin() {
@@ -14,6 +15,12 @@ function RestaurantSignin() {
   const [restData,setRestData]=useState(null);
   const [restImage,setRestImage]=useState(null);
   const navigate = useNavigate(); 
+
+  function onChangeRestData(value) {
+   
+    const onlyNumber = value.replace(/[^0-9]/g, '')
+    setRestData(onlyNumber)
+  }
   useEffect(() => {
     // 토큰을 localStorage에서 가져오기
     const storedToken = localStorage.getItem('token');
@@ -32,6 +39,49 @@ function RestaurantSignin() {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
   };
+  const handleSignup = () => {
+    if (!validateEmail(email)) {
+      alert('유효하지 않은 이메일 주소입니다.');
+      return;
+    }
+    // if(restData.length()!=10){
+    //   alert('사업자등록번호는 10자리 입니다.')
+    // }
+    if (!restName2 || !restData) {
+      alert('모든 필수 항목을 입력해주세요.');
+      return;
+    }
+
+    const signupData = {
+      email,
+      restName,
+      restPhone,
+      restName2,
+      restData,
+      restImage
+    };
+    
+    axios.post('http://localhost:8080/register/restaurant', signupData)
+    .then(response => {
+      if(response.data>0){
+        console.log('Signup success:', response.data);
+        alert('[식당 회원가입 완료] 로그인 해주세요.');
+        navigate("/");
+      }else if(response.data===0){
+        alert('[회원가입 실패] 중복된 핸드폰 번호입니다' );
+      }
+      else{
+        alert('[회원가입 실패] 회원가입에 실패하였습니다.' );
+      }
+   
+    // 성공적으로 회원가입이 처리되었을 경우의 처리
+  })
+  .catch(error => {
+    console.error('Signup failed:', error);
+  });
+
+
+};
 
   
   return (
@@ -142,6 +192,8 @@ function RestaurantSignin() {
               type="text"
               className="input2"
               placeholder="매장 이름"
+              maxLength={100}
+              onChange={(e) => setRestName2(e.target.value)}
             />
           </div>
           <div className="wrapper2"> 
@@ -151,7 +203,12 @@ function RestaurantSignin() {
             <input
               type="text"
               className="input2"
-              placeholder="숫자만 입력해주세요"
+              placeholder="숫자만 입력가능합니다.(10자리)"
+              maxLength={10}
+              minLength={10}
+              value={restData}
+              onChange={(e)=>onChangeRestData(e.target.value)}
+         
             />
           </div>
         </div>
@@ -167,7 +224,7 @@ function RestaurantSignin() {
         </div>
       </div>
       <div className="signinFooter">
-        <button className="signinSubmitBtn">
+        <button className="signinSubmitBtn" onClick={handleSignup}>
           기업 회원가입
         </button>
       </div>

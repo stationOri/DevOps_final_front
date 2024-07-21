@@ -273,6 +273,7 @@
   margin-top: 15px;
   margin-bottom: 50px;
   min-width: 1300px;
+  min-height: 525px;
 }
 
 .review-pagination-img{
@@ -280,4 +281,12 @@
   height: 30px;
   object-fit: cover;
   display: block;
+}
+
+.rest-no-review{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+  font-weight: lighter;
 }
