@@ -9,6 +9,7 @@ import UserSignup from "./pages/UserSignup";
 import RestDetailPage from "./pages/RestDetailPage";
 import RestMain from "./pages/RestMain";
 import AdminMain from "./pages/AdminMain";
+import UserMain from "./pages/UserMain";
 import Restaurants from "./pages/Restaurants";
 import Reservation from "./pages/Resveration";
 import Chat from "./pages/Chat"
@@ -25,7 +26,8 @@ function App() {
     <NoticeModalProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Main />}></Route>
+        {/* <Route path="/" element={<Main />}></Route> */}
+        <Route path="/" element={<UserMain />}></Route>
         <Route path="/restmain" element={<RestMain />}></Route>
         <Route path="/adminmain" element={<AdminMain />}></Route>
         <Route path="/mypage/:id" element={<Mypage />}></Route>

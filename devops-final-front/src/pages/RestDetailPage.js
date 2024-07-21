@@ -33,7 +33,7 @@ function RestDetailPage() {
   const [isExtended, setIsExtended] = useState(true);
 
   const navigate = useNavigate();
-  const userId = 3;
+  const userId = 1197;
 
   const openModal = () => {
     setIsModalOpen(true);
