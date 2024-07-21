@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import "../css/components/RestCard.css";
 
@@ -15,13 +14,8 @@ const RestCard = ({
   keyword3,
   isFavorite,
   toggleFavorite,
+  onCardClick,
 }) => {
-  const navigate = useNavigate();
-
-  const moveFunc = () => {
-    navigate(`/restaurants/${restId}`);
-  };
-
   const handleFavorite = (e) => {
     e.stopPropagation();
     toggleFavorite(restId, !isFavorite);
@@ -30,7 +24,7 @@ const RestCard = ({
 
   return (
     <div className="rest-card-container">
-      <div className="rest-card" onClick={moveFunc}>
+      <div className="rest-card" onClick={onCardClick}>
         <div className="rest-card-img-box">
           <img className="rest-card-img" src={img} alt="restaurantImg" />
         </div>
