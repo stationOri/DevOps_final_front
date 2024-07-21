@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../css/pages/Restaurants.css";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBar from "../components/user/SideBar";
@@ -64,7 +64,7 @@ function Restaurants() {
         setPage((prevPage) => prevPage + 1);
         fetchRestaurants(page);
       }
-    }, 1000);
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [page, hasMore]);
@@ -74,16 +74,6 @@ function Restaurants() {
       fetchRestaurants(page);
     }
   }, [page]);
-
-  useEffect(() => {
-    restaurants.forEach((restaurant) => {
-      fetchOpentimes(restaurant.restId);
-    });
-  }, [restaurants]);
-
-  useEffect(() => {
-    filterRestaurants();
-  }, [locationFilter, keywordFilters]);
 
   const fetchInitialData = async () => {
     try {
@@ -136,7 +126,7 @@ function Restaurants() {
     }
   };
 
-  const fetchOpentimes = async (restId) => {
+  const fetchOpentimes = useCallback(async (restId) => {
     try {
       const response = await fetch(`http://localhost:8080/opentime/${restId}`);
       if (!response.ok) {
@@ -156,7 +146,21 @@ function Restaurants() {
     } catch (error) {
       console.error("Error fetching opentimes:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    restaurants.forEach((restaurant) => {
+      if (
+        !opentimes.some((opentime) => opentime.restId === restaurant.restId)
+      ) {
+        fetchOpentimes(restaurant.restId);
+      }
+    });
+  }, [restaurants, fetchOpentimes, opentimes]);
+
+  useEffect(() => {
+    filterRestaurants();
+  }, [locationFilter, keywordFilters]);
 
   const fetchFavorites = async () => {
     try {
