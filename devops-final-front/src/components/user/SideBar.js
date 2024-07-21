@@ -20,19 +20,24 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-function SideBar({ isExtended, toggleSidebar }) {
+function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
+  const { openNoticeModal } = useNoticeModal();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [loginshow, setLoginshow] = useState(false);
   const [signinshow, setSigninshow] = useState(false);
   const [naversigninshow, setNaverSigninshow] = useState(false);
-  const [userId, setUserId] = useState("");
   const [chatType, setChatType] = useState("");
-  const { openNoticeModal } = useNoticeModal();
   const query = useQuery();
   const token = query.get("token");
 
   const navigate = useNavigate();
+
+  const handleSidebarTextClick = (text) => {
+    if (onMenuClick) {
+      onMenuClick(text);
+    }
+  };
 
   useEffect(() => {
     const signinok = query.get("signin");
@@ -42,6 +47,7 @@ function SideBar({ isExtended, toggleSidebar }) {
             const userinfo = jwtDecode(token);
             setUsername("Guest");
             setSigninshow(true);
+            setUserId(userinfo.object.loginDto.id);
             } catch (error) {
               console.error("Invalid token", error);
             }
@@ -72,7 +78,7 @@ function SideBar({ isExtended, toggleSidebar }) {
               console.error("Invalid token", error);
             }
           }
-  }, [token]);
+  }, [token, setUserId]);
 
   const handleEditNoticeModal = (contents, rest_id) => {
     openNoticeModal({
@@ -136,20 +142,20 @@ function SideBar({ isExtended, toggleSidebar }) {
         <img src={ExtendBtn} alt="" className="extendbtnImg" />
       </button>
       <div className="sidebarContent">
-        <div className="sidebarRow" onClick={() => navigate("/")}>
+        <div className="sidebarRow">
           <div className={`ctgText ${isExtended ? "" : "hidden"}`}>MAIN</div>
         </div>
-        <div className="sidebarRow" onClick={() => navigate("/")}>
+        <div className="sidebarRow" onClick={() => handleSidebarTextClick("홈")}>
           <img src={Home} alt="" className="sidebarIcon" />
           <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>홈</div>
         </div>
-        <div className="sidebarRow" onClick={() => navigate("/restaurants")}>
+        <div className="sidebarRow" onClick={() => handleSidebarTextClick("식당 조회")}>
           <img src={Restaurant} alt="" className="sidebarIcon rest" />
           <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
             식당 조회
           </div>
         </div>
-        <div className="sidebarRow">
+        <div className="sidebarRow" onClick={() => handleSidebarTextClick("1:1 문의")}>
           <img src={Chat} alt="" className="sidebarIcon" />
           <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
             1:1 문의
@@ -164,7 +170,7 @@ function SideBar({ isExtended, toggleSidebar }) {
             <>
               <div
                 className="sidebarRow"
-                onClick={() => navigate(`/mypage/${userId}`)}
+                onClick={() => handleSidebarTextClick("마이페이지")}
               >
                 <img src={Login} alt="" className="sidebarIcon" />
                 <div className={`sidebarText ${isExtended ? "" : "hidden"}`}>
