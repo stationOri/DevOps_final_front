@@ -10,7 +10,8 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 function Restaurants() {
   const [isExtended, setIsExtended] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [additionalLoading, setAdditionalLoading] = useState(false);
   const [restaurants, setRestaurants] = useState([]);
   const [opentimes, setOpentimes] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -19,9 +20,12 @@ function Restaurants() {
   const [locationFilter, setLocationFilter] = useState("");
   const [keywordFilters, setKeywordFilters] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
-
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const restaurantsPerPage = 6;
+
+  const userId = 3;
 
   const toggleSidebar = () => {
     setIsExtended(!isExtended);
@@ -50,13 +54,26 @@ function Restaurants() {
     }
   };
 
-  const userId = 3;
+  useEffect(() => {
+    fetchInitialData().finally(() => setInitialLoading(false));
+  }, []);
 
   useEffect(() => {
-    Promise.all([fetchRestaurants(), fetchFavorites(), fetchKeywords()])
-      .then(() => setLoading(false))
-      .catch((error) => console.error("Error fetching initial data:", error));
-  }, []);
+    const interval = setInterval(() => {
+      if (hasMore) {
+        setPage((prevPage) => prevPage + 1);
+        fetchRestaurants(page);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [page, hasMore]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchRestaurants(page);
+    }
+  }, [page]);
 
   useEffect(() => {
     restaurants.forEach((restaurant) => {
@@ -68,17 +85,54 @@ function Restaurants() {
     filterRestaurants();
   }, [locationFilter, keywordFilters]);
 
-  const fetchRestaurants = async () => {
+  const fetchInitialData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/restaurants`);
+      await Promise.all([
+        fetchRestaurants(1, 10),
+        fetchFavorites(),
+        fetchKeywords(),
+      ]);
+      setInitialLoading(false);
+    } catch (error) {
+      console.error("Error fetching initial data:", error);
+    } finally {
+      setInitialLoading(false);
+    }
+  };
+
+  const fetchRestaurants = async (page) => {
+    if (page === 1) {
+      setInitialLoading(true);
+    } else {
+      setAdditionalLoading(true);
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/restaurants/page/${page}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch restaurants");
       }
       const data = await response.json();
-      setRestaurants(data);
-      setFilteredRestaurants(data);
+
+      if (data.length === 0) {
+        setHasMore(false);
+      } else {
+        setRestaurants((prevRestaurants) => [...prevRestaurants, ...data]);
+        setFilteredRestaurants((prevRestaurants) => [
+          ...prevRestaurants,
+          ...data,
+        ]);
+      }
     } catch (error) {
       console.error("Error fetching restaurants:", error);
+    } finally {
+      if (page === 1) {
+        setInitialLoading(false);
+      } else {
+        setAdditionalLoading(false);
+      }
     }
   };
 
@@ -254,7 +308,7 @@ function Restaurants() {
 
   return (
     <div>
-      {loading ? (
+      {initialLoading ? (
         <Loading />
       ) : (
         <div className="usermainWrapper">
