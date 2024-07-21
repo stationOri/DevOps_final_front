@@ -35,41 +35,43 @@ function SideBar({ isExtended, toggleSidebar }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        const userinfo = jwtDecode(storedToken);
-        if(!isLoggedIn){
-          setUsername("Guest")
-        }else{
-          setUsername(userinfo.userName);
-        }
-        setUserId(userinfo.object.loginDto.id);
-        setChatType(userinfo.object.loginDto.chatType);
-        setIsLoggedIn(true); // 로그인 상태로 설정
-        const signinok = query.get("signin");
-        if (signinok === "true") {
-          setSigninshow(true);
-        }
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    } else if (token) {
-      try {
-        console.log("새로운 토큰 디코딩 중")
-        localStorage.setItem("token", token);
-        const userinfo = jwtDecode(token);
-        setUsername(userinfo.userName);
-        setIsLoggedIn(true); // 로그인 상태로 설정
-        const signinok = query.get("signin");
-        if (signinok === "true") {
-          setSigninshow(true);
-        }
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
+    const signinok = query.get("signin");
+      if (signinok === "true") {
+            try{
+              localStorage.setItem("token", token);
+            const userinfo = jwtDecode(token);
+            setUsername("Guest");
+            setSigninshow(true);
+            } catch (error) {
+              console.error("Invalid token", error);
+            }
+          }
+      else{
+            try {
+              const storedToken = localStorage.getItem("token");
+              let userinfo=null;
+              if(storedToken){
+                if(token){
+                  localStorage.setItem("token", token);
+                }
+                userinfo = jwtDecode(token);
+              }else{
+                localStorage.setItem("token", token);
+                userinfo = jwtDecode(token);
+              }
+              if(userinfo.object.loginDto){
+                setUsername(userinfo.userName);
+                setUserId(userinfo.object.loginDto.id);
+                setChatType(userinfo.object.loginDto.chatType);
+                setIsLoggedIn(true); // 로그인 상태로 설정
+              }else{
+                setUsername("Guest");
+                setIsLoggedIn(false);
+              }
+            } catch (error) {
+              console.error("Invalid token", error);
+            }
+          }
   }, [token]);
 
   const handleEditNoticeModal = (contents, rest_id) => {
@@ -97,8 +99,13 @@ function SideBar({ isExtended, toggleSidebar }) {
   };
 
   const handleLogout = () => {
+    const currentUrl = new URL(window.location.href); 
+    currentUrl.searchParams.delete('token');
+    window.history.replaceState({}, document.title, currentUrl.toString());
     setIsLoggedIn(false);
     setUsername("Guest");
+    navigate('/');
+    localStorage.removeItem('token');
   };
 
   return (
