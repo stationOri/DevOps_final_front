@@ -11,11 +11,10 @@ import leftImg from "../../assets/images/detail/left.png";
 import locationImg from "../../assets/images/detail/location.png";
 import opentimeImg from "../../assets/images/detail/opentime.png";
 import phoneImg from "../../assets/images/detail/phone.png";
-import emptyImg from "../../assets/images/detail/empty.png";
 import quotesImg1 from "../../assets/images/detail/quotes.png";
 import quotesImg2 from "../../assets/images/detail/quotes2.png";
 
-function RestaurantInfo() {
+function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   const [restaurant, setRestaurant] = useState(null);
   const [opentimes, setOpentimes] = useState([]);
   const [menus, setMenus] = useState([]);
@@ -49,6 +48,10 @@ function RestaurantInfo() {
       default:
         return day;
     }
+  };
+
+  const handleMenuEditClick = () => {
+    onMenuClick('메뉴 관리');
   };
 
   useEffect(() => {
@@ -161,7 +164,7 @@ function RestaurantInfo() {
         <div className="rest-name-box">
           <div className="rest-name">{restaurant.restName}</div>
           <div className="rest-mod-btn-box">
-            <div className="mod-btn">
+            <div className="mod-btn" onClick={() => onInfoEditClick(id)}>
               <div className="mod-btn-content">식당 정보 수정</div>
             </div>
           </div>
@@ -200,7 +203,7 @@ function RestaurantInfo() {
         <div className="rest-mod-btn-wrap">
           <div className="rest-title">Menu</div>
           <div className="rest-mod-btn-box">
-            <div className="mod-btn">
+            <div className="mod-btn" onClick={handleMenuEditClick}>
               <div className="mod-btn-content">메뉴 수정</div>
             </div>
           </div>
