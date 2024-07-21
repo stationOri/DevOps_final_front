@@ -1,35 +1,42 @@
+import React, { useState, useEffect } from "react";
 import Now from "../../assets/images/Restaurant/now.png";
 import Deposit from "../../assets/images/Restaurant/deposit.png";
 import Waiting from "../../assets/images/Restaurant/waiting.png";
+import Phone from "../../assets/images/Restaurant/phone.png";
+import Human from "../../assets/images/Restaurant/human.png";
+import Table from "../../assets/images/Restaurant/table.png";
 import "../../css/components/restaurant/Reservation.css";
-import React, { useState, useEffect } from "react";
 import Loading from "../Loading";
 import Cal from "../../assets/images/modal/cal.png";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // DatePicker CSS 파일을 임포트
+import "react-datepicker/dist/react-datepicker.css";
+import SendTalkModal from "../Modal/SendTalkModal";
 
 function Reservation() {
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
   const [restId, setRestId] = useState(2);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [tableDates, setTableDates] = useState({}); // 날짜 상태 관리
+  const [tableDates, setTableDates] = useState({});
   const [rev1, setRev1] = useState([]);
   const [rev2, setRev2] = useState([]);
   const [rev3, setRev3] = useState([]);
   const [rev4, setRev4] = useState([]);
   const [todayinfo, setTodayInfo] = useState([]);
   const [todaynum, setTodayNum] = useState(0);
+  const [talkshow, setTalkShow] = useState(false);
 
-  // 현재 날짜의 작년 1월 1일 계산
+  const TalkClose = () => setTalkShow(false);
+  const TalkShow = () => setTalkShow(true);
+
   const getLastYearStartDate = () => {
     const now = new Date();
     return new Date(now.getFullYear() - 1, 0, 1);
   };
 
-  const minDate = getLastYearStartDate(); // minDate 값 설정
+  const minDate = getLastYearStartDate();
+  const LaterDate = new Date(new Date().setDate(new Date().getDate() + 30));
 
-  // 식당 예약 상태 확인
   const getWait = async () => {
     try {
       const response = await fetch(
@@ -47,7 +54,10 @@ function Reservation() {
     }
   };
 
-  // 식당 열 가져오기
+  const sortByDateTime = (data) => {
+    return data.sort((a, b) => new Date(a.res_datetime) - new Date(b.res_datetime));
+  };
+  
   const getRev = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restRev`);
@@ -55,13 +65,13 @@ function Reservation() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log(json);
-      setRev1(json);
+      const sortedData = sortByDateTime(json);
+      setRev1(sortedData);
     } catch (error) {
-      console.error("Error revWait status:", error);
+      console.error("Error fetching rev1:", error);
     }
   };
-
+  
   const getRev2 = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restRev2`);
@@ -69,13 +79,13 @@ function Reservation() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log(json);
-      setRev2(json);
+      const sortedData = sortByDateTime(json);
+      setRev2(sortedData);
     } catch (error) {
-      console.error("Error revWait status:", error);
+      console.error("Error fetching rev2:", error);
     }
   };
-
+  
   const getRev3 = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restRev3`);
@@ -83,13 +93,13 @@ function Reservation() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log(json);
-      setRev3(json);
+      const sortedData = sortByDateTime(json);
+      setRev3(sortedData);
     } catch (error) {
-      console.error("Error revWait status:", error);
+      console.error("Error fetching rev3:", error);
     }
   };
-
+  
   const getRev4 = async () => {
     try {
       const response = await fetch(`http://localhost:4000/restRev4`);
@@ -97,14 +107,14 @@ function Reservation() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log(json);
-      setRev4(json);
+      const sortedData = sortByDateTime(json);
+      setRev4(sortedData);
     } catch (error) {
-      console.error("Error revWait status:", error);
+      console.error("Error fetching rev4:", error);
     }
   };
+  
 
-  //오늘 예약건 갯수
   const getToday = async () => {
     try {
       const response = await fetch(`http://localhost:4000/today`);
@@ -113,7 +123,6 @@ function Reservation() {
       }
       const json = await response.json();
 
-      // 시간을 기준으로 예약 건수를 세는 객체
       const timeCounts = json.reduce((acc, reservation) => {
         const hour = new Date(reservation.res_datetime).getHours();
         const timeSlot = `${hour}:00`;
@@ -125,11 +134,106 @@ function Reservation() {
       }, {});
 
       setTodayNum(json.length);
-      setTodayInfo(timeCounts); // 시간별 건수를 저장
+      setTodayInfo(timeCounts);
     } catch (error) {
-      console.error("Error revWait status:", error);
+      console.error("Error fetching today's reservations:", error);
     }
   };
+
+  const renderReservations = (reservations, row) => {
+    const getButtonText = (status) => {
+      switch (status) {
+        case "RESERVATION_READY":
+          return <button className="btninRestRev">승인</button>;
+        case "RESERVATION_ACCEPTED":
+          return <button className="btninRestRev">확인</button>;
+        case "RESERVATION_REJECTED":
+          return <div>거절됨</div>;
+        case "RESERVATION_CANCELED":
+          return <div>취소됨</div>;
+        case "VISITED":
+          return <div>방문</div>;
+        case "NOSHOW":
+          return <div>노쇼</div>;
+        default:
+          return <div>오류</div>;
+      }
+    };
+  
+    let previousTime = null;  // 이전 예약의 시간 저장 변수
+  
+    return reservations.map((rev, index) => {
+      const date = new Date(rev.res_datetime);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const period = hours >= 12 ? "PM" : "AM";
+      const formattedHours = hours % 12 || 12;
+      const formattedMinutes = minutes.toString().padStart(2, "0");
+      const isLastElement = index === reservations.length - 1;
+  
+      const currentTime = `${formattedHours}:${formattedMinutes} ${period}`;
+  
+      // 시간이 달라질 때 새로운 줄 클래스를 추가
+      const isNewLine = previousTime !== currentTime;
+  
+      const timeDisplay = isNewLine ? (
+        <>
+          <div>{formattedHours}:{formattedMinutes}</div>
+          <div style={{ fontSize: "13px" }}>{period}</div>
+        </>
+      ) : null;
+  
+      previousTime = currentTime;
+  
+      let rowClass = '';
+      switch (row) {
+        case 1:
+          rowClass = 'firstElement';
+          break;
+        case 2:
+          rowClass = 'secondElement';
+          break;
+        case 3:
+          rowClass = 'thirdElement';
+          break;
+        case 4:
+          rowClass = 'fourthElement';
+          break;
+        default:
+          rowClass = '';
+      }
+  
+      return (
+        <div className={`reservationBox ${rowClass} ${isNewLine ? 'newLine' : 'notNewLine'} ${isLastElement ? 'lastElement' : ''}`} key={rev.res_id}>
+          <div className="timebox">
+            {timeDisplay}
+          </div>
+          <div className="reservationDetail">
+            <div className="reservationdetailed">
+              <div>{rev.user_name}</div>
+              <div className="boxforicon">
+                <div className="innericonbox">
+                  <img src={Human} alt="" className="iconforrev humanicon" />
+                  <div className="cnfornumber">{rev.res_num}</div>
+                </div>
+                <div className="innericonbox">
+                  <img src={Table} alt="" className="iconforrev" />
+                  <div className="cnfornumber">1</div>
+                </div>
+              </div>
+            </div>
+            <div className="reservationforbtn">
+              {getButtonText(rev.status)}
+            </div>
+          </div>
+        </div>
+      );
+    });
+  };
+
+  
+  
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,9 +251,7 @@ function Reservation() {
     fetchData();
   }, [restId]);
 
-  // 찾기 버튼 클릭 핸들러
   const handleFindClick = () => {
-    // 선택된 날짜를 기준으로 테이블의 날짜를 계산하여 업데이트
     setTableDates({
       today: selectedDate,
       day1: addDays(selectedDate, 1),
@@ -171,7 +273,6 @@ function Reservation() {
     return newDate;
   };
 
-  // 초기 테이블 날짜 설정
   useEffect(() => {
     setTableDates({
       today: new Date(),
@@ -184,8 +285,6 @@ function Reservation() {
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
-
-  const LaterDate = new Date(new Date().setDate(new Date().getDate() + 30));
 
   return (
     <div className="WrapperWithoutBorder">
@@ -244,24 +343,31 @@ function Reservation() {
               <img src={Waiting} alt="" className="rest-text-logo" />
               <p className="rest-bold-text">Booking Status</p>
             </div>
-            <div className="dateselectWrapper">
-              <div className="dateborderWrapper">
-                <img src={Cal} alt="" className="calphoto" />
-                <DatePicker
-                  selected={selectedDate}
-                  onChange={handleDateChange}
-                  minDate={minDate}
-                  maxDate={LaterDate}
-                  className="picker insmallrev"
-                  placeholderText="DATE"
-                  dateFormat="yyyy-MM-dd"
-                />
+            <div className="forspacingInrev">
+              <div className="dateselectWrapper">
+                <div className="dateborderWrapper">
+                  <img src={Cal} alt="" className="calphoto" />
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                    minDate={minDate}
+                    maxDate={LaterDate}
+                    className="picker insmallrev"
+                    placeholderText="DATE"
+                    dateFormat="yyyy-MM-dd"
+                  />
+                </div>
+                <button className="findbtn" onClick={handleFindClick}>
+                  찾기
+                </button>
               </div>
-              <button className="findbtn" onClick={handleFindClick}>
-                찾기
-              </button>
+              <div className="phoneWrapper">
+                <img src={Phone} alt="" className="phoneicon" />
+                <div className="phoneText" onClick={TalkShow}>
+                  알림톡 전송하기
+                </div>
+              </div>
             </div>
-
             {rev ? (
               <div className="bookingtableno">
                 <div className="rowWrapper">
@@ -269,7 +375,7 @@ function Reservation() {
                     {formatDate(tableDates.today)}
                   </div>
                   <div className="tableBorder forRow">
-                    {formatDate(tableDates.day2)} (D+2)
+                    {formatDate(tableDates.day1)} (D+1)
                   </div>
                   <div className="tableBorder forRow">
                     {formatDate(tableDates.day2)} (D+2)
@@ -290,30 +396,39 @@ function Reservation() {
             ) : (
               <div className="bookingtable">
                 <div className="colWarpper">
-                  <div className="tableBorder">
+                  <div className="tableBorderyes">
                     {formatDate(tableDates.today)}
                   </div>
+                  <div>{renderReservations(rev1, 1)}</div>
                 </div>
                 <div className="colWarpper">
-                  <div className="tableBorder">
+                  <div className="tableBorderyes">
                     {formatDate(tableDates.day1)} (D+1)
                   </div>
+                  <div>{renderReservations(rev2,2)}</div>
                 </div>
                 <div className="colWarpper">
-                  <div className="tableBorder">
+                  <div className="tableBorderyes">
                     {formatDate(tableDates.day2)} (D+2)
                   </div>
+                  <div>{renderReservations(rev3,3)}</div>
                 </div>
                 <div className="colWarpper">
-                  <div className="tableBorderend">
+                  <div className="tableBorderyesend">
                     {formatDate(tableDates.day3)} (D+3)
                   </div>
+                  <div>{renderReservations(rev4,4)}</div>
                 </div>
               </div>
             )}
           </div>
         </>
       )}
+      <SendTalkModal
+        TalkClose={TalkClose}
+        talkshow={talkshow}
+        restId={restId}
+      />
     </div>
   );
 }
