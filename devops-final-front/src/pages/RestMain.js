@@ -4,6 +4,7 @@ import SideBarRest from '../components/restaurant/SideBarRest';
 import MenuManagement from "../components/restaurant/MenuManagement"
 import Reservation from '../components/restaurant/Reservation';
 import WaitingManagement from '../components/restaurant/WaitingManagement';
+import RestaurantInfo from '../components/restaurant/RestaurantInfo';
 import "../css/pages/RestMain.css";
 
 function RestMain() {
@@ -44,10 +45,6 @@ function RestMain() {
       </div>
     </div>
   );
-}
-
-function RestaurantInfo() {
-  return <div>식당 정보 페이지입니다.</div>;
 }
 
 function ContactUs() {
