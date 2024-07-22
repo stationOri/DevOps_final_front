@@ -3,7 +3,7 @@ import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/SigninModal.css";
 import "../../css/components/Modal/NicknameEditModal.css";
 
-function SigninModal({ EditClose, editshow }) {
+function NicknameEditModal({ EditClose, editshow }) {
   const [nickname, setNickname] = useState("");
 
   const handleEditActivate = () => {
@@ -54,4 +54,4 @@ function SigninModal({ EditClose, editshow }) {
   );
 }
 
-export default SigninModal;
+export default NicknameEditModal;
