@@ -3,6 +3,7 @@ import AdminUserSideBar from "./AdminUserSideBar";
 import "../../css/components/adminn/AdminUserControl.css";
 import AdminUserList from "../adminn/AdminUserList"
 import AdminUserReport from "../adminn/AdminUserReport"
+import UserBlacklist from "./UserBlacklist";
 
 function AdminUserControl() {
   const [activeButton, setActiveButton] = useState("유저 목록");
@@ -14,7 +15,7 @@ function AdminUserControl() {
       case "신고 내역":
         return <AdminUserReport />;
       case "블랙리스트":
-        return <div>블랙리스트 컴포넌트</div>;
+        return <UserBlacklist />;
       default:
         return <AdminUserList />;
     }
