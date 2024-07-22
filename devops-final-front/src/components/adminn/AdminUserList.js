@@ -18,14 +18,14 @@ function AdminUserList() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/adminuser");
+      const response = await fetch("http://localhost:8080/user");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
       console.log("Fetched data:", json);
       setReadyRest(json || []);
-      setFilteredItems([]);
+      setFilteredItems(json || []); // 데이터를 필터링하기 전에 설정합니다.
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -62,8 +62,8 @@ function AdminUserList() {
 
     filtered = filtered.filter((item) => {
       if (
-        (statusFilters.활동회원 && item.is_banned === false) ||
-        (statusFilters.탈퇴회원 && item.is_banned === true)
+        (statusFilters.활동회원 && !item.banned) ||
+        (statusFilters.탈퇴회원 && item.banned)
       ) {
         return true;
       }
@@ -71,7 +71,7 @@ function AdminUserList() {
     });
 
     filtered = filtered.filter((item) =>
-      item.user_id.toString().includes(searchTerm)
+      item.userId.toString().includes(searchTerm)
     );
 
     setFilteredItems(filtered);
@@ -85,13 +85,13 @@ function AdminUserList() {
       const itemsToAdd = itemsPerPage - remainder;
       for (let i = 0; i < itemsToAdd; i++) {
         filledArray.push({
-          user_id: filledArray.length + 1,
-          user_name: "빈열",
-          user_nickname: "",
-          user_phone: "",
-          user_email: "",
-          is_blocked: false,
-          is_banned: false,
+          userId: filledArray.length + 1,
+          userName: "빈열",
+          userNickname: "",
+          userPhone: "",
+          userEmail: "",
+          blocked: false,
+          banned: false,
         });
       }
     }
@@ -170,25 +170,25 @@ function AdminUserList() {
               <tbody>
                 {currentItems.map((user, index) => (
                   <tr key={index}>
-                    {user.user_name === "빈열" ? (
+                    {user.userName === "빈열" ? (
                       <td></td>
                     ) : (
-                      <td>{user.user_id}</td>
+                      <td>{user.userId}</td>
                     )}
-                    {user.user_name === "빈열" ? (
+                    {user.userName === "빈열" ? (
                       <td></td>
                     ) : (
-                      <td>{user.user_name}</td>
+                      <td>{user.userName}</td>
                     )}
-                    <td>{user.user_phone}</td>
-                    <td>{user.user_email}</td>
-                    {user.user_name !== "빈열" ? (
-                      <td>{user.is_blocked ? "O" : "X"}</td>
+                    <td>{user.userPhone}</td>
+                    <td>{user.userEmail}</td>
+                    {user.userName !== "빈열" ? (
+                      <td>{user.blocked ? "O" : "X"}</td>
                     ) : (
                       <td></td>
                     )}
-                    {user.user_name !== "빈열" ? (
-                      <td>{user.is_banned ? "O" : "X"}</td>
+                    {user.userName !== "빈열" ? (
+                      <td>{user.banned ? "O" : "X"}</td>
                     ) : (
                       <td></td>
                     )}
