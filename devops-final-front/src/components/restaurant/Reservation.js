@@ -173,7 +173,6 @@ function Reservation() {
   
       const currentTime = `${formattedHours}:${formattedMinutes} ${period}`;
   
-      // 시간이 달라질 때 새로운 줄 클래스를 추가
       const isNewLine = previousTime !== currentTime;
   
       const timeDisplay = isNewLine ? (
@@ -230,10 +229,6 @@ function Reservation() {
       );
     });
   };
-
-  
-  
-  
 
   useEffect(() => {
     const fetchData = async () => {

@@ -222,7 +222,7 @@
 
 .reservationBox {
   display: flex;
-  width: 99%;
+  width:99%;
   height: 60px;
 }
 
@@ -234,11 +234,13 @@
 .secondElement, .thirdElement {
   border-right: 2px solid #dddddd;
   border-left: 2px solid #dddddd;
+  margin: -1px;
 }
 
 .fourthElement {
   border-left: 2px solid #dddddd;
   border-right: 2px solid #fff;
+  margin: -1px;
 }
 
 .timebox {
