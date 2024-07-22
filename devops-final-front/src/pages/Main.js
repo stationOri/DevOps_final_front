@@ -86,7 +86,7 @@ function Main() {
           <div className="maincontentsWrapper">
             <div className={`behindsidebar ${isExtended ? "" : "collapsed"}`} />
             <div
-              className={`innercontentsWrapper ${
+              className={`innercontentsWrapper  ${
                 isExtended ? "" : "collapsed"
               }`}
             >

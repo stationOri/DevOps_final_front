@@ -68,7 +68,7 @@ const Main = ({ userId }) => {
   }, []);
 
   return (
-    <div>
+    <div style={{width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
       <div className="carouselContainer">
         <Carousel bannerFoods={bannerFoods} />
       </div>
