@@ -21,6 +21,12 @@
   justify-content: space-between;
 }
 
+.zeroacceptrow {
+  margin-bottom: 10px;
+}
+
+
+
 .infoModalcheck {
   border: none;
   color: white;

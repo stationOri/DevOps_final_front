@@ -2,6 +2,7 @@ import "../../css/components/adminn/AdminRestReservation.css";
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination";
 import Search from "../../assets/images/sidebar/search.png";
+import UserInfoModal from "../Modal/UserInfoModal";
 
 function AdminUserList() {
   const [readyRest, setReadyRest] = useState([]);
@@ -10,11 +11,21 @@ function AdminUserList() {
   const itemsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
+  const [infoshow, setInfoShow] = useState(false);
+  const [selectedRest, setSelectedRest] = useState(null); // 선택된 매장 정보
   const [statusFilters, setStatusFilters] = useState({
     활동회원: true,
     탈퇴회원: false,
   });
-  const [selectedReservation, setSelectedReservation] = useState(null);
+
+  const openInfoModal = (user) => {
+    setSelectedRest(user);
+    setInfoShow(true);
+  };
+
+  const closeInfoModal = () => {
+    setInfoShow(false);
+  };
 
   const getRestData = async () => {
     try {
@@ -98,10 +109,6 @@ function AdminUserList() {
     return filledArray;
   };
 
-  const handleReservationClick = (reservation) => {
-    setSelectedReservation(reservation);
-  };
-
   const filledItems = fillEmptyItems(filteredItems, itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -178,7 +185,7 @@ function AdminUserList() {
                     {user.userName === "빈열" ? (
                       <td></td>
                     ) : (
-                      <td>{user.userName}</td>
+                      <td onClick={() => openInfoModal(user)} style={{cursor:"pointer"}}>{user.userName}</td>
                     )}
                     <td>{user.userPhone}</td>
                     <td>{user.userEmail}</td>
@@ -205,6 +212,13 @@ function AdminUserList() {
         currentPage={currentPage}
         onPageChange={handlePageChange}
       />
+      {infoshow && selectedRest && (
+        <UserInfoModal
+          InfoClose={closeInfoModal}
+          infoshow={infoshow}
+          user={selectedRest}
+        />
+      )}
     </div>
   );
 }
