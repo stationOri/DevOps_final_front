@@ -1,0 +1,53 @@
+.accountModal {
+  width: 250px;
+  position: fixed; 
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 0 30px gray;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 20px;
+}
+
+.accountBtnWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.accountedityes {
+  width: 100%;
+  background-color: #ff8a00;
+  border: none;
+  color: white;
+  height: 30px;
+}
+
+.accounteditno {
+  margin-top: 10px;
+  width: 100%;
+  height: 30px;
+}
+
+.accountinputWrapper {
+  margin: 20px 0;
+}
+
+.accountText {
+  color: #555555;
+  font-size: 12px;
+}
+
+.accountinput {
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  width: 95%;
+  height: 26px;
+  margin-top: 5px;
+}

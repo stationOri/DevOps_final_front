@@ -11,10 +11,12 @@ import Cal from "../../assets/images/modal/cal.png";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SendTalkModal from "../Modal/SendTalkModal";
+import AccountModal from "../Modal/AccountModal";
 
 function Reservation() {
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
+  const [infoshow, setInfoShow] = useState(false);
   const [restId, setRestId] = useState(2);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tableDates, setTableDates] = useState({});
@@ -28,6 +30,14 @@ function Reservation() {
 
   const TalkClose = () => setTalkShow(false);
   const TalkShow = () => setTalkShow(true);
+
+  const openInfoModal = () => {
+    setInfoShow(true);
+  };
+
+  const closeInfoModal = () => {
+    setInfoShow(false);
+  };
 
   const getLastYearStartDate = () => {
     const now = new Date();
@@ -301,7 +311,7 @@ function Reservation() {
                 <div>
                   <span className="spanformoney">500,000</span> 원
                 </div>
-                <div className="accountbox">환불계좌 수정하기</div>
+                <div className="accountbox" style={{cursor:"pointer"}}onClick={openInfoModal}>환불계좌 수정하기</div>
               </div>
             </div>
             <div className="upperboxright">
@@ -422,6 +432,11 @@ function Reservation() {
       <SendTalkModal
         TalkClose={TalkClose}
         talkshow={talkshow}
+        restId={restId}
+      />
+      <AccountModal 
+        infoshow={infoshow}
+        closeInfoModal={closeInfoModal}
         restId={restId}
       />
     </div>
