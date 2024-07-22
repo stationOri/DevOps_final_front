@@ -9,9 +9,12 @@ import "../../css/components/restaurant/Reservation.css";
 import Loading from "../Loading";
 import Cal from "../../assets/images/modal/cal.png";
 import DatePicker from "react-datepicker";
+import axios from 'axios';
 import "react-datepicker/dist/react-datepicker.css";
 import SendTalkModal from "../Modal/SendTalkModal";
 import AccountModal from "../Modal/AccountModal";
+import CancelModal from "../Modal/CancelModal";
+import { useCancelModal } from "../Modal/CancelModalContext";
 
 function Reservation() {
   const [loading, setLoading] = useState(true);
@@ -27,9 +30,21 @@ function Reservation() {
   const [todayinfo, setTodayInfo] = useState([]);
   const [todaynum, setTodayNum] = useState(0);
   const [talkshow, setTalkShow] = useState(false);
+  const { openCancelModal } = useCancelModal();
+
 
   const TalkClose = () => setTalkShow(false);
   const TalkShow = () => setTalkShow(true);
+
+  // const handleCancelRev
+
+  const handelCancelRev = () => {
+    openCancelModal('예약', restId);
+  };
+
+  const handelChangeStatus = () => {
+    openCancelModal('상태', restId);
+  };
 
   const openInfoModal = () => {
     setInfoShow(true);
@@ -70,57 +85,20 @@ function Reservation() {
   
   const getRev = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/restRev`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const json = await response.json();
-      const sortedData = sortByDateTime(json);
+      const response = await axios.get('http://localhost:4000/restRev');
+      const sortedData = sortByDateTime(response.data);
       setRev1(sortedData);
+      const response1 = await axios.get('http://localhost:4000/restRev2');
+      const sortedData1 = sortByDateTime(response1.data);
+      setRev2(sortedData1);
+      const response2 = await axios.get('http://localhost:4000/restRev3');
+      const sortedData2= sortByDateTime(response2.data);
+      setRev3(sortedData2);
+      const response3 = await axios.get('http://localhost:4000/restRev4');
+      const sortedData3 = sortByDateTime(response3.data);
+      setRev4(sortedData3);
     } catch (error) {
       console.error("Error fetching rev1:", error);
-    }
-  };
-  
-  const getRev2 = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/restRev2`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const json = await response.json();
-      const sortedData = sortByDateTime(json);
-      setRev2(sortedData);
-    } catch (error) {
-      console.error("Error fetching rev2:", error);
-    }
-  };
-  
-  const getRev3 = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/restRev3`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const json = await response.json();
-      const sortedData = sortByDateTime(json);
-      setRev3(sortedData);
-    } catch (error) {
-      console.error("Error fetching rev3:", error);
-    }
-  };
-  
-  const getRev4 = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/restRev4`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const json = await response.json();
-      const sortedData = sortByDateTime(json);
-      setRev4(sortedData);
-    } catch (error) {
-      console.error("Error fetching rev4:", error);
     }
   };
   
@@ -154,9 +132,9 @@ function Reservation() {
     const getButtonText = (status) => {
       switch (status) {
         case "RESERVATION_READY":
-          return <button className="btninRestRev">승인</button>;
+          return <button onClick={handelCancelRev} className="btninRestRev">승인</button>;
         case "RESERVATION_ACCEPTED":
-          return <button className="btninRestRev">확인</button>;
+          return <button onClick={handelChangeStatus} className="btninRestRev">확인</button>;
         case "RESERVATION_REJECTED":
           return <div>거절됨</div>;
         case "RESERVATION_CANCELED":
@@ -245,16 +223,13 @@ function Reservation() {
       await Promise.all([
         getWait(),
         getRev(),
-        getRev2(),
-        getRev3(),
-        getRev4(),
         getToday(),
       ]);
       setLoading(false);
     };
 
     fetchData();
-  }, [restId]);
+  }, [selectedDate]);
 
   const handleFindClick = () => {
     setTableDates({
@@ -439,6 +414,7 @@ function Reservation() {
         closeInfoModal={closeInfoModal}
         restId={restId}
       />
+      <CancelModal />
     </div>
   );
 }

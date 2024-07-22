@@ -16,9 +16,11 @@ import Chat from "./pages/Chat"
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
 import { InputModalProvider } from "./components/Modal/InputModalContext";
 import { NoticeModalProvider } from "./components/Modal/NoticeModalContext";
+import { CancelModalProvider } from "./components/Modal/CancelModalContext";
 
 function App() {
   return (
+    <CancelModalProvider>
     <SuccessModalProvider>
     <CheckModalProvider>
     <MenuModalProvider>
@@ -44,6 +46,7 @@ function App() {
     </MenuModalProvider>
     </CheckModalProvider>
     </SuccessModalProvider>
+    </CancelModalProvider>
   );
 }
 
