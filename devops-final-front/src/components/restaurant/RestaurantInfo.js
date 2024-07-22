@@ -124,7 +124,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   const fetchReviews = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/review/rest/${id}/user/${userId}`
+        `http://localhost:8080/review/rest/${id}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
