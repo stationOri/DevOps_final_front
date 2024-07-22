@@ -6,16 +6,16 @@ export const InputModalProvider = ({ children }) => {
   const [modalState, setModalState] = useState({
     show: false,
     header: "",
-    review_id: null,
+    reviewId: null,
     user_id: null,
     rest_id: null,
   });
 
-  const openInputModal = ({ header, review_id, user_id, rest_id }) => {
+  const openInputModal = ({ header, reviewId, user_id, rest_id }) => {
     setModalState({
       show: true,
       header,
-      review_id,
+      reviewId,
       user_id,
       rest_id,
     });
@@ -25,7 +25,7 @@ export const InputModalProvider = ({ children }) => {
     setModalState({
       show: false,
       header: "",
-      review_id: null,
+      reviewId: null,
       user_id: null,
       rest_id: null,
     });
