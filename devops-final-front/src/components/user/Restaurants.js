@@ -117,6 +117,21 @@ const Restaurants = ({ userId, onCardClick }) => {
     }
   };
 
+  const fetchRestaurantByName = async (name) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/restaurants/name/${name}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch restaurants by name");
+      }
+      const data = await response.json();
+      setFilteredRestaurants(data);
+    } catch (error) {
+      console.error("Error fetching restaurants by name:", error);
+    }
+  };
+
   const fetchOpentimes = useCallback(async (restId) => {
     try {
       const response = await fetch(`http://localhost:8080/opentime/${restId}`);
@@ -188,9 +203,10 @@ const Restaurants = ({ userId, onCardClick }) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSearchByEnter = (e) => {
+  const handleSearchByEnter = async (e) => {
     if (e.key === "Enter") {
-      filterRestaurantsByName();
+      setHasMore(false);
+      await fetchRestaurantByName(e.target.value);
       setCurrentPage(1);
     }
   };
@@ -200,8 +216,8 @@ const Restaurants = ({ userId, onCardClick }) => {
     setCurrentPage(1);
   };
 
-  const handleSearchClick = () => {
-    filterRestaurantsByName();
+  const handleSearchClick = async () => {
+    await fetchRestaurantByName(searchTerm);
     setCurrentPage(1);
   };
 
@@ -231,18 +247,6 @@ const Restaurants = ({ userId, onCardClick }) => {
           keywordFilters.includes(restaurant.keyword1) ||
           keywordFilters.includes(restaurant.keyword2) ||
           keywordFilters.includes(restaurant.keyword3)
-      );
-    }
-
-    setFilteredRestaurants(filtered);
-  };
-
-  const filterRestaurantsByName = () => {
-    let filtered = restaurants;
-
-    if (searchTerm) {
-      filtered = filtered.filter((restaurant) =>
-        restaurant.restName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 

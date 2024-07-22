@@ -5,6 +5,8 @@ import Loading from "../Loading";
 import StarRatings from "../../components/StarRatings";
 import RestaurantLocationMap from "../../components/RestaurantLocationMap";
 import ReviewCard from "../../components/ReviewCard";
+import InputModal from "../Modal/InputModal";
+import { useInputModal } from "../Modal/InputModalContext";
 
 import rightImg from "../../assets/images/detail/right.png";
 import leftImg from "../../assets/images/detail/left.png";
@@ -25,7 +27,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   const reviewsPerPage = 4;
 
   const id = 1;
-  const userId = 1197;
+  const { openInputModal } = useInputModal();
 
   const convertDayToKorean = (day) => {
     switch (day) {
@@ -51,7 +53,16 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   };
 
   const handleMenuEditClick = () => {
-    onMenuClick('메뉴 관리');
+    onMenuClick("메뉴 관리");
+  };
+
+  const handleReviewReportClick = (reviewId) => {
+    console.log("리뷰 신고 버튼 클릭됨, 리뷰 ID:", reviewId);
+    openInputModal({
+      show: true,
+      header: "리뷰 신고",
+      reviewId: reviewId,
+    });
   };
 
   useEffect(() => {
@@ -123,9 +134,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/review/rest/${id}/user/${userId}`
-      );
+      const response = await fetch(`http://localhost:8080/review/rest/${id}`);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
@@ -274,9 +283,12 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
             ) : (
               currentReviews.map((review) => (
                 <div className="rest-review-report-box">
-                  <ReviewCard key={review.id} review={review} />
+                  <ReviewCard key={review.reviewId} review={review} />
                   <div className="rest-mod-btn-box">
-                    <div className="mod-btn">
+                    <div
+                      className="mod-btn"
+                      onClick={() => handleReviewReportClick(review.reviewId)}
+                    >
                       <div className="mod-btn-content">리뷰 신고</div>
                     </div>
                   </div>
@@ -295,6 +307,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
           </div>
         </div>
       </div>
+      <InputModal />
     </div>
   );
 }
