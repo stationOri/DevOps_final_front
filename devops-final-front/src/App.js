@@ -28,15 +28,15 @@ function App() {
       <Routes>
         {/* <Route path="/" element={<Main />}></Route> */}
         <Route path="/" element={<UserMain />}></Route>
-        <Route path="/restmain" element={<RestMain />}></Route>
-        <Route path="/adminmain" element={<AdminMain />}></Route>
-        <Route path="/mypage/:id" element={<Mypage />}></Route>
-        <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
+        <Route path="/rest" element={<RestMain />}></Route>
+        <Route path="/admin" element={<AdminMain />}></Route>
         <Route path="/usersignup" element={<UserSignup />}></Route>
+        <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
+        {/* <Route path="/mypage/:id" element={<Mypage />}></Route>
         <Route path="/restaurants" element={<Restaurants />}></Route>
         <Route path="/restaurants/:id" element={<RestDetailPage />}></Route>
         <Route path="/reservation/:id" element={<Reservation />}></Route>
-        <Route path="/chat" element={<Chat />}></Route>
+        <Route path="/chat" element={<Chat />}></Route> */}
       </Routes>
     </BrowserRouter>
     </NoticeModalProvider>
