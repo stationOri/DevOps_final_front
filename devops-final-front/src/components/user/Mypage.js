@@ -3,7 +3,6 @@ import axios from "axios";
 import "../../css/pages/Mypage.css";
 import Loading from "../../components/Loading";
 import MostReservedRestaurantsChart from "../../components/user/MostReservedRestaurantsChart";
-
 import profileImg from "../../assets/images/mypage/profile.png";
 import phoneImg from "../../assets/images/detail/phone.png";
 import mailImg from "../../assets/images/mypage/mail.png";
@@ -18,8 +17,10 @@ import Pagination from "../../components/Pagination";
 import rightImg from "../../assets/images/detail/right.png";
 import leftImg from "../../assets/images/detail/left.png";
 import locationImg from "../../assets/images/detail/location.png";
+import NicknameEditModal from "../Modal/NicknameEditModal"
 
 const Mypage = ({ userId, onCardClick }) => {
+  const [editshow, setEditshow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
@@ -37,6 +38,8 @@ const Mypage = ({ userId, onCardClick }) => {
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
   const favoritesPerPage = 3;
+  const EditClose = () => setEditshow(false);
+  const EditShow = () => setEditshow(true);
 
   const onPageChange = (pageNumber) => {
     setReviewCurrentPage(pageNumber);
@@ -309,7 +312,7 @@ const Mypage = ({ userId, onCardClick }) => {
                 <div className="my-info-item-content">{user?.userEmail}</div>
               </div>
               <div className="my-info-item-content-box">
-                <div className="my-info-update-btn">회원정보 수정</div>
+                <div className="my-info-update-btn" onClick={EditShow}>회원정보 수정</div>
               </div>
             </div>
             <div className="my-res-info-box">
@@ -578,6 +581,10 @@ const Mypage = ({ userId, onCardClick }) => {
           </div>
         </div>
       </div>
+      <NicknameEditModal 
+      EditClose={EditClose}
+      editshow={editshow}
+      />
     </div>
   );
 };
