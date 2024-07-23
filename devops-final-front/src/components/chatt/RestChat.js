@@ -10,13 +10,18 @@ const RestChat = ({ restId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
   const [selectedChatQsName, setSelectedChatQsName] = useState(null);
+  const [selectedChatQsId, setSelectedChatQsId] = useState(null);
+  const [selectedChatAnsId, setSelectedChatAnsId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleChatSelect = async (chattingRoomId, ansName, qsName) => {
+  const handleChatSelect = async (chattingRoomId, ansName, qsName, qsId, ansId) => {
     setSelectedChatRoomId(chattingRoomId);
     setSelectedChatAnsName(ansName);
     setSelectedChatQsName(qsName);
+    setSelectedChatQsId(qsId);
+    setSelectedChatAnsId(ansId);
+
     console.log("ansName:", ansName);
   };
 
@@ -47,8 +52,11 @@ const RestChat = ({ restId }) => {
                   chattingRoomId={selectedChatRoomId}
                   ansName={selectedChatAnsName}
                   qsName={selectedChatQsName} 
+                  qsId={selectedChatQsId}
+                  ansId={selectedChatAnsId}
                   refreshTrigger={refreshTrigger}
                   chatType="ans"
+                  currentUserId={restId}
                 />
               ) : (
                 <div className="chat-no-message">

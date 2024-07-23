@@ -5,9 +5,12 @@ function ChatRoom({
   chattingRoomId,
   ansName,
   qsName,
+  ansId,
+  qsId,
   sentColor = "#FF8A00",
   chatType = "qs",
   refreshTrigger,
+  currentUserId,
 }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -49,18 +52,18 @@ function ChatRoom({
     }
   }, [chattingRoomId, refreshTrigger]);
 
+  console.log("qsId:", qsId);
+  console.log("ansId:", ansId);
+  console.log("currentUserId:", currentUserId);
+
   const sortedChatRooms = [...chatRooms].sort(
     (a, b) => new Date(a.sendTime) - new Date(b.sendTime)
   );
 
   const isAdmin = ansName === "관리자";
-  const headerName = isAdmin
-    ? chatType === "qs"
-      ? qsName
-      : ansName
-    : chatType === "qs"
-    ? ansName
-    : qsName;
+  const isCurrentUserQs = currentUserId === qsId;
+  const headerName = isCurrentUserQs ? ansName : qsName;
+
   return (
     <div className="chat-window">
       {chatRooms.length > 0 ? (
@@ -75,95 +78,41 @@ function ChatRoom({
       <div className="message-list">
         {sortedChatRooms.map((chatRoom) => (
           <div className="message-box" key={chatRoom.id}>
-            {chatRoom.senderType === "qs" ? (
-              <div
-                className={`message-info ${
-                  chatType === "qs"
-                    ? isAdmin
-                      ? "received-info"
-                      : "sent-info"
-                    : isAdmin
-                    ? "sent-info"
-                    : "received-info"
-                }`}
-              >
-                <span
-                  className={`chat-senderTime ${
-                    chatType === "qs" && isAdmin ? "" : "mr-15"
-                  }`}
-                >
-                  {formatTimestamp(chatRoom.sendTime) || "No time"}
-                </span>
-                <span
-                  className={`chat-senderName ${
-                    chatType === "qs" && !isAdmin ? "mr-15" : ""
-                  }`}
-                >
-                  {chatRoom.senderName}
-                </span>
-              </div>
-            ) : (
-              <div
-                className={`message-info ${
-                  chatType === "qs"
-                    ? isAdmin
-                      ? "sent-info"
-                      : "received-info"
-                    : isAdmin
-                    ? "received-info"
-                    : "sent-info"
-                }`}
-              >
-                <span
-                  className={`chat-senderName ${
-                    chatType === "qs" && isAdmin ? "" : "mr-15"
-                  }`}
-                >
-                  {chatRoom.senderName}
-                </span>
-                <span
-                  className={`chat-senderTime ${
-                    chatType === "qs" && !isAdmin ? "mr-15" : ""
-                  }`}
-                >
-                  {formatTimestamp(chatRoom.sendTime) || "No time"}
-                </span>
-              </div>
-            )}
+            <div
+              className={`message-info ${
+                chatRoom.senderId === currentUserId
+                  ? "sent-info"
+                  : "received-info"
+              }`}
+            >
+              {chatRoom.senderId === currentUserId ? (
+                <>
+                  <span className="chat-senderTime mr-15">
+                    {formatTimestamp(chatRoom.sendTime) || "No time"}
+                  </span>
+                  <span className="chat-senderName ">
+                    {chatRoom.senderName}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="chat-senderName mr-15">
+                    {chatRoom.senderName}
+                  </span>
+                  <span className="chat-senderTime">
+                    {formatTimestamp(chatRoom.sendTime) || "No time"}
+                  </span>
+                </>
+              )}
+            </div>
             <div
               className={`message ${
-                chatType === "qs"
-                  ? chatRoom.senderType === "qs"
-                    ? isAdmin
-                      ? "received"
-                      : "sent"
-                    : isAdmin
-                    ? "sent"
-                    : "received"
-                  : chatRoom.senderType === "qs"
-                  ? isAdmin
-                    ? "sent"
-                    : "received"
-                  : isAdmin
-                  ? "received"
-                  : "sent"
+                chatRoom.senderId === currentUserId ? "sent" : "received"
               }`}
               style={
-                chatType === "qs"
-                  ? chatRoom.senderType === "qs"
-                    ? isAdmin
-                      ? {}
-                      : { backgroundColor: sentColor }
-                    : isAdmin
-                    ? { backgroundColor: sentColor }
-                    : {}
-                  : chatRoom.senderType === "qs"
-                  ? isAdmin
-                    ? { backgroundColor: sentColor }
-                    : {}
-                  : isAdmin
-                  ? {}
-                  : { backgroundColor: sentColor }
+                chatRoom.senderId === currentUserId
+                  ? { backgroundColor: sentColor }
+                  : {}
               }
             >
               <div>{chatRoom.messageContent}</div>

@@ -15,7 +15,7 @@
   border-bottom: 1px solid #e1e1e1;
 }
 
-.chat-with{
+.chat-with {
   font-size: 20px;
   font-weight: bold;
   font-style: italic;
@@ -26,7 +26,7 @@
   width: 100%;
   min-height: 470px;
   flex: 1;
-  overflow-y: auto; 
+  overflow-y: auto;
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 10px;
@@ -60,7 +60,7 @@
   word-wrap: break-word;
 }
 
-.message-info{
+.message-info {
   max-width: 70%;
   height: fit-content;
   padding: 10px;
@@ -68,7 +68,7 @@
   word-wrap: break-word;
 }
 
-.message-box{
+.message-box {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -83,22 +83,21 @@
   margin-right: 17px;
 }
 
-.sent-info{
+.sent-info {
   align-self: flex-end;
   margin-right: 17px;
 }
 
 .received {
   align-self: flex-start;
-  /* margin-right: 20%; */
   box-shadow: 0 0 4px #e1e1e1;
 }
 
-.received-info{
+.received-info {
   align-self: flex-start;
 }
 
-.chat-sender-info{
+.chat-sender-info {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -108,15 +107,15 @@
   word-wrap: break-word;
 }
 
-.chat-senderName{
+.chat-senderName {
   font-weight: bold;
 }
 
-.chat-senderTime{
+.chat-senderTime {
   font-size: 12px;
   color: #a1a1a1;
 }
 
-.mr-15{
+.mr-15 {
   margin-right: 15px;
 }

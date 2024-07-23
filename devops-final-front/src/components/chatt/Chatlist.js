@@ -56,7 +56,7 @@ function ChatList({
   };
 
   const handleChatSelect = (chat) => {
-    onChatSelect(chat.chattingRoomId, chat.ansName, chat.qsName, chat.ansName);
+    onChatSelect(chat.chattingRoomId, chat.ansName, chat.qsName, chat.qsId, chat.ansId); // 추가된 인자 전달
   };
 
   const filteredChatLists = searchTerm

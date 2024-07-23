@@ -9,12 +9,20 @@ import ChatImg from "../../assets/images/chatorange.png";
 const UserChat = ({ userId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
+  const [selectedChatQsName, setSelectedChatQsName] = useState(null);
+  const [selectedChatQsId, setSelectedChatQsId] = useState(null);
+  const [selectedChatAnsId, setSelectedChatAnsId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleChatSelect = async (chattingRoomId, ansName) => {
+  const handleChatSelect = async (chattingRoomId, ansName, qsName, qsId, ansId) => {
     setSelectedChatRoomId(chattingRoomId);
     setSelectedChatAnsName(ansName);
+    setSelectedChatQsName(qsName);
+    setSelectedChatQsId(qsId);
+    setSelectedChatAnsId(ansId);
+
+    console.log("ansName:", ansName);
   };
 
   const handleRefresh = () => {
@@ -42,7 +50,11 @@ const UserChat = ({ userId }) => {
                 <ChatRoom
                   chattingRoomId={selectedChatRoomId}
                   ansName={selectedChatAnsName}
+                  qsName={selectedChatQsName} 
+                  qsId={selectedChatQsId}
+                  ansId={selectedChatAnsId}
                   refreshTrigger={refreshTrigger}
+                  currentUserId={userId}
                 />
               ) : (
                 <div className="chat-no-message">
