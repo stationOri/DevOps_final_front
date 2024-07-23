@@ -15,6 +15,7 @@ import { useNoticeModal } from "../Modal/NoticeModalContext";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import LoginModal from "../Modal/LoginModal";
+import SelectReceiverModal from "../Modal/SelectReceiverModal";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -30,6 +31,9 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
   const [chatType, setChatType] = useState("");
   const query = useQuery();
   const token = query.get("token");
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
+  const [receiverId, setReceiverId] = useState(null); // 선택된 수신자
+  const [senderId, setSenderId] = useState(null); // 발신자 ID
 
   const navigate = useNavigate();
 
@@ -69,6 +73,7 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
                 setUserId(userinfo.object.loginDto.id);
                 setChatType(userinfo.object.loginDto.chatType);
                 setIsLoggedIn(true); // 로그인 상태로 설정
+                setSenderId(userinfo.object.loginDto.id); // 발신자 ID 설정
               }else{
                 setUsername("Guest");
                 setIsLoggedIn(false);
@@ -112,6 +117,17 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
     navigate('/');
     localStorage.removeItem('token');
   };
+
+  // 수신자 ID를 설정
+  const handleOpenSelectReceiverModal = () => {
+    setReceiverId(1184);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseSelectReceiverModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div className={`sideBarWrapper ${isExtended ? "extended" : "collapsed"}`}>
@@ -213,12 +229,18 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
         </div>
         <button
           className={`sidebaraskButton ${isExtended ? "" : "hidden"}`}
-          onClick={handleEditNoticeModal}
+          onClick={handleOpenSelectReceiverModal}
         >
           관리자 문의
         </button>
       </div>
       <NoticeModal />
+      <SelectReceiverModal
+        isOpen={isModalOpen}
+        onClose={handleCloseSelectReceiverModal}
+        receiverId={receiverId}
+        senderId={senderId}
+      />
     </div>
   );
 }

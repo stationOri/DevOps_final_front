@@ -9,6 +9,7 @@ import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
 import Waiting from "../../assets/images/sidebar/waiting.png";
 import Login from "../../assets/images/sidebar/login.png";
 import CheckModal from "../Modal/CheckModal";
+import SelectReceiverModal from "../Modal/SelectReceiverModal";
 import { useCheckModal } from "../Modal/CheckModalContext";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
@@ -17,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
+
 function SideBarRest({
   onMenuClick,
   isExtended,
@@ -31,6 +33,9 @@ function SideBarRest({
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chatType, setChatType] = useState("");
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열기 상태
+  const [receiverId, setReceiverId] = useState(null); // 선택된 수신자
+  const [senderId, setSenderId] = useState(null); // 발신자 ID
 
   const handleOpenModal = () => {
     openCheckModal("관리자 문의 실패", "로그인이 되어있지 않습니다.");
@@ -73,6 +78,7 @@ function SideBarRest({
           setIsLoggedIn(true);
           onRestIdChange(userinfo.object.loginDto.id);
           setChatType(userinfo.object.loginDto.chatType);
+          setSenderId(userinfo.object.loginDto.id); // 발신자 ID 설정
         } else {
           setUsername("Guest");
           setIsLoggedIn(false);
@@ -91,6 +97,16 @@ function SideBarRest({
     setUsername("Guest");
     navigate("/");
     localStorage.removeItem("token");
+  };
+
+  // 수신자 ID를 설정
+  const handleOpenSelectReceiverModal = () => {
+    setReceiverId(1184);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseSelectReceiverModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -179,12 +195,18 @@ function SideBarRest({
         </div>
         <button
           className={`sidebaraskButton ${isExtended ? "" : "hidden"}`}
-          onClick={handleOpenModal}
+          onClick={handleOpenSelectReceiverModal}
         >
           관리자 문의
         </button>
       </div>
       <CheckModal />
+      <SelectReceiverModal
+        isOpen={isModalOpen}
+        onClose={handleCloseSelectReceiverModal}
+        receiverId={receiverId}
+        senderId={senderId}
+      />
     </div>
   );
 }
