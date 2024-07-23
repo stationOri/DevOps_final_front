@@ -47,7 +47,6 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
             const userinfo = jwtDecode(token);
             setUsername("Guest");
             setSigninshow(true);
-            setUserId(userinfo.object.loginDto.id);
             } catch (error) {
               console.error("Invalid token", error);
             }

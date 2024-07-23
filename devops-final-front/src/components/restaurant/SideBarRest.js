@@ -12,6 +12,7 @@ import CheckModal from "../Modal/CheckModal";
 import { useCheckModal } from "../Modal/CheckModalContext";
 import {jwtDecode} from "jwt-decode";
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -23,6 +24,8 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
   const token = query.get('token'); // 'token'은 URL에서의 파라미터 이름
   const [username,setUsername]=useState("Guest");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [chatType, setChatType] = useState("");
+  const navigate = useNavigate();
 
 
   const handleOpenModal = () => {
@@ -35,41 +38,57 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
     }
   };
   
-  useEffect(() => {
-    if (token) {
-      try {
-        localStorage.setItem('token', token);
-        const userinfo = jwtDecode(token);
-        setUsername(userinfo.userName);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, [token]);
 
+  
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      try {
-        const userinfo = jwtDecode(storedToken);
-        setUsername(userinfo.userName);
-        setRestId(userinfo.RestId);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    } else if (token) {
-      try {
-        localStorage.setItem("token", token);
-        const userinfo = jwtDecode(token);
-        setUsername(userinfo.userName);
-        setRestId(userinfo.RestId);
-        setIsLoggedIn(true);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, [token]);
+    const signinok = query.get("signin");
+      if (signinok === "true") {
+            try{
+              localStorage.setItem("token", token);
+            const userinfo = jwtDecode(token);
+            setUsername("Guest");
+            } catch (error) {
+              console.error("Invalid token", error);
+            }
+          }
+      else{
+            try {
+              const storedToken = localStorage.getItem("token");
+              let userinfo=null;
+              if(storedToken){
+                if(token){
+                  localStorage.setItem("token", token);
+                }
+                userinfo = jwtDecode(token);
+              }else{
+                localStorage.setItem("token", token);
+                userinfo = jwtDecode(token);
+              }
+              if(userinfo.object.loginDto){
+                setUsername(userinfo.userName);
+                setRestId(userinfo.RestId);
+                setIsLoggedIn(true);
+                setChatType(userinfo.object.loginDto.chatType);
+              }else{
+                setUsername("Guest");
+                setIsLoggedIn(false);
+              }
+            } catch (error) {
+              console.error("Invalid token", error);
+            }
+          }
+  }, [token, setRestId]);
+
+
+  const handleLogout = () => {
+    const currentUrl = new URL(window.location.href); 
+    currentUrl.searchParams.delete('token');
+    window.history.replaceState({}, document.title, currentUrl.toString());
+    setIsLoggedIn(false);
+    setUsername("Guest");
+    navigate('/');
+    localStorage.removeItem('token');
+  };
 
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
@@ -117,7 +136,7 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
               </div>
               <div className="sidebarRow">
                 <img src={Login} alt="" className="sidebarIcon"/>
-                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={() => handleSidebarTextClick('로그아웃')}>로그아웃</div>
+                <div className={`sidebarText ${isExtended ? '' : 'hidden'}`} onClick={handleLogout}>로그아웃</div>
               </div>
         </div>
         <button className={`sidebaraskButton ${isExtended ? '' : 'hidden'}`} onClick={handleOpenModal}>관리자 문의</button>
