@@ -68,14 +68,13 @@ function RestCancelModal({ RestCancelClose, restcancelshow }) {
               onClick={handleCancel}
               disabled={!selectedReason}
             >
-              승인
+              취소승인
             </button>
             <button
-              className={`resModalBtnno ${!selectedReason ? 'disabled' : ''}`}
+              className={`resModalBtnno`}
               onClick={handleReject}
-              disabled={!selectedReason}
             >
-              거부
+              취소
             </button>
           </div>
         </div>
