@@ -3,9 +3,11 @@ import "../../css/components/Modal/WaitingSuccessModal.css";
 import checkIcon from "../../assets/images/modal/check.png";
 import peopleIcon from "../../assets/images/modal/people.png";
 import restIcon from "../../assets/images/modal/rest.png";
+import Loading from "../Loading";
 
 function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
   const [waiting, setWaiting] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
@@ -22,10 +24,14 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
         throw new Error("Failed to fetch waiting");
       }
       const data = await response.json();
+      console.log("Fetched data:", data);
       setWaiting(data);
+      setLoading(false);
     } catch (error) {
       setWaiting(null);
       console.error("Error fetching waiting:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,7 +69,7 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
                   className="success-rest-icon"
                   alt="rest icon"
                 ></img>
-                <div className="success-text">{waiting.restName}</div>
+                <div className="success-text">{waiting?.restName}</div>
               </div>
               <div className="success-content-box">
                 <img
@@ -72,7 +78,7 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
                   alt="people icon"
                 ></img>
                 <div className="success-text">
-                  <span className="selected-guest">{waiting.waitingPpl}</span>{" "}
+                  <span className="selected-guest">{waiting?.waitingPpl}</span>{" "}
                   Guests
                 </div>
               </div>
@@ -82,7 +88,7 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
               <div className="success-content-box">
                 대기번호
                 <div className="success-text">
-                  <span className="waiting-num">{waiting.waitingNum}</span>
+                  <span className="waiting-num">{waiting?.waitingNum}</span>
                 </div>
                 번
               </div>
@@ -90,7 +96,7 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
               <div className="success-content-box">
                 현재 남은 웨이팅
                 <div className="success-text">
-                  <span className="waiting-num">{waiting.waitingLeft}</span>{" "}
+                  <span className="waiting-num">{waiting?.waitingLeft}</span>{" "}
                 </div>
                 팀
               </div>

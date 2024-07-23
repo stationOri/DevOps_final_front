@@ -39,3 +39,8 @@
   box-sizing: border-box;
   padding: 10px;
 }
+
+.timeSelectBox {
+  outline: none;
+  font-size: 16px;
+}

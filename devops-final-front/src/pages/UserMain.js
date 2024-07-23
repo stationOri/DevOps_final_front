@@ -5,7 +5,7 @@ import Main from "../components/user/Main";
 import Restaurants from "../components/user/Restaurants";
 import RestDetail from "../components/user/RestDetail";
 import Reservation from "../components/user/Reservation";
-import UserChat from "../components/user/UserChat";
+import UserChat from "../components/chatt/UserChat";
 import Mypage from "../components/user/Mypage";
 import "../css/pages/RestMain.css";
 

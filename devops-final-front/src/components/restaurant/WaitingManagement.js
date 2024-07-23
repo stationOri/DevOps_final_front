@@ -5,10 +5,9 @@ import React, { useState, useEffect } from "react";
 import Loading from "../Loading";
 import Pagination from "../Pagination";
 
-function WaitingManagement() {
+function WaitingManagement({ restId }) {
   const [loading, setLoading] = useState(true);
   const [wait, setWait] = useState(false);
-  const [restId, setRestId] = useState(2);
   const [upperText, setUpperText] = useState("");
   const [lowerText, setLowerText] = useState("");
   const [team, setTeam] = useState(0);

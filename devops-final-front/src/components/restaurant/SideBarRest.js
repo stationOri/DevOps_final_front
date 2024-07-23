@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
+function SideBarRest({ onMenuClick, isExtended, toggleSidebar, onRestIdChange}) {
   const { openCheckModal } = useCheckModal();
   const query = useQuery();
   const [restId, setRestId] = useState("");

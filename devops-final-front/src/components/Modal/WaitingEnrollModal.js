@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 import "../../css/components/Modal/WaitingEnrollModal.css";
 import closeIcon from "../../assets/images/modal/x-close.png";
 import emptyIcon from "../../assets/images/modal/emptyenroll.png";
 import restIcon from "../../assets/images/modal/rest.png";
 import WaitingSuccessModal from "./WaitingSuccessModal";
+import Loading from "../Loading";
 
-const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
-  const { id } = useParams();
+const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
   const [restInfo, setRestInfo] = useState(null);
   const [waiting, setWaiting] = useState([]);
   const [selectedGuests, setSelectedGuests] = useState(1);
   const [userPhone, setUserPhone] = useState("");
   const [waitingCount, setWaitingCount] = useState(0);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -26,12 +26,13 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
   const fetchRestInfo = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/restaurants/info/res/${id}`
+        `http://localhost:8080/restaurants/info/res/${restId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant info");
       }
       const data = await response.json();
+      console.log("Fetched data:", data);
       setRestInfo(data);
     } catch (error) {
       console.error(error);
@@ -40,7 +41,7 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
 
   const fetchWaiting = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/waiting/rest/${id}`);
+      const response = await fetch(`http://localhost:8080/waiting/rest/${restId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch waiting");
       }
@@ -73,11 +74,11 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
   const handleOpenSuccessModal = async () => {
     console.log("등록 버튼 클릭됨");
     const userPhoneString = String(userPhone);
-    setIsSuccessModalOpen(true);
+    setLoading(true);
     try {
       const response = await axios.post(`http://localhost:8080/waiting`, {
         userId: userId,
-        restId: id,
+        restId: restId,
         waitingPpl: selectedGuests,
         watingPhone: userPhoneString,
       });
@@ -89,6 +90,8 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
       }
     } catch (error) {
       console.error("웨이팅 요청 오류:", error.response || error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -157,7 +160,7 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, name }) => {
             </div>
             <div className="waiting-enroll-btn">
               <div className="waiting-btn-content" onClick={handleOpenSuccessModal}>
-                등록
+                {loading ? <Loading /> : "등록"}
               </div>
             </div>
           </div>

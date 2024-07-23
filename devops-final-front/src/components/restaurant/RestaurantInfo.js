@@ -16,7 +16,7 @@ import phoneImg from "../../assets/images/detail/phone.png";
 import quotesImg1 from "../../assets/images/detail/quotes.png";
 import quotesImg2 from "../../assets/images/detail/quotes2.png";
 
-function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
+function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
   const [restaurant, setRestaurant] = useState(null);
   const [opentimes, setOpentimes] = useState([]);
   const [menus, setMenus] = useState([]);
@@ -26,7 +26,6 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
 
-  const id = 1;
   const { openInputModal } = useInputModal();
 
   const convertDayToKorean = (day) => {
@@ -53,7 +52,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   };
 
   const handleMenuEditClick = () => {
-    onMenuClick("메뉴 관리");
+    onMenuEditClick("메뉴 관리");
   };
 
   const handleReviewReportClick = (reviewId) => {
@@ -81,11 +80,11 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
       }
     };
     fetchData();
-  }, [id]);
+  }, [restId]);
 
   const fetchRestaurant = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/restaurants/${id}`);
+      const response = await fetch(`http://localhost:8080/restaurants/${restId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch restaurant");
       }
@@ -99,7 +98,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
 
   const fetchOpentimes = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/opentime/${id}`);
+      const response = await fetch(`http://localhost:8080/opentime/${restId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch opentimes");
       }
@@ -120,7 +119,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
   const fetchMenus = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/restaurants/menu/${id}`
+        `http://localhost:8080/restaurants/menu/${restId}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch menus");
@@ -134,7 +133,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/review/rest/${id}`);
+      const response = await fetch(`http://localhost:8080/review/rest/${restId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
@@ -173,7 +172,7 @@ function RestaurantInfo({ onMenuClick, onInfoEditClick }) {
         <div className="rest-name-box">
           <div className="rest-name">{restaurant.restName}</div>
           <div className="rest-mod-btn-box">
-            <div className="mod-btn" onClick={() => onInfoEditClick(id)}>
+            <div className="mod-btn" onClick={() => onInfoEditClick(restId)}>
               <div className="mod-btn-content">식당 정보 수정</div>
             </div>
           </div>

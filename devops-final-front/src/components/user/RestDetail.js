@@ -172,12 +172,14 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
         isOpen={isModalOpen}
         onClose={closeModal}
         userId={userId}
+        restId={restId}
         name={restaurant.restName}
       />
       <WaitingEnrollModal
         isOpen={isWaitingModalOpen}
         onClose={closeModal}
         userId={userId}
+        restId={restId}
         name={restaurant.restName}
       />
       <div className="rest-container">

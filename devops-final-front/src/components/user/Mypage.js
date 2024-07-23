@@ -3,7 +3,6 @@ import axios from "axios";
 import "../../css/pages/Mypage.css";
 import Loading from "../../components/Loading";
 import MostReservedRestaurantsChart from "../../components/user/MostReservedRestaurantsChart";
-
 import profileImg from "../../assets/images/mypage/profile.png";
 import phoneImg from "../../assets/images/detail/phone.png";
 import mailImg from "../../assets/images/mypage/mail.png";
@@ -18,8 +17,12 @@ import Pagination from "../../components/Pagination";
 import rightImg from "../../assets/images/detail/right.png";
 import leftImg from "../../assets/images/detail/left.png";
 import locationImg from "../../assets/images/detail/location.png";
+import NicknameEditModal from "../Modal/NicknameEditModal";
+import ReviewModal from "../Modal/ReviewModal";
 
 const Mypage = ({ userId, onCardClick }) => {
+  const [editshow, setEditshow] = useState(false);
+  const [reviewshow, setReviewshow] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
@@ -37,6 +40,10 @@ const Mypage = ({ userId, onCardClick }) => {
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
   const favoritesPerPage = 3;
+  const EditClose = () => setEditshow(false);
+  const EditShow = () => setEditshow(true);
+  const ReviewClose = () => setReviewshow(false);
+  const ReviewShow = () => setReviewshow(true);
 
   const onPageChange = (pageNumber) => {
     setReviewCurrentPage(pageNumber);
@@ -144,7 +151,6 @@ const Mypage = ({ userId, onCardClick }) => {
       }
       const data = await response.json();
       setFavorites(data);
-      console.log("Favorites:", data);
     } catch (error) {
       console.error("Error fetching favorites:", error);
     }
@@ -196,7 +202,11 @@ const Mypage = ({ userId, onCardClick }) => {
         </div>
       );
     } else if (reservation.resStatus === "VISITED") {
-      return <button className="my-res-info-review-btn">리뷰</button>;
+      return (
+        <button className="my-res-info-review-btn" onClick={ReviewShow}>
+          리뷰
+        </button>
+      );
     } else {
       return <button className="my-res-info-res-btn">예약 취소</button>;
     }
@@ -288,11 +298,25 @@ const Mypage = ({ userId, onCardClick }) => {
     console.log(restId);
   };
 
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+    const day = String(date.getDate()).padStart(2, "0");
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
   return (
     <div className="my-container">
       <div className="profile-container">
         <div className="profile-title-box">
-          <img src={profileImg} className="profile-Img" />
+          <img src={profileImg} className="profile-Img" alt="" />
           <div className="profile-title">Profile</div>
         </div>
         <div className="my-info">
@@ -309,7 +333,9 @@ const Mypage = ({ userId, onCardClick }) => {
                 <div className="my-info-item-content">{user?.userEmail}</div>
               </div>
               <div className="my-info-item-content-box">
-                <div className="my-info-update-btn">회원정보 수정</div>
+                <div className="my-info-update-btn" onClick={EditShow}>
+                  회원정보 수정
+                </div>
               </div>
             </div>
             <div className="my-res-info-box">
@@ -355,7 +381,7 @@ const Mypage = ({ userId, onCardClick }) => {
                       </div>
                       <div className="my-res-info-img-wrap">
                         <img src={calImg} className="my-res-Img" />
-                        <div>{reservation.resDatetime}</div>
+                        <div>{formatTimestamp(reservation.resDatetime)}</div>
                       </div>
                       <div className="my-res-info-img-wrap">
                         <img src={peopleImg} className="my-res-Img" />
@@ -435,6 +461,8 @@ const Mypage = ({ userId, onCardClick }) => {
                 <div>
                   {waiting.waitingStatus === "QUEUE_CANCELED" ? (
                     <div>대기를 취소했습니다.</div>
+                  ) : waiting.waitingStatus === "NOSHOW" ? (
+                    <div>입장을 하지 않았습니다.</div>
                   ) : waiting.waitingLeft !== 0 ? (
                     <div>
                       현재 예상 대기시간은{" "}
@@ -449,7 +477,20 @@ const Mypage = ({ userId, onCardClick }) => {
                 </div>
               </div>
               <div className="my-waiting-info-btn-box">
-                <div className="my-waiting-info-btn" onClick={handleCancel}>
+                <div
+                  className={`my-waiting-info-btn ${
+                    waiting.waitingStatus === "QUEUE_CANCELED" ||
+                    waiting.waitingStatus === "NOSHOW"
+                      ? "disabled"
+                      : ""
+                  }`}
+                  onClick={
+                    waiting.waitingStatus === "QUEUE_CANCELED" ||
+                    waiting.waitingStatus === "NOSHOW"
+                      ? null
+                      : handleCancel
+                  }
+                >
                   <div>취소</div>
                 </div>
               </div>
@@ -560,16 +601,21 @@ const Mypage = ({ userId, onCardClick }) => {
                     className="my-most-card-rest-img"
                     src={rest.restPhoto}
                     onClick={() => onCardClick(rest.restId)}
+                    alt=""
                   />
                 </div>
                 <div className="my-most-card-rest-info">
                   <div className="my-most-card-title">{rest.restName}</div>
                   <div className="my-most-card-content">
-                    <img src={phoneImg} className="my-most-card-icon" />
+                    <img src={phoneImg} className="my-most-card-icon" alt="" />
                     <div>{rest.restPhone}</div>
                   </div>
                   <div className="my-most-card-content">
-                    <img src={locationImg} className="my-most-card-icon" />
+                    <img
+                      src={locationImg}
+                      className="my-most-card-icon"
+                      alt=""
+                    />
                     <div>{rest.restAddress}</div>
                   </div>
                 </div>
@@ -578,6 +624,8 @@ const Mypage = ({ userId, onCardClick }) => {
           </div>
         </div>
       </div>
+      <NicknameEditModal EditClose={EditClose} editshow={editshow} />
+      <ReviewModal ReviewClose={ReviewClose} reviewshow={reviewshow} />
     </div>
   );
 };
