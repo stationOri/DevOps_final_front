@@ -42,7 +42,7 @@ function SelectReceiverModal({ isOpen, onClose, receiverId, senderId }) {
         <div className="chat-modal-content">
           <div className="chat-modal-header">
             <img src={AdminChatIcon} className="chat-icon"></img>
-            <div className="chat-header-text">관리자에게 메세지를 보내세요</div>
+            <div className="chat-header-text">궁금한 메세지를 보내세요</div>
           </div>
           <div className="chat-modal-body">
             <form onSubmit={handleSubmit}>

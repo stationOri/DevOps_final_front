@@ -43,6 +43,7 @@ const RestChat = ({ restId }) => {
               onChatSelect={handleChatSelect}
               refreshTrigger={refreshTrigger}
               chatType="admin"
+              currentUserId={restId}
             />
           </div>
           <div className="chat-messages-wrap">

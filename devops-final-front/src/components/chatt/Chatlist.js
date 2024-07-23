@@ -8,6 +8,7 @@ function ChatList({
   onChatSelect,
   chatImg = "default",
   refreshTrigger,
+  currentRestId
 }) {
   const [chatLists, setChatLists] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +57,13 @@ function ChatList({
   };
 
   const handleChatSelect = (chat) => {
-    onChatSelect(chat.chattingRoomId, chat.ansName, chat.qsName, chat.qsId, chat.ansId); // 추가된 인자 전달
+    onChatSelect(
+      chat.chattingRoomId,
+      chat.ansName,
+      chat.qsName,
+      chat.qsId,
+      chat.ansId
+    ); // 추가된 인자 전달
   };
 
   const filteredChatLists = searchTerm
@@ -70,6 +77,17 @@ function ChatList({
   const truncateMessage = (message) => {
     return message.length > 20 ? message.substring(0, 20) + "..." : message;
   };
+
+  const getDisplayName = (chatList) => {
+    if (chatList.ansName === "관리자") {
+      return "관리자";
+    }
+    if (currentRestId === chatList.qsId) {
+      return chatList.ansName;
+    }
+    return chatList.qsName;
+  };
+
 
   return (
     <aside className="sidebar">
@@ -96,9 +114,7 @@ function ChatList({
             />
             <div className="chat-info">
               <h3>
-                {chatList.ansName === "관리자"
-                  ? chatList.ansName
-                  : chatList.qsName}
+              {getDisplayName(chatList)}
               </h3>
               <p>{truncateMessage(chatList.lastMsg)}</p>
             </div>
