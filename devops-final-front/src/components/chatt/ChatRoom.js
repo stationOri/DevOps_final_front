@@ -7,7 +7,7 @@ function ChatRoom({
   qsName,
   sentColor = "#FF8A00",
   chatType = "qs",
-  refreshTrigger
+  refreshTrigger,
 }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ function ChatRoom({
     const date = new Date(timestamp);
 
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     const hours = String(date.getHours()).padStart(2, "0");
@@ -36,8 +36,6 @@ function ChatRoom({
       }
       const data = await response.json();
       setChatRooms(data || []);
-      console.log("chattingRoomId:", chattingRoomId);
-      console.log("Fetched data:", data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -55,8 +53,14 @@ function ChatRoom({
     (a, b) => new Date(a.sendTime) - new Date(b.sendTime)
   );
 
-  const headerName = chatType === "qs" ? ansName : qsName;
-
+  const isAdmin = ansName === "관리자";
+  const headerName = isAdmin
+    ? chatType === "qs"
+      ? qsName
+      : ansName
+    : chatType === "qs"
+    ? ansName
+    : qsName;
   return (
     <div className="chat-window">
       {chatRooms.length > 0 ? (
@@ -71,57 +75,93 @@ function ChatRoom({
       <div className="message-list">
         {sortedChatRooms.map((chatRoom) => (
           <div className="message-box" key={chatRoom.id}>
-            {chatType === "qs" ? (
-              chatRoom.senderType === "qs" ? (
-                <div className="message-info sent-info">
-                  <span className="chat-senderTime mr-15">
-                    {formatTimestamp(chatRoom.sendTime) || "No time"}
-                  </span>
-                  <span className="chat-senderName">{chatRoom.senderName}</span>
-                </div>
-              ) : (
-                <div className="message-info received-info">
-                  <span className="chat-senderName mr-15">
-                    {chatRoom.senderName}
-                  </span>
-                  <span className="chat-senderTime">
-                    {formatTimestamp(chatRoom.sendTime) || "No time"}
-                  </span>
-                </div>
-              )
-            ) : chatRoom.senderType === "qs" ? (
-              <div className="message-info received-info">
-                <span className="chat-senderName mr-15">
-                  {chatRoom.senderName}
-                </span>
-                <span className="chat-senderTime">
+            {chatRoom.senderType === "qs" ? (
+              <div
+                className={`message-info ${
+                  chatType === "qs"
+                    ? isAdmin
+                      ? "received-info"
+                      : "sent-info"
+                    : isAdmin
+                    ? "sent-info"
+                    : "received-info"
+                }`}
+              >
+                <span
+                  className={`chat-senderTime ${
+                    chatType === "qs" && isAdmin ? "" : "mr-15"
+                  }`}
+                >
                   {formatTimestamp(chatRoom.sendTime) || "No time"}
+                </span>
+                <span
+                  className={`chat-senderName ${
+                    chatType === "qs" && !isAdmin ? "mr-15" : ""
+                  }`}
+                >
+                  {chatRoom.senderName}
                 </span>
               </div>
             ) : (
-              <div className="message-info sent-info">
-                <span className="chat-senderTime mr-15">
+              <div
+                className={`message-info ${
+                  chatType === "qs"
+                    ? isAdmin
+                      ? "sent-info"
+                      : "received-info"
+                    : isAdmin
+                    ? "received-info"
+                    : "sent-info"
+                }`}
+              >
+                <span
+                  className={`chat-senderName ${
+                    chatType === "qs" && isAdmin ? "" : "mr-15"
+                  }`}
+                >
+                  {chatRoom.senderName}
+                </span>
+                <span
+                  className={`chat-senderTime ${
+                    chatType === "qs" && !isAdmin ? "mr-15" : ""
+                  }`}
+                >
                   {formatTimestamp(chatRoom.sendTime) || "No time"}
                 </span>
-                <span className="chat-senderName">{chatRoom.senderName}</span>
               </div>
             )}
             <div
               className={`message ${
                 chatType === "qs"
                   ? chatRoom.senderType === "qs"
+                    ? isAdmin
+                      ? "received"
+                      : "sent"
+                    : isAdmin
                     ? "sent"
                     : "received"
                   : chatRoom.senderType === "qs"
+                  ? isAdmin
+                    ? "sent"
+                    : "received"
+                  : isAdmin
                   ? "received"
                   : "sent"
               }`}
               style={
                 chatType === "qs"
                   ? chatRoom.senderType === "qs"
+                    ? isAdmin
+                      ? {}
+                      : { backgroundColor: sentColor }
+                    : isAdmin
                     ? { backgroundColor: sentColor }
                     : {}
                   : chatRoom.senderType === "qs"
+                  ? isAdmin
+                    ? { backgroundColor: sentColor }
+                    : {}
+                  : isAdmin
                   ? {}
                   : { backgroundColor: sentColor }
               }

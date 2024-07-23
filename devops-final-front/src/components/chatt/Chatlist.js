@@ -3,18 +3,26 @@ import "../../css/components/chatt/ChatList.css";
 import planeImg from "../../assets/images/plane.png";
 import planeBlueImg from "../../assets/images/planeblue.png";
 
-function ChatList({ userId, onChatSelect, chatImg = "default", chatType = "user", refreshTrigger }) {
+function ChatList({
+  userId,
+  onChatSelect,
+  chatImg = "default",
+  refreshTrigger,
+}) {
   const [chatLists, setChatLists] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const getChatImage = () => {
+  const getChatImage = (ansName) => {
+    if (ansName === "관리자") {
+      return planeBlueImg;
+    }
     switch (chatImg) {
       case "blue":
-        return require("../../assets/images/planeblue.png");
+        return planeBlueImg;
       case "default":
       default:
-        return require("../../assets/images/plane.png");
+        return planeImg;
     }
   };
 
@@ -48,21 +56,20 @@ function ChatList({ userId, onChatSelect, chatImg = "default", chatType = "user"
   };
 
   const handleChatSelect = (chat) => {
-    onChatSelect(
-      chat.chattingRoomId,
-      chat.ansName,
-      chat.qsId,
-      chat.ansId
-    );
+    onChatSelect(chat.chattingRoomId, chat.ansName, chat.qsName, chat.ansName);
   };
 
   const filteredChatLists = searchTerm
-    ? chatLists.filter((chatList) =>
-        chatType === "admin"
-          ? chatList.qsName.toLowerCase().includes(searchTerm)
-          : chatList.ansName.toLowerCase().includes(searchTerm)
+    ? chatLists.filter(
+        (chatList) =>
+          chatList.qsName.toLowerCase().includes(searchTerm) ||
+          chatList.ansName.toLowerCase().includes(searchTerm)
       )
     : chatLists;
+
+  const truncateMessage = (message) => {
+    return message.length > 20 ? message.substring(0, 20) + "..." : message;
+  };
 
   return (
     <aside className="sidebar">
@@ -84,14 +91,16 @@ function ChatList({ userId, onChatSelect, chatImg = "default", chatType = "user"
           >
             <img
               className="chat-img"
-              src={getChatImage()}
+              src={getChatImage(chatList.ansName)}
               alt={chatList.ansName}
             />
             <div className="chat-info">
               <h3>
-                {chatType === "admin" ? chatList.qsName : chatList.ansName}
+                {chatList.ansName === "관리자"
+                  ? chatList.ansName
+                  : chatList.qsName}
               </h3>
-              <p>{chatList.lastMsg}</p>
+              <p>{truncateMessage(chatList.lastMsg)}</p>
             </div>
           </li>
         ))}
