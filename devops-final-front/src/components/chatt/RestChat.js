@@ -7,7 +7,7 @@ import MessageInput from "./MessageInput";
 
 import ChatImg from "../../assets/images/chatorange.png";
 
-const AdminChat = ({ restId }) => {
+const RestChat = ({ restId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
   const [selectedChatQsName, setSelectedChatQsName] = useState(null);
@@ -62,4 +62,4 @@ const AdminChat = ({ restId }) => {
   );
 };
 
-export default AdminChat;
+export default RestChat;
