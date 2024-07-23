@@ -6,9 +6,9 @@ import FileReview from "../FileReview";
 
 function ReviewModal({ ReviewClose, reviewshow }) {
   const [contents, setContents] = useState("");
-  const [rating, setRating] = useState(0); // 별점 상태
-  const [hover, setHover] = useState(null); // 호버 상태
-  const userId = "user123"; // 예시 사용자 ID
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(null);
+  const userId = "user123";
 
   const fileRef = useRef(null);
 
@@ -32,27 +32,35 @@ function ReviewModal({ ReviewClose, reviewshow }) {
       });
 
       console.log("Response:", response.data);
-      ReviewClose();
     } catch (error) {
       console.error("Error uploading review:", error);
+    } finally {
+      setContents("");
+      fileRef.current.reset();
+      setRating(0);
+      ReviewClose();
     }
   };
 
   const handleStarClick = (index) => {
-    // 별점 설정 (1단위로)
     const newRating = index + 1;
     setRating(newRating);
     console.log(`Selected Rating: ${newRating}`); // 선택한 별점 로그
   };
 
   const handleMouseEnter = (index) => {
-    // 별점 호버 시 강조
     setHover(index + 1);
   };
 
   const handleMouseLeave = () => {
-    // 호버가 떠나면 현재 별점으로 리셋
     setHover(null);
+  };
+
+  const handleReviewClose = () => {
+    setContents("");
+    fileRef.current.reset();
+    setRating(0);
+    ReviewClose();
   };
 
   return (
@@ -63,14 +71,14 @@ function ReviewModal({ ReviewClose, reviewshow }) {
           e.target.id === "signinbackgroundon" ||
           e.target.id === "signinbackgroundoff"
         ) {
-          ReviewClose();
+          handleReviewClose();
         }
       }}
     >
       <div className={`signinModal ${reviewshow ? "signinshow" : "signinhide"}`}>
         <div className="signinModalHeader">
           <img src={Logo} alt="Logo" className="signinori"/>
-          <button className='signinclosebtn' onClick={ReviewClose}>
+          <button className='signinclosebtn' onClick={handleReviewClose}>
             X
           </button>
         </div>
@@ -107,7 +115,7 @@ function ReviewModal({ ReviewClose, reviewshow }) {
         </div>
         <div className="signinModalButton">
           <button className="signinModalPersonal" onClick={handleEditActivate}>등록</button>
-          <button className="signinModalRest" onClick={ReviewClose}>취소</button>
+          <button className="signinModalRest" onClick={handleReviewClose}>취소</button>
         </div>
       </div>
     </div>
