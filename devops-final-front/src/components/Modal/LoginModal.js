@@ -31,7 +31,7 @@ function LoginModal({ loginClose, loginshow }) {
       }}
     >
       <div className={`signinModal ${loginshow ? "signinshow" : "signinhide"}`}>
-        <div className="signinModalHeader">
+      <div className="signinModalHeader">
           <img src={Logo} alt="" className="signinori"/>
           <button className='signinclosebtn' onClick={loginClose}>
             X
