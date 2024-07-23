@@ -6,6 +6,7 @@ import Reservation from "../components/restaurant/Reservation";
 import WaitingManagement from "../components/restaurant/WaitingManagement";
 import RestaurantInfo from "../components/restaurant/RestaurantInfo";
 import RestaurantInfoEdit from "../components/restaurant/RestaurantInfoEdit";
+import AccountInfo from "../components/restaurant/AccountInfo";
 import RestChat from "../components/chatt/RestChat";
 import "../css/pages/RestMain.css";
 
@@ -61,7 +62,7 @@ function RestMain() {
             {selectedMenu === "메뉴 관리" && selectedRestId && (
               <MenuManagement restId={selectedRestId} />
             )}
-            {selectedMenu === "예약" && <Reservation />}
+            {selectedMenu === "예약" && <Reservation restId={selectedRestId}/>}
             {selectedMenu === "웨이팅 관리" && <WaitingManagement restId={selectedRestId}/>}
             {selectedMenu === "1:1 문의" && <RestChat restId={selectedRestId}/>}
             {selectedMenu === "계정 정보" && <AccountInfo restId={selectedRestId}/>}
@@ -73,9 +74,7 @@ function RestMain() {
   );
 }
 
-function AccountInfo() {
-  return <div>계정 정보 페이지입니다.</div>;
-}
+
 
 function Logout() {
   return <div>로그아웃 페이지입니다.</div>;

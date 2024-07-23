@@ -13,10 +13,10 @@ import Deposit from "./Deposit";
 import Today from "./Today";
 import DetailedReservation from "./DetailedReservation";
 
-function Reservation() {
+function Reservation({restId}) {
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
-  const [restId, setRestId] = useState(2);
+  // const [restId, setRestId] = useState(2);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tableDates, setTableDates] = useState({});
   const [rev1, setRev1] = useState([]);
