@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import HeaderOrange from "../components/HeaderOrange";
 import SideBarRest from "../components/restaurant/SideBarRest";
 import MenuManagement from "../components/restaurant/MenuManagement";
@@ -29,9 +29,10 @@ function RestMain() {
     setSelectedMenu("식당정보 수정");
   };
 
-  const handleRestIdChange = (id) => {
+  const handleRestIdChange = useCallback((id) => {
+    console.log("식당 ID 변경됨, ID:", id);
     setSelectedRestId(id);
-  };
+  }, []);
 
   return (
     <div className="mainWrapper">

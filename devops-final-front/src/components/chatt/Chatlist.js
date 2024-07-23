@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "../../css/components/chatt/ChatList.css";
-
 import planeImg from "../../assets/images/plane.png";
 import planeBlueImg from "../../assets/images/planeblue.png";
 
@@ -8,19 +7,23 @@ function ChatList({
   userId,
   onChatSelect,
   chatImg = "default",
-  chatType = "user",
+  refreshTrigger,
+  currentRestId
 }) {
   const [chatLists, setChatLists] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const getChatImage = () => {
+  const getChatImage = (ansName) => {
+    if (ansName === "관리자") {
+      return planeBlueImg;
+    }
     switch (chatImg) {
       case "blue":
-        return require("../../assets/images/planeblue.png");
+        return planeBlueImg;
       case "default":
       default:
-        return require("../../assets/images/plane.png");
+        return planeImg;
     }
   };
 
@@ -32,8 +35,6 @@ function ChatList({
       }
       const data = await response.json();
       setChatLists(data || []);
-      console.log("userId:", userId);
-      console.log("Fetched data:", data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -43,7 +44,7 @@ function ChatList({
 
   useEffect(() => {
     getChatList();
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -55,13 +56,38 @@ function ChatList({
     }
   };
 
+  const handleChatSelect = (chat) => {
+    onChatSelect(
+      chat.chattingRoomId,
+      chat.ansName,
+      chat.qsName,
+      chat.qsId,
+      chat.ansId
+    ); // 추가된 인자 전달
+  };
+
   const filteredChatLists = searchTerm
-    ? chatLists.filter((chatList) =>
-        chatType === "admin"
-          ? chatList.qsName.toLowerCase().includes(searchTerm)
-          : chatList.ansName.toLowerCase().includes(searchTerm)
+    ? chatLists.filter(
+        (chatList) =>
+          chatList.qsName.toLowerCase().includes(searchTerm) ||
+          chatList.ansName.toLowerCase().includes(searchTerm)
       )
     : chatLists;
+
+  const truncateMessage = (message) => {
+    return message.length > 20 ? message.substring(0, 20) + "..." : message;
+  };
+
+  const getDisplayName = (chatList) => {
+    if (chatList.ansName === "관리자") {
+      return "관리자";
+    }
+    if (currentRestId === chatList.qsId) {
+      return chatList.ansName;
+    }
+    return chatList.qsName;
+  };
+
 
   return (
     <aside className="sidebar">
@@ -79,24 +105,18 @@ function ChatList({
           <li
             key={chatList.chattingRoomId}
             className="chat-item"
-            onClick={() =>
-              onChatSelect(
-                chatList.chattingRoomId,
-                chatList.ansName,
-                chatList.qsName
-              )
-            }
+            onClick={() => handleChatSelect(chatList)}
           >
             <img
               className="chat-img"
-              src={getChatImage()}
+              src={getChatImage(chatList.ansName)}
               alt={chatList.ansName}
             />
             <div className="chat-info">
               <h3>
-                {chatType === "admin" ? chatList.qsName : chatList.ansName}
+              {getDisplayName(chatList)}
               </h3>
-              <p>{chatList.lastMsg}</p>
+              <p>{truncateMessage(chatList.lastMsg)}</p>
             </div>
           </li>
         ))}

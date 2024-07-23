@@ -14,6 +14,7 @@ import quotesImg1 from "../../assets/images/detail/quotes.png";
 import quotesImg2 from "../../assets/images/detail/quotes2.png";
 import EmptyEnrollModal from "../../components/Modal/EmptyEnrollModal";
 import WaitingEnrollModal from "../../components/Modal/WaitingEnrollModal";
+import SelectReceiverModal from "../../components/Modal/SelectReceiverModal";
 
 const RestDetail = ({ userId, restId, moveToReservation }) => {
   const [restaurant, setRestaurant] = useState(null);
@@ -24,6 +25,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isWaitingModalOpen, setIsWaitingModalOpen] = useState(false);
+  const [isReceiverModalOpen, setIsReceiverModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
 
@@ -35,9 +37,14 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
     setIsWaitingModalOpen(true);
   };
 
+  const openReceiverModal = () => {
+    setIsReceiverModalOpen(true);
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setIsWaitingModalOpen(false);
+    setIsReceiverModalOpen(false);
   };
 
   const moveFunc = () => {
@@ -182,6 +189,12 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
         restId={restId}
         name={restaurant.restName}
       />
+      <SelectReceiverModal
+        isOpen={isReceiverModalOpen}
+        onClose={closeModal}
+        receiverId={restId}
+        senderId={userId}
+      />
       <div className="rest-container">
         <div className="rest-photo-box">
           <img
@@ -198,7 +211,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
                 <img className="empty-img" src={emptyImg} />
                 <div>빈자리 알림 요청</div>
               </div>
-              <div className="ask-btn">
+              <div className="ask-btn" onClick={openReceiverModal}>
                 <div className="btn-content">1:1 문의</div>
               </div>
               {restaurant.revWait === "A" && (

@@ -1,19 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../../css/components/chatt/Chat.css";
 import Loading from "../Loading";
 import ChatList from "./Chatlist";
 import ChatRoom from "./ChatRoom";
 import MessageInput from "./MessageInput";
-
 import ChatImg from "../../assets/images/chatorange.png";
 
 const UserChat = ({ userId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
+  const [selectedChatQsName, setSelectedChatQsName] = useState(null);
+  const [selectedChatQsId, setSelectedChatQsId] = useState(null);
+  const [selectedChatAnsId, setSelectedChatAnsId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleChatSelect = (chattingRoomId, ansName) => {
+  const handleChatSelect = async (chattingRoomId, ansName, qsName, qsId, ansId) => {
     setSelectedChatRoomId(chattingRoomId);
     setSelectedChatAnsName(ansName);
+    setSelectedChatQsName(qsName);
+    setSelectedChatQsId(qsId);
+    setSelectedChatAnsId(ansId);
+
+    console.log("ansName:", ansName);
+  };
+
+  const handleRefresh = () => {
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -25,7 +38,11 @@ const UserChat = ({ userId }) => {
         </div>
         <div className="real-chat-content">
           <div className="chat-list">
-            <ChatList userId={userId} onChatSelect={handleChatSelect} />
+            <ChatList
+              userId={userId}
+              onChatSelect={handleChatSelect}
+              refreshTrigger={refreshTrigger}
+            />
           </div>
           <div className="chat-messages-wrap">
             <div className="chat-messages">
@@ -33,6 +50,11 @@ const UserChat = ({ userId }) => {
                 <ChatRoom
                   chattingRoomId={selectedChatRoomId}
                   ansName={selectedChatAnsName}
+                  qsName={selectedChatQsName} 
+                  qsId={selectedChatQsId}
+                  ansId={selectedChatAnsId}
+                  refreshTrigger={refreshTrigger}
+                  currentUserId={userId}
                 />
               ) : (
                 <div className="chat-no-message">
@@ -41,7 +63,15 @@ const UserChat = ({ userId }) => {
               )}
             </div>
             <div className="chat-input-box">
-              <MessageInput />
+              {loading ? (
+                <Loading />
+              ) : (
+                <MessageInput
+                  chattingRoomId={selectedChatRoomId}
+                  userId={userId}
+                  onMessageSent={handleRefresh}
+                />
+              )}
             </div>
           </div>
         </div>

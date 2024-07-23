@@ -5,8 +5,12 @@ function ChatRoom({
   chattingRoomId,
   ansName,
   qsName,
+  ansId,
+  qsId,
   sentColor = "#FF8A00",
   chatType = "qs",
+  refreshTrigger,
+  currentUserId,
 }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +19,7 @@ function ChatRoom({
     const date = new Date(timestamp);
 
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // 월은 0부터 시작하므로 +1 필요
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
     const hours = String(date.getHours()).padStart(2, "0");
@@ -35,8 +39,6 @@ function ChatRoom({
       }
       const data = await response.json();
       setChatRooms(data || []);
-      console.log("chattingRoomId:", chattingRoomId);
-      console.log("Fetched data:", data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -48,13 +50,19 @@ function ChatRoom({
     if (chattingRoomId) {
       getChatRoom();
     }
-  }, [chattingRoomId]);
+  }, [chattingRoomId, refreshTrigger]);
+
+  console.log("qsId:", qsId);
+  console.log("ansId:", ansId);
+  console.log("currentUserId:", currentUserId);
 
   const sortedChatRooms = [...chatRooms].sort(
     (a, b) => new Date(a.sendTime) - new Date(b.sendTime)
   );
 
-  const headerName = chatType === "qs" ? ansName : qsName;
+  const isAdmin = ansName === "관리자";
+  const isCurrentUserQs = currentUserId === qsId;
+  const headerName = isCurrentUserQs ? ansName : qsName;
 
   return (
     <div className="chat-window">
@@ -70,59 +78,41 @@ function ChatRoom({
       <div className="message-list">
         {sortedChatRooms.map((chatRoom) => (
           <div className="message-box" key={chatRoom.id}>
-            {chatType === "qs" ? (
-              chatRoom.senderType === "qs" ? (
-                <div className="message-info sent-info">
+            <div
+              className={`message-info ${
+                chatRoom.senderId === currentUserId
+                  ? "sent-info"
+                  : "received-info"
+              }`}
+            >
+              {chatRoom.senderId === currentUserId ? (
+                <>
                   <span className="chat-senderTime mr-15">
                     {formatTimestamp(chatRoom.sendTime) || "No time"}
                   </span>
-                  <span className="chat-senderName">{chatRoom.senderName}</span>
-                </div>
+                  <span className="chat-senderName ">
+                    {chatRoom.senderName}
+                  </span>
+                </>
               ) : (
-                <div className="message-info received-info">
+                <>
                   <span className="chat-senderName mr-15">
                     {chatRoom.senderName}
                   </span>
                   <span className="chat-senderTime">
                     {formatTimestamp(chatRoom.sendTime) || "No time"}
                   </span>
-                </div>
-              )
-            ) : chatRoom.senderType === "qs" ? (
-              <div className="message-info received-info">
-                <span className="chat-senderName mr-15">
-                  {chatRoom.senderName}
-                </span>
-                <span className="chat-senderTime">
-                  {formatTimestamp(chatRoom.sendTime) || "No time"}
-                </span>
-              </div>
-            ) : (
-              <div className="message-info sent-info">
-                <span className="chat-senderTime mr-15">
-                  {formatTimestamp(chatRoom.sendTime) || "No time"}
-                </span>
-                <span className="chat-senderName">{chatRoom.senderName}</span>
-              </div>
-            )}
+                </>
+              )}
+            </div>
             <div
               className={`message ${
-                chatType === "qs"
-                  ? chatRoom.senderType === "qs"
-                    ? "sent"
-                    : "received"
-                  : chatRoom.senderType === "qs"
-                  ? "received"
-                  : "sent"
+                chatRoom.senderId === currentUserId ? "sent" : "received"
               }`}
               style={
-                chatType === "qs"
-                  ? chatRoom.senderType === "qs"
-                    ? { backgroundColor: sentColor }
-                    : {}
-                  : chatRoom.senderType === "qs"
-                  ? {}
-                  : { backgroundColor: sentColor }
+                chatRoom.senderId === currentUserId
+                  ? { backgroundColor: sentColor }
+                  : {}
               }
             >
               <div>{chatRoom.messageContent}</div>
