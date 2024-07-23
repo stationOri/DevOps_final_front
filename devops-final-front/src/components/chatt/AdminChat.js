@@ -5,15 +5,20 @@ import ChatList from "./Chatlist";
 import ChatRoom from "./ChatRoom";
 import MessageInput from "./MessageInput";
 
-import ChatImg from "../../assets/images/chatorange.png";
+import ChatImg from "../../assets/images/chatblue.png";
 
-const UserChat = ({ userId }) => {
+const AdminChat = ({ adminId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
+  const [selectedChatQsName, setSelectedChatQsName] = useState(null);
 
-  const handleChatSelect = (chattingRoomId, ansName) => {
+  const handleChatSelect = (chattingRoomId, ansName, qsName) => {
     setSelectedChatRoomId(chattingRoomId);
     setSelectedChatAnsName(ansName);
+    setSelectedChatQsName(qsName);
+    console.log("chattingRoomId:", chattingRoomId);
+    console.log("ansName:", ansName);
+    console.log("qsName:", qsName);
   };
 
   return (
@@ -25,7 +30,12 @@ const UserChat = ({ userId }) => {
         </div>
         <div className="real-chat-content">
           <div className="chat-list">
-            <ChatList userId={userId} onChatSelect={handleChatSelect} />
+            <ChatList
+              userId={adminId}
+              onChatSelect={handleChatSelect}
+              chatImg="blue"
+              chatType="admin"
+            />
           </div>
           <div className="chat-messages-wrap">
             <div className="chat-messages">
@@ -33,6 +43,9 @@ const UserChat = ({ userId }) => {
                 <ChatRoom
                   chattingRoomId={selectedChatRoomId}
                   ansName={selectedChatAnsName}
+                  qsName={selectedChatQsName}
+                  sentColor="#4E95D9"
+                  chatType="ans"
                 />
               ) : (
                 <div className="chat-no-message">
@@ -41,7 +54,7 @@ const UserChat = ({ userId }) => {
               )}
             </div>
             <div className="chat-input-box">
-              <MessageInput />
+              <MessageInput btnColor="#4E95D9" />
             </div>
           </div>
         </div>
@@ -50,4 +63,4 @@ const UserChat = ({ userId }) => {
   );
 };
 
-export default UserChat;
+export default AdminChat;

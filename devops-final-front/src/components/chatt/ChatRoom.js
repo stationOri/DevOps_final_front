@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../../css/components/chatt/ChatRoom.css";
 
-function ChatRoom({ chattingRoomId, ansName, sentColor = "#FF8A00" }) {
+function ChatRoom({
+  chattingRoomId,
+  ansName,
+  qsName,
+  sentColor = "#FF8A00",
+  chatType = "qs",
+}) {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,11 +54,13 @@ function ChatRoom({ chattingRoomId, ansName, sentColor = "#FF8A00" }) {
     (a, b) => new Date(a.sendTime) - new Date(b.sendTime)
   );
 
+  const headerName = chatType === "qs" ? ansName : qsName;
+
   return (
     <div className="chat-window">
       {chatRooms.length > 0 ? (
         <div className="chat-header">
-          <h2>{ansName}</h2>
+          <h2>{headerName}</h2>
         </div>
       ) : (
         <div className="chat-header">
@@ -62,14 +70,25 @@ function ChatRoom({ chattingRoomId, ansName, sentColor = "#FF8A00" }) {
       <div className="message-list">
         {sortedChatRooms.map((chatRoom) => (
           <div className="message-box" key={chatRoom.id}>
-            {chatRoom.senderType === "qs" ? (
-              <div className="message-info sent-info">
-                <span className="chat-senderTime mr-15">
-                  {formatTimestamp(chatRoom.sendTime) || "No time"}
-                </span>
-                <span className="chat-senderName">{chatRoom.senderName}</span>
-              </div>
-            ) : (
+            {chatType === "qs" ? (
+              chatRoom.senderType === "qs" ? (
+                <div className="message-info sent-info">
+                  <span className="chat-senderTime mr-15">
+                    {formatTimestamp(chatRoom.sendTime) || "No time"}
+                  </span>
+                  <span className="chat-senderName">{chatRoom.senderName}</span>
+                </div>
+              ) : (
+                <div className="message-info received-info">
+                  <span className="chat-senderName mr-15">
+                    {chatRoom.senderName}
+                  </span>
+                  <span className="chat-senderTime">
+                    {formatTimestamp(chatRoom.sendTime) || "No time"}
+                  </span>
+                </div>
+              )
+            ) : chatRoom.senderType === "qs" ? (
               <div className="message-info received-info">
                 <span className="chat-senderName mr-15">
                   {chatRoom.senderName}
@@ -78,15 +97,32 @@ function ChatRoom({ chattingRoomId, ansName, sentColor = "#FF8A00" }) {
                   {formatTimestamp(chatRoom.sendTime) || "No time"}
                 </span>
               </div>
+            ) : (
+              <div className="message-info sent-info">
+                <span className="chat-senderTime mr-15">
+                  {formatTimestamp(chatRoom.sendTime) || "No time"}
+                </span>
+                <span className="chat-senderName">{chatRoom.senderName}</span>
+              </div>
             )}
             <div
               className={`message ${
-                chatRoom.senderType === "qs" ? "sent" : "received"
+                chatType === "qs"
+                  ? chatRoom.senderType === "qs"
+                    ? "sent"
+                    : "received"
+                  : chatRoom.senderType === "qs"
+                  ? "received"
+                  : "sent"
               }`}
               style={
-                chatRoom.senderType === "qs"
-                  ? { backgroundColor: sentColor }
-                  : {}
+                chatType === "qs"
+                  ? chatRoom.senderType === "qs"
+                    ? { backgroundColor: sentColor }
+                    : {}
+                  : chatRoom.senderType === "qs"
+                  ? {}
+                  : { backgroundColor: sentColor }
               }
             >
               <div>{chatRoom.messageContent}</div>
