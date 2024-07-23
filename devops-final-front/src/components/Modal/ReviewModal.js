@@ -1,23 +1,41 @@
 import React, { useState, useRef } from 'react';
+import axios from 'axios';
 import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/ReviewModal.css";
 import FileReview from "../FileReview";
 
 function ReviewModal({ ReviewClose, reviewshow }) {
-  const [nickname, setNickname] = useState("");
+  const [contents, setContents] = useState("");
   const [rating, setRating] = useState(0); // 별점 상태
   const [hover, setHover] = useState(null); // 호버 상태
+  const userId = "user123"; // 예시 사용자 ID
 
-  const fileRef = useRef(null); // 하나의 FileReview 컴포넌트만 사용
+  const fileRef = useRef(null);
 
-  const handleEditActivate = () => {
+  const handleEditActivate = async () => {
     const files = fileRef.current.getFiles();
-    
-    console.log(`Review: ${nickname}`);
-    console.log(`Rating: ${rating}`);
-    console.log(`Files: ${files.length > 0 ? files.map(file => file.name).join(', ') : 'No files selected'}`);
 
-    ReviewClose();
+    const formData = new FormData();
+    formData.append("userId", userId);
+    formData.append("contents", contents);
+    formData.append("rating", rating);
+    files.forEach((file, index) => {
+      formData.append(`file${index + 1}`, file);
+    });
+
+    try {
+      // 백엔드 엔드포인트로 POST 요청
+      const response = await axios.post("https://your-backend-endpoint/api/review", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Response:", response.data);
+      ReviewClose();
+    } catch (error) {
+      console.error("Error uploading review:", error);
+    }
   };
 
   const handleStarClick = (index) => {
@@ -80,8 +98,8 @@ function ReviewModal({ ReviewClose, reviewshow }) {
             className='reviewinputBox'
             placeholder='최대 500자까지 작성 가능합니다.'
             maxLength={500}
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            value={contents}
+            onChange={(e) => setContents(e.target.value)}
           />
         </div>
         <div className='files'>
