@@ -1,13 +1,17 @@
+// DetailedReservation.js
 import React, { useCallback, useRef, useState } from 'react';
 import Human from "../../assets/images/Restaurant/human.png";
 import Table from "../../assets/images/Restaurant/table.png";
 import RevAcceptModal from '../Modal/RevAcceptModal';
 import RestCancelModal from '../Modal/RestCancelModal';
+import RestStatusChangeModal from '../Modal/RestStatusChangeModal';
+import RestStatusModal from '../Modal/RestStatusModal';
 
 function DetailedReservation({ reservations, row, restId }) {
   const [restcancelshow, setRestCancelShow] = useState(false);
   const [revacceptshow, setRevAcceptShow] = useState(false);
   const [revdetailshow, setRevDetailShow] = useState(false);
+  const [restchangeshow, setRestChangeShow] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
 
   const RevAcceptShow = (reservation) => {
@@ -20,15 +24,25 @@ function DetailedReservation({ reservations, row, restId }) {
     setSelectedReservation(null);
   };
 
-  const RevDetailShow = () => setRevDetailShow(true);
-  const RevDetailClose = () => setRevDetailShow(false);
+  const RevDetailShow = (reservation) => {
+    setSelectedReservation(reservation);
+    setRevDetailShow(true);
+  };
+
+  const RevDetailClose = () => {
+    setRevDetailShow(false);
+    setSelectedReservation(null);
+  };
 
   const RestCancelShow = () => setRestCancelShow(true);
   const RestCancelClose = () => setRestCancelShow(false);
 
+  const RestChangeShow = () => setRestChangeShow(true);
+  const RestChangeClose = () => setRestChangeShow(false);
+
   const previousTimeRef = useRef(null);
 
-  const getButtonText = useCallback((status, resId, reservation) => {
+  const getButtonText = useCallback((status, reservation) => {
     switch (status) {
       case "RESERVATION_READY":
         return (
@@ -38,7 +52,7 @@ function DetailedReservation({ reservations, row, restId }) {
         );
       case "RESERVATION_ACCEPTED":
         return (
-          <button onClick={() => RevDetailShow()} className="btninRestRev">
+          <button onClick={() => RevDetailShow(reservation)} className="btninRestRev">
             확인
           </button>
         );
@@ -116,7 +130,7 @@ function DetailedReservation({ reservations, row, restId }) {
                 </div>
               </div>
               <div className="reservationforbtn">
-                {getButtonText(rev.status, rev.res_id, rev)}
+                {getButtonText(rev.status, rev)}
               </div>
             </div>
             {revacceptshow && selectedReservation && (
@@ -131,6 +145,21 @@ function DetailedReservation({ reservations, row, restId }) {
               <RestCancelModal 
                 RestCancelClose={RestCancelClose} 
                 restcancelshow={restcancelshow} 
+              />
+            )}
+            {revdetailshow && selectedReservation && (
+              <RestStatusChangeModal 
+                RevDetailClose={RevDetailClose}
+                revdetailshow={revdetailshow}
+                reservation={selectedReservation}
+                RestCancelShow={RestCancelShow}
+                RestChangeShow={RestChangeShow}
+              />
+            )}
+            {restchangeshow && (
+              <RestStatusModal 
+                RestChangeClose={RestChangeClose} 
+                restchangeshow={restchangeshow} 
               />
             )}
           </div>

@@ -1,25 +1,21 @@
-import React, { useState, useEffect } from "react";
-import Now from "../../assets/images/Restaurant/now.png";
-import Deposit from "../../assets/images/Restaurant/deposit.png";
+import React, { useState, useEffect, useCallback } from "react";
 import Waiting from "../../assets/images/Restaurant/waiting.png";
 import Phone from "../../assets/images/Restaurant/phone.png";
-import Human from "../../assets/images/Restaurant/human.png";
-import Table from "../../assets/images/Restaurant/table.png";
 import "../../css/components/restaurant/Reservation.css";
 import Loading from "../Loading";
 import Cal from "../../assets/images/modal/cal.png";
 import DatePicker from "react-datepicker";
-import axios from 'axios';
+import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import SendTalkModal from "../Modal/SendTalkModal";
-import AccountModal from "../Modal/AccountModal";
-import CancelModal from "../Modal/CancelModal";
-import { useCancelModal } from "../Modal/CancelModalContext";
+
+import Deposit from "./Deposit";
+import Today from "./Today";
+import DetailedReservation from "./DetailedReservation";
 
 function Reservation() {
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
-  const [infoshow, setInfoShow] = useState(false);
   const [restId, setRestId] = useState(2);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [tableDates, setTableDates] = useState({});
@@ -27,32 +23,11 @@ function Reservation() {
   const [rev2, setRev2] = useState([]);
   const [rev3, setRev3] = useState([]);
   const [rev4, setRev4] = useState([]);
-  const [todayinfo, setTodayInfo] = useState([]);
-  const [todaynum, setTodayNum] = useState(0);
-  const [talkshow, setTalkShow] = useState(false);
-  const { openCancelModal } = useCancelModal();
 
+  const [talkshow, setTalkShow] = useState(false);
 
   const TalkClose = () => setTalkShow(false);
   const TalkShow = () => setTalkShow(true);
-
-  // const handleCancelRev
-
-  const handelCancelRev = () => {
-    openCancelModal('예약', restId);
-  };
-
-  const handelChangeStatus = () => {
-    openCancelModal('상태', restId);
-  };
-
-  const openInfoModal = () => {
-    setInfoShow(true);
-  };
-
-  const closeInfoModal = () => {
-    setInfoShow(false);
-  };
 
   const getLastYearStartDate = () => {
     const now = new Date();
@@ -62,174 +37,52 @@ function Reservation() {
   const minDate = getLastYearStartDate();
   const LaterDate = new Date(new Date().setDate(new Date().getDate() + 30));
 
-  const getWait = async () => {
+  const getWait = useCallback(async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/restaurants/info/revWait/${restId}`
-      );
+      const response = await fetch(`http://localhost:8080/restaurants/info/revWait/${restId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const text = await response.text();
       if (text === "B" || text === "C") {
         setRev(true);
+      } else {
+        setRev(false);
       }
     } catch (error) {
       console.error("Error revWait status:", error);
     }
-  };
+  }, [restId]);
 
-  const sortByDateTime = (data) => {
-    return data.sort((a, b) => new Date(a.res_datetime) - new Date(b.res_datetime));
-  };
-  
-  const getRev = async () => {
+  const getRev = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:4000/restRev');
-      const sortedData = sortByDateTime(response.data);
-      setRev1(sortedData);
-      const response1 = await axios.get('http://localhost:4000/restRev2');
-      const sortedData1 = sortByDateTime(response1.data);
-      setRev2(sortedData1);
-      const response2 = await axios.get('http://localhost:4000/restRev3');
-      const sortedData2= sortByDateTime(response2.data);
-      setRev3(sortedData2);
-      const response3 = await axios.get('http://localhost:4000/restRev4');
-      const sortedData3 = sortByDateTime(response3.data);
-      setRev4(sortedData3);
+      const [response1, response2, response3, response4] = await Promise.all([
+        axios.get("http://localhost:4000/restRev"),
+        axios.get("http://localhost:4000/restRev2"),
+        axios.get("http://localhost:4000/restRev3"),
+        axios.get("http://localhost:4000/restRev4"),
+      ]);
+
+      setRev1(sortByDateTime(response1.data));
+      setRev2(sortByDateTime(response2.data));
+      setRev3(sortByDateTime(response3.data));
+      setRev4(sortByDateTime(response4.data));
     } catch (error) {
-      console.error("Error fetching rev1:", error);
+      console.error("Error fetching reservations:", error);
     }
-  };
-  
+  }, []);
 
-  const getToday = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/today`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const json = await response.json();
-
-      const timeCounts = json.reduce((acc, reservation) => {
-        const hour = new Date(reservation.res_datetime).getHours();
-        const timeSlot = `${hour}:00`;
-        if (!acc[timeSlot]) {
-          acc[timeSlot] = 0;
-        }
-        acc[timeSlot] += 1;
-        return acc;
-      }, {});
-
-      setTodayNum(json.length);
-      setTodayInfo(timeCounts);
-    } catch (error) {
-      console.error("Error fetching today's reservations:", error);
-    }
-  };
-
-  const renderReservations = (reservations, row) => {
-    const getButtonText = (status) => {
-      switch (status) {
-        case "RESERVATION_READY":
-          return <button onClick={handelCancelRev} className="btninRestRev">승인</button>;
-        case "RESERVATION_ACCEPTED":
-          return <button onClick={handelChangeStatus} className="btninRestRev">확인</button>;
-        case "RESERVATION_REJECTED":
-          return <div>거절됨</div>;
-        case "RESERVATION_CANCELED":
-          return <div>취소됨</div>;
-        case "VISITED":
-          return <div>방문</div>;
-        case "NOSHOW":
-          return <div>노쇼</div>;
-        default:
-          return <div>오류</div>;
-      }
-    };
-  
-    let previousTime = null;  // 이전 예약의 시간 저장 변수
-  
-    return reservations.map((rev, index) => {
-      const date = new Date(rev.res_datetime);
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
-      const period = hours >= 12 ? "PM" : "AM";
-      const formattedHours = hours % 12 || 12;
-      const formattedMinutes = minutes.toString().padStart(2, "0");
-      const isLastElement = index === reservations.length - 1;
-  
-      const currentTime = `${formattedHours}:${formattedMinutes} ${period}`;
-  
-      const isNewLine = previousTime !== currentTime;
-  
-      const timeDisplay = isNewLine ? (
-        <>
-          <div>{formattedHours}:{formattedMinutes}</div>
-          <div style={{ fontSize: "13px" }}>{period}</div>
-        </>
-      ) : null;
-  
-      previousTime = currentTime;
-  
-      let rowClass = '';
-      switch (row) {
-        case 1:
-          rowClass = 'firstElement';
-          break;
-        case 2:
-          rowClass = 'secondElement';
-          break;
-        case 3:
-          rowClass = 'thirdElement';
-          break;
-        case 4:
-          rowClass = 'fourthElement';
-          break;
-        default:
-          rowClass = '';
-      }
-  
-      return (
-        <div className={`reservationBox ${rowClass} ${isNewLine ? 'newLine' : 'notNewLine'} ${isLastElement ? 'lastElement' : ''}`} key={rev.res_id}>
-          <div className="timebox">
-            {timeDisplay}
-          </div>
-          <div className="reservationDetail">
-            <div className="reservationdetailed">
-              <div>{rev.user_name}</div>
-              <div className="boxforicon">
-                <div className="innericonbox">
-                  <img src={Human} alt="" className="iconforrev humanicon" />
-                  <div className="cnfornumber">{rev.res_num}</div>
-                </div>
-                <div className="innericonbox">
-                  <img src={Table} alt="" className="iconforrev" />
-                  <div className="cnfornumber">1</div>
-                </div>
-              </div>
-            </div>
-            <div className="reservationforbtn">
-              {getButtonText(rev.status)}
-            </div>
-          </div>
-        </div>
-      );
-    });
-  };
+  const sortByDateTime = (data) => data.sort((a, b) => new Date(a.res_datetime) - new Date(b.res_datetime));
 
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([
-        getWait(),
-        getRev(),
-        getToday(),
-      ]);
+      await getWait();
+      await getRev();
       setLoading(false);
     };
 
     fetchData();
-  }, [selectedDate]);
+  }, [getWait, getRev]);
 
   const handleFindClick = () => {
     setTableDates({
@@ -262,9 +115,7 @@ function Reservation() {
     });
   }, []);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-  };
+  const handleDateChange = (date) => setSelectedDate(date);
 
   return (
     <div className="WrapperWithoutBorder">
@@ -273,50 +124,8 @@ function Reservation() {
       ) : (
         <>
           <div className="UpperBoxRestheight">
-            <div className="upperboxleft">
-              <div className="rest-text">
-                <img src={Deposit} alt="" className="rest-text-logo" />
-                <p className="rest-bold-text">Deposit</p>
-              </div>
-              <div className="rest-content-boxwai">
-                <div>
-                  이번 달 <span className="spanfornoshow">노쇼</span> 예약금
-                  총액
-                </div>
-                <div>
-                  <span className="spanformoney">500,000</span> 원
-                </div>
-                <div className="accountbox" style={{cursor:"pointer"}}onClick={openInfoModal}>환불계좌 수정하기</div>
-              </div>
-            </div>
-            <div className="upperboxright">
-              <div className="rest-text">
-                <img src={Now} alt="" className="rest-text-logo" />
-                <p className="rest-bold-text">Today</p>
-              </div>
-              <div className="rest-content-boxwai">
-                <div className="bookingExText">
-                  오늘의 예약{" "}
-                  <span className="spanforOrangerev">{todaynum}</span> 건
-                </div>
-                <hr className="innerHrLinewai" />
-                {rev ? (
-                  <div className="resernoinfobox">
-                    예약 내역이 존재하지 않습니다.
-                  </div>
-                ) : (
-                  <div className="reserinfobox">
-                    {Object.entries(todayinfo).map(([timeSlot, count]) => (
-                      <div className="innerslot" key={timeSlot}>
-                        {timeSlot}{" "}
-                        <span className="spanforcounting">{count}</span>건
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <hr className="innerHrLinewai" />
-              </div>
-            </div>
+            <Deposit />
+            <Today rev={rev} />
           </div>
           <div className="LowerBoxRest">
             <div className="rest-text">
@@ -379,25 +188,41 @@ function Reservation() {
                   <div className="tableBorderyes">
                     {formatDate(tableDates.today)}
                   </div>
-                  <div>{renderReservations(rev1, 1)}</div>
+                  <DetailedReservation
+                    reservations={rev1}
+                    row={1}
+                    restId={restId}
+                  />
                 </div>
                 <div className="colWarpper">
                   <div className="tableBorderyes">
                     {formatDate(tableDates.day1)} (D+1)
                   </div>
-                  <div>{renderReservations(rev2,2)}</div>
+                  <DetailedReservation
+                    reservations={rev2}
+                    row={2}
+                    restId={restId}
+                  />
                 </div>
                 <div className="colWarpper">
                   <div className="tableBorderyes">
                     {formatDate(tableDates.day2)} (D+2)
                   </div>
-                  <div>{renderReservations(rev3,3)}</div>
+                  <DetailedReservation
+                    reservations={rev3}
+                    row={3}
+                    restId={restId}
+                  />
                 </div>
                 <div className="colWarpper">
                   <div className="tableBorderyesend">
                     {formatDate(tableDates.day3)} (D+3)
                   </div>
-                  <div>{renderReservations(rev4,4)}</div>
+                  <DetailedReservation
+                    reservations={rev4}
+                    row={4}
+                    restId={restId}
+                  />
                 </div>
               </div>
             )}
@@ -409,12 +234,6 @@ function Reservation() {
         talkshow={talkshow}
         restId={restId}
       />
-      <AccountModal 
-        infoshow={infoshow}
-        closeInfoModal={closeInfoModal}
-        restId={restId}
-      />
-      <CancelModal />
     </div>
   );
 }
