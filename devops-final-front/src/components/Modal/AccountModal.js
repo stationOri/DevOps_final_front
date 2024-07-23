@@ -14,6 +14,7 @@ function AccountModal({ closeInfoModal, infoshow, restId }) {
     } catch (error) {
       console.error('Error:', error);
     } finally {
+      setAccountNumber("")
       closeInfoModal();
     }
   };
