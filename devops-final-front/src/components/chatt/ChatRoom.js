@@ -7,6 +7,7 @@ function ChatRoom({
   qsName,
   sentColor = "#FF8A00",
   chatType = "qs",
+  refreshTrigger
 }) {
   const [chatRooms, setChatRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ function ChatRoom({
     if (chattingRoomId) {
       getChatRoom();
     }
-  }, [chattingRoomId]);
+  }, [chattingRoomId, refreshTrigger]);
 
   const sortedChatRooms = [...chatRooms].sort(
     (a, b) => new Date(a.sendTime) - new Date(b.sendTime)

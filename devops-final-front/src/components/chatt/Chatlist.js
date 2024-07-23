@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../../css/components/chatt/ChatList.css";
-
 import planeImg from "../../assets/images/plane.png";
 import planeBlueImg from "../../assets/images/planeblue.png";
 
-function ChatList({
-  userId,
-  onChatSelect,
-  chatImg = "default",
-  chatType = "user",
-}) {
+function ChatList({ userId, onChatSelect, chatImg = "default", chatType = "user", refreshTrigger }) {
   const [chatLists, setChatLists] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -32,8 +26,6 @@ function ChatList({
       }
       const data = await response.json();
       setChatLists(data || []);
-      console.log("userId:", userId);
-      console.log("Fetched data:", data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -43,7 +35,7 @@ function ChatList({
 
   useEffect(() => {
     getChatList();
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
@@ -53,6 +45,15 @@ function ChatList({
     if (e.key === "Enter") {
       e.preventDefault();
     }
+  };
+
+  const handleChatSelect = (chat) => {
+    onChatSelect(
+      chat.chattingRoomId,
+      chat.ansName,
+      chat.qsId,
+      chat.ansId
+    );
   };
 
   const filteredChatLists = searchTerm
@@ -79,13 +80,7 @@ function ChatList({
           <li
             key={chatList.chattingRoomId}
             className="chat-item"
-            onClick={() =>
-              onChatSelect(
-                chatList.chattingRoomId,
-                chatList.ansName,
-                chatList.qsName
-              )
-            }
+            onClick={() => handleChatSelect(chatList)}
           >
             <img
               className="chat-img"
