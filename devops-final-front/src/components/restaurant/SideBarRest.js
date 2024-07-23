@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
-function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
+function SideBarRest({ onMenuClick, isExtended, toggleSidebar, onRestIdChange}) {
   const { openCheckModal } = useCheckModal();
   const query = useQuery();
   const [restId, setRestId] = useState("");
@@ -34,26 +34,17 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
       onMenuClick(text); // 클릭된 메뉴명을 RestMain으로 전달
     }
   };
-  
-  useEffect(() => {
-    if (token) {
-      try {
-        localStorage.setItem('token', token);
-        const userinfo = jwtDecode(token);
-        setUsername(userinfo.userName);
-      } catch (error) {
-        console.error("Invalid token", error);
-      }
-    }
-  }, [token]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
+    console.log("storedToken", storedToken);
     if (storedToken) {
       try {
         const userinfo = jwtDecode(storedToken);
+        console.log("userinfo", userinfo);
         setUsername(userinfo.userName);
-        setRestId(userinfo.RestId);
+        setRestId(userinfo.object.loginDto.id);
+        console.log("restId: ", userinfo.object.loginDto.id); 
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Invalid token", error);
@@ -61,15 +52,23 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
     } else if (token) {
       try {
         localStorage.setItem("token", token);
+        console.log("token", token);
         const userinfo = jwtDecode(token);
         setUsername(userinfo.userName);
-        setRestId(userinfo.RestId);
+        setRestId(userinfo.object.loginDto.id);
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Invalid token", error);
       }
     }
   }, [token]);
+
+  useEffect(() => {
+    if (onRestIdChange) {
+      console.log("Updating restId:", restId);
+      onRestIdChange(restId);
+    }
+  }, [restId, onRestIdChange]);
 
   return (
     <div className={`sideBarWrapper ${isExtended ? 'extended' : 'collapsed'}`}>
