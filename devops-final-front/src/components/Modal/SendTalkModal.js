@@ -8,35 +8,44 @@ import axios from 'axios';
 
 function SendTalkModal({ TalkClose, talkshow, restId }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(""); // 새로운 상태 추가
   const [message, setMessage] = useState("");
-  const [timeline, setTimeline] = useState([]);
   const [uniqueTimes, setUniqueTimes] = useState([]);
 
-  // 날짜가 변경될 때마다 호출
   useEffect(() => {
     const fetchTimeline = async () => {
       const formattedDate = selectedDate.toISOString().split('T')[0]; // YYYY-MM-DD 형식으로 변환
       try {
         const response = await axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formattedDate}`);
-        // 중복 제거 및 정렬
-        const unique = [...new Set(response.data.map(item => item.split(' ')[1]))];
-        setUniqueTimes(unique);
+        const unique = [...new Set(response.data.map(item => item.split(' ')[1].substring(0, 5)))];
+        const sortedUnique = unique.sort((a, b) => {
+          const [aHours, aMinutes] = a.split(':').map(Number);
+          const [bHours, bMinutes] = b.split(':').map(Number);
+          return aHours - bHours || aMinutes - bMinutes;
+        });
+        setUniqueTimes(sortedUnique);
       } catch (error) {
         console.error("Error fetching reservation times:", error);
       }
     };
-    
+
     fetchTimeline();
   }, [selectedDate, restId]);
 
   const handleSendTalk = () => {
     // 알림톡 전송 로직
+    console.log(`Selected Date: ${selectedDate.toISOString().split('T')[0]}`);
+    console.log(`Selected Time: ${selectedTime}`);
     setMessage("");
     TalkClose();
   };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleTimeChange = (e) => {
+    setSelectedTime(e.target.value);
   };
 
   const handleMessageChange = (e) => {
@@ -87,7 +96,8 @@ function SendTalkModal({ TalkClose, talkshow, restId }) {
               <div className="explanationTextintalk">예약 시간</div>
               <div className="dateborderWrapper">
                 <img src={Time} alt="" className="calphoto" />
-                <select className="timeSelectBox">
+                <select className="timeSelectBox" onChange={handleTimeChange} value={selectedTime}>
+                  <option value="" disabled>시간 선택</option>
                   {uniqueTimes.map((time, index) => (
                     <option key={index} value={time}>
                       {time}
