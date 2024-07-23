@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useImperativeHandle, forwardRef, useState } from "react";
 import "../css/components/File.css";
 
-const File = forwardRef((props, ref) => {
+const File = forwardRef(({ onFileChange }, ref) => {
   const inputEl = useRef(null);
   const [fileName, setFileName] = useState("파일을 선택하세요.");
   const [file, setFile] = useState(null); // State to hold the selected file
@@ -11,9 +11,12 @@ const File = forwardRef((props, ref) => {
     if (files && files[0]) {
       setFileName(files[0].name);
       setFile(files[0]); // Store the file in state
+      onFileChange(files[0]); // Notify parent component about the file change
+    } else {
+      onFileChange(null);
     }
-  }, []);
-  
+  }, [onFileChange]);
+
   useImperativeHandle(ref, () => ({
     getFile: () => file, // Expose method to get the selected file
     reset: () => {
@@ -22,8 +25,9 @@ const File = forwardRef((props, ref) => {
       if (inputEl.current) {
         inputEl.current.value = null;
       }
+      onFileChange(null); // Notify parent component about the file reset
     }
-  }), [file]);
+  }), [file, onFileChange]);
 
   return (
     <div className="fileWrapper">
