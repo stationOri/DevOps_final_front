@@ -52,6 +52,7 @@ function SideBarRest({ onMenuClick, isExtended, toggleSidebar}) {
     if (storedToken) {
       try {
         const userinfo = jwtDecode(storedToken);
+        console.log(userinfo)
         setUsername(userinfo.userName);
         setRestId(userinfo.RestId);
         setIsLoggedIn(true);
