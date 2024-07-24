@@ -42,6 +42,7 @@ const UserChat = ({ userId }) => {
               userId={userId}
               onChatSelect={handleChatSelect}
               refreshTrigger={refreshTrigger}
+              currentUserId={userId}
             />
           </div>
           <div className="chat-messages-wrap">
