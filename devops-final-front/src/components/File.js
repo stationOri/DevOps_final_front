@@ -1,33 +1,68 @@
 import React, { useRef, useCallback, useImperativeHandle, forwardRef, useState } from "react";
+import axios from 'axios';
 import "../css/components/File.css";
 
-const File = forwardRef(({ onFileChange }, ref) => {
+const File = forwardRef(({ onFileChange, onUploadSuccess, onUploadError }, ref) => {
   const inputEl = useRef(null);
   const [fileName, setFileName] = useState("파일을 선택하세요.");
-  const [file, setFile] = useState(null); // State to hold the selected file
-  
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const fileInputHandler = useCallback((event) => {
     const files = event.target.files;
     if (files && files[0]) {
       setFileName(files[0].name);
-      setFile(files[0]); // Store the file in state
-      onFileChange(files[0]); // Notify parent component about the file change
+      setFile(files[0]);
+      if (onFileChange) {
+        onFileChange(files[0]);
+      }
     } else {
-      onFileChange(null);
+      if (onFileChange) {
+        onFileChange(null);
+      }
     }
   }, [onFileChange]);
 
+  const uploadToServer = useCallback(async () => {
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('http://localhost:8080/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      if (onUploadSuccess) {
+        onUploadSuccess(response.data.url);
+      }
+    } catch (error) {
+      console.error('Error uploading file: ', error);
+      if (onUploadError) {
+        onUploadError(error);
+      }
+    } finally {
+      setUploading(false);
+    }
+  }, [file, onUploadSuccess, onUploadError]);
+
   useImperativeHandle(ref, () => ({
-    getFile: () => file, // Expose method to get the selected file
+    getFile: () => file,
     reset: () => {
       setFileName("파일을 선택하세요.");
-      setFile(null); // Clear the file from state
+      setFile(null);
       if (inputEl.current) {
         inputEl.current.value = null;
       }
-      onFileChange(null); // Notify parent component about the file reset
-    }
-  }), [file, onFileChange]);
+      if (onFileChange) {
+        onFileChange(null);
+      }
+    },
+    upload: uploadToServer
+  }), [file, onFileChange, uploadToServer]);
 
   return (
     <div className="fileWrapper">
@@ -36,6 +71,7 @@ const File = forwardRef(({ onFileChange }, ref) => {
         <div className="fileselect">파일 선택</div>
       </label>
       <input accept=".jpg,.jpeg,.png" type="file" id="file" ref={inputEl} className="file-input" onChange={fileInputHandler} />
+      {uploading && <div>업로드 중...</div>}
     </div>
   );
 });

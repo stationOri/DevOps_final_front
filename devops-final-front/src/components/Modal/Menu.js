@@ -1,20 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useMenuModal } from "./MenuModalContext";
 import "../../css/components/Modal/Menu.css";
 import File from "../../components/File";
+import axios from 'axios';
 
 function MenuModal() {
   const { menumodalState, closeMenuModal, openMenuModal } = useMenuModal();
-  const { show, header, menuname, menuprice, menuFile } = menumodalState;
+  const { show, header, menuname, menuprice } = menumodalState;
 
   const [nameInput, setNameInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    setNameInput(menuname);
-    setPriceInput(menuprice);
-  }, [menuname, menuprice]);
+    setNameInput(menumodalState.menuname);
+    setPriceInput(menumodalState.menuprice);
+  }, [menumodalState.menuname, menumodalState.menuprice]);
 
   const handleMenuNameChange = (e) => {
     setNameInput(e.target.value);
@@ -25,21 +28,48 @@ function MenuModal() {
   };
 
   const handleFileChange = (file) => {
-    // 파일 관련 상태 업데이트는 MenuModalContext를 통해 이루어져야 함
-    // 여기서는 예시로 사용자 정의 입력으로 상태 업데이트
-    // 실제 구현에서는 setMenuFile(file)과 같이 MenuModalContext를 사용해야 함
+    // You can handle file changes here if necessary
   };
 
-  const handleConfirm = () => {
-    openMenuModal(header, nameInput, priceInput);
-    closeMenuModal();
-  };
+  const handleConfirm = useCallback(async () => {
+    const file = fileInputRef.current.getFile();
+  
+    if (!file) {
+      console.error("No file selected");
+      return;
+    }
+  
+    setUploading(true);
+  
+    const formData = new FormData();
+    formData.append('menuData', JSON.stringify({
+      restId: 1397,
+      menuName: nameInput,
+      menuPrice: priceInput,
+    }));
+    formData.append('file', file);
+  
+    try {
+      const response = await axios.post('http://localhost:8080/restaurants/menu', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log("Menu added successfully with ID:", response.data);
+    } catch (error) {
+      console.error('Error adding menu: ', error);
+      setUploadError(error);
+    } finally {
+      setUploading(false);
+      closeMenuModal();
+    }
+  }, [nameInput, priceInput, closeMenuModal]);
 
   const handleCancel = () => {
     setNameInput('');
     setPriceInput('');
     if (fileInputRef.current) {
-      fileInputRef.current.reset(); // 파일 필드를 초기화합니다.
+      fileInputRef.current.reset(); // Reset the file field
     }
     closeMenuModal();
   };
@@ -49,10 +79,7 @@ function MenuModal() {
       <div
         id={show ? "menubackgroundon" : "menubackgroundoff"}
         onClick={(e) => {
-          if (
-            e.target.id === "menubackgroundon" ||
-            e.target.id === "menubackgroundoff"
-          ) {
+          if (e.target.id === "menubackgroundon" || e.target.id === "menubackgroundoff") {
             handleCancel();
           }
         }}
@@ -78,10 +105,12 @@ function MenuModal() {
               <div className='menudescription'>메뉴 사진은 한 장만 등록 가능합니다.</div>
             </div>
             <div className='menu-modal-file-wrapper'>
-            <File ref={fileInputRef}/>
+              <File ref={fileInputRef} onFileChange={handleFileChange} />
             </div>
             <button className="MenuCheckModalBtn" onClick={handleConfirm}>확인</button>
             <button className="MenucancelModalBtn" onClick={handleCancel}>취소</button>
+            {uploading && <div>업로드 중...</div>}
+            {uploadError && <div>업로드 중 오류가 발생했습니다: {uploadError.message}</div>}
           </div>
         </div>
       </div>

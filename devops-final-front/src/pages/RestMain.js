@@ -8,6 +8,7 @@ import RestaurantInfo from "../components/restaurant/RestaurantInfo";
 import RestaurantInfoEdit from "../components/restaurant/RestaurantInfoEdit";
 import AccountInfo from "../components/restaurant/AccountInfo";
 import RestChat from "../components/chatt/RestChat";
+import FileUploadTest from "../components/FileUploadTest";
 import "../css/pages/RestMain.css";
 
 function RestMain() {
@@ -51,11 +52,12 @@ function RestMain() {
           <HeaderOrange />
           <div className="restmainrealcontents">
             {selectedMenu === "식당정보" && selectedRestId && (
-              <RestaurantInfo
-                onMenuEditClick={handleMenuClick}
-                onInfoEditClick={handleInfoEditClick}
-                restId={selectedRestId}
-              />
+              // <RestaurantInfo
+              //   onMenuEditClick={handleMenuClick}
+              //   onInfoEditClick={handleInfoEditClick}
+              //   restId={selectedRestId}
+              // />
+              <FileUploadTest />
             )}
             {selectedMenu === "식당정보 수정" && selectedRestId && (
               <RestaurantInfoEdit restId={selectedRestId} />
