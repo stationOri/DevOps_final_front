@@ -244,11 +244,11 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
           </div>
           <div className="rest-location-wrap">
             <div className="rest-info-wrap">
-              <img className="rest-info-img" src={locationImg} />
+              <img className="rest-info-img" src={locationImg} alt=""/>
               <p className="rest-info-content">{restaurant.restAddress}</p>
             </div>
             <div className="rest-info-wrap-2">
-              <img className="rest-info-img" src={opentimeImg} />
+              <img className="rest-info-img" src={opentimeImg} alt=""/>
               <div>
                 {opentimes.map((opentime) => (
                   <div key={opentime.id} className="rest-info-content">
@@ -260,7 +260,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
               </div>
             </div>
             <div className="rest-info-wrap">
-              <img className="rest-info-img" src={phoneImg} />
+              <img className="rest-info-img" src={phoneImg} alt=""/>
               <p className="rest-info-content">{restaurant.restPhone}</p>
             </div>
           </div>
@@ -274,7 +274,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
             onClick={() => paginate(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <img className="review-pagination-img" src={leftImg} />
+            <img className="review-pagination-img" src={leftImg} alt=""/>
           </div>
           <div className="rest-review-container">
             {currentReviews.length === 0 ? (
@@ -302,7 +302,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
               currentPage === Math.ceil(reviews.length / reviewsPerPage)
             }
           >
-            <img className="review-pagination-img" src={rightImg} />
+            <img className="review-pagination-img" src={rightImg} alt=""/>
           </div>
         </div>
       </div>

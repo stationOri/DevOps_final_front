@@ -27,7 +27,7 @@ function SuccessModal() {
           <div className="success-modal-content">
             <div className="modal-header">
               <div className="success-modal-header">
-                <img src={checkIcon} className="success-icon"></img>
+                <img src={checkIcon} className="success-icon" alt=""></img>
                 <div className="success-header">{header}</div>
               </div>
             </div>
@@ -37,13 +37,13 @@ function SuccessModal() {
               <div className="horizon"></div>
               <div className="success-content">
                 <div className="success-content-box">
-                  <img src={calIcon} className="success-content-icon"></img>
+                  <img src={calIcon} className="success-content-icon" alt=""></img>
                   <div className="success-text">
                     {day} | {selectedTime}
                   </div>
                 </div>
                 <div className="success-content-box">
-                  <img src={peopleIcon} className="success-content-icon"></img>
+                  <img src={peopleIcon} className="success-content-icon" alt=""></img>
                   <div className="success-text">
                     <span className="selected-guest">{selectedGuests}</span>{" "}
                     Guests

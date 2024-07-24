@@ -282,11 +282,11 @@ const Reservation = ({ userId, restId }) => {
             <div className="res-rest-intro-box flex-row">
               <div className="res-rest-location-wrap">
                 <div className="rest-info-wrap">
-                  <img className="rest-info-img" src={locationImg} />
+                  <img className="rest-info-img" src={locationImg} alt=""/>
                   <p className="rest-info-content">{restaurant.restAddress}</p>
                 </div>
                 <div className="rest-info-wrap-2">
-                  <img className="rest-info-img mt-5" src={opentimeImg} />
+                  <img className="rest-info-img mt-5" src={opentimeImg} alt=""/>
                   <div>
                     {opentimes.map((opentime) => (
                       <div
@@ -301,13 +301,13 @@ const Reservation = ({ userId, restId }) => {
                   </div>
                 </div>
                 <div className="rest-info-wrap">
-                  <img className="rest-info-img" src={phoneImg} />
+                  <img className="rest-info-img" src={phoneImg} alt=""/>
                   <p className="rest-info-content">{restaurant.restPhone}</p>
                 </div>
               </div>
               <div className="res_rest_intro">
                 <div className="rest-info-wrap-2">
-                  <img className="rest-info-img mt-5" src={noteImg} />
+                  <img className="rest-info-img mt-5" src={noteImg} alt=""/>
                   <div className="rest-info-content">
                     {restaurant.restIntro}
                   </div>
@@ -317,7 +317,7 @@ const Reservation = ({ userId, restId }) => {
           </div>
           <div className="res-enroll-date-time">
             <div className="res-enroll-date">
-              <img className="res-cal-img" src={calImg} />
+              <img className="res-cal-img" src={calImg} alt=""/>
               <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
@@ -329,7 +329,7 @@ const Reservation = ({ userId, restId }) => {
               />
             </div>
             <div className="res-enroll-ppl">
-              <img className="res-ppl-img" src={pplImg} />
+              <img className="res-ppl-img" src={pplImg} alt=""/>
               {restInfo && restInfo.maxPpl ? (
                 <select
                   id="guestPicker"
