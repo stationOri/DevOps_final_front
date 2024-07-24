@@ -33,8 +33,10 @@ function InputModal() {
       if (!response.ok) {
         throw new Error("Failed to post restaurant report");
       }
+      alert("신고가 성공적으로 접수되었습니다.");
       console.log("Restaurant report submitted successfully");
     } catch (error) {
+      alert("신고 접수를 실패했습니다.");
       console.error("Error posting restaurant report:", error);
     }
   };
@@ -61,8 +63,10 @@ function InputModal() {
         console.log("Response status:", response.status); // 응답 상태 코드 확인
         throw new Error("Failed to post user report");
       }
+      alert("신고가 성공적으로 접수되었습니다.");
       console.log("User report submitted successfully");
     } catch (error) {
+      alert("신고 접수를 실패했습니다.");
       console.error("Error posting user report:", error);
     }
   };
