@@ -32,7 +32,7 @@ function TimeSlot({ time, setTime, disabled }) {
   };
 
   return (
-    <div className="dateborderWrapper">
+    <div className="dateborderWrapper timeslotsize">
       <img src={Time} alt="" className="calphoto" />
       <select
         className="timeSelectBox"

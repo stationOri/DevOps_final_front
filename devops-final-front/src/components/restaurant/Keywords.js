@@ -85,9 +85,11 @@ function Keywords({ restId }) {
 
   return (
     <div className="keywordWrapper">
+      <div className="accinfo-bigtext">키워드</div>
       <div className="keyWrapperUpper">
+        
         <div className="Wrppaerforinput keywordWrapperforSelect">
-          <div className="accinfo-hintText">키워드 설정(최대 3개만 가능합니다)</div>
+          <div className="accinfo-hintText">키워드 등록(최대 3개만 가능합니다)</div>
           <Select
             options={getAvailableKeywords()}  // 필터링된 키워드 목록 사용
             value={selectedKeyword}
