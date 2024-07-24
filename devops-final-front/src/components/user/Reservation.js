@@ -4,7 +4,7 @@ import Loading from "../../components/Loading";
 import RestaurantLocationMap from "../../components/RestaurantLocationMap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import axios from "axios";
 import locationImg from "../../assets/images/detail/location.png";
 import opentimeImg from "../../assets/images/detail/opentime.png";
 import phoneImg from "../../assets/images/detail/phone.png";
@@ -232,28 +232,129 @@ const Reservation = ({ userId, restId }) => {
     ).padStart(2, "0")}-${String(koreanDate.getDate()).padStart(2, "0")}`;
   }
 
-  const handleEnrollReservation = () => {
-    console.log("예약 완료");
-    console.log(new Date().toISOString().split("T")[0]); // 예약 신청일
-    console.log(toKoreanDateString(selectedDate)); // 예약 날짜
-    console.log(selectedTime); // 예약 시간
-    console.log(selectedGuests); // 예약 인원
-    menus.forEach((menu) => {
-      if (menuQuantities[menu.menuId] > 0) {
-        console.log(`${menu.menuName}`); // 선택한 메뉴
-        console.log(`${menuQuantities[menu.menuId]}`); // 수량
-      }
-    });
-    console.log(reqText); // 요청사항 출력
+  // const handleEnrollReservation = () => {
+  //   console.log("예약 완료");
+  //   console.log(new Date().toISOString().split("T")[0]); // 예약 신청일
+  //   console.log(toKoreanDateString(selectedDate)); // 예약 날짜
+  //   console.log(selectedTime); // 예약 시간
+  //   console.log(selectedGuests); // 예약 인원
+  //   menus.forEach((menu) => {
+  //     if (menuQuantities[menu.menuId] > 0) {
+  //       console.log(`${menu.menuName}`); // 선택한 메뉴
+  //       console.log(`${menuQuantities[menu.menuId]}`); // 수량
+  //     }
+  //   });
+  //   console.log(reqText); // 요청사항 출력
+  //   let depositAmount;
+  //   if (restInfo && restInfo.restDepositMethod === "A") {
+  //     depositAmount = restInfo.restDeposit * selectedGuests;
+  //   } else {
+  //     depositAmount = calculateTotalPrice() * 0.2;
+  //   }
+  //   console.log(depositAmount); // 예약금 출력
+  // };
+  const handleEnrollReservation = async (e) => {
+    e.preventDefault();
+    const menulist = menus
+    .filter(menu => menuQuantities[menu.menuId] > 0)
+    .map(menu => ({
+        menuId: menu.menuId,
+        amount: menuQuantities[menu.menuId]
+    }));
+    
     let depositAmount;
-    if (restInfo && restInfo.restDepositMethod === "A") {
-      depositAmount = restInfo.restDeposit * selectedGuests;
-    } else {
-      depositAmount = calculateTotalPrice() * 0.2;
+      if (restInfo && restInfo.restDepositMethod === "A") {
+        depositAmount = restInfo.restDeposit * selectedGuests;
+      } else {
+        depositAmount = calculateTotalPrice() * 0.2;
+      }
+    const reservationReqDto = {
+      restId,
+      userId,
+      selectedTime,
+      selectedDate: toKoreanDateString(selectedDate),
+      resNum: selectedGuests,
+      deposit: depositAmount,
+      request: reqText,
+      menulist
+    };
+
+    try {
+      console.log(menulist)
+      const response = await axios.post('http://localhost:8080/reservations/reservationcheck', reservationReqDto, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (response.data === 'available') {
+        PaymentRequest(depositAmount, userId, reservationReqDto);
+      }else{
+        alert(response.data);
+      }
+    } catch (error) {
+      console.error('Error making reservation:', error);
     }
-    console.log(depositAmount); // 예약금 출력
   };
 
+  const PaymentRequest = (amount, userId, reservationReqDto) => {
+    const { IMP } = window;
+    IMP.init('imp50204728'); // 가맹점 번호 지정
+    IMP.request_pay({
+      pg: "tosspayments",
+      pay_method: 'card',
+      merchant_uid: `mid_${new Date().getTime()}_${userId}`,
+      name: 'waitmate 예약금',
+      amount: amount, 
+      buyer_name: userId,
+  },  async (response) => {
+      if (response.error_code != null) {
+        return alert(`결제에 실패하였습니다. 에러 내용: ${response.error_msg}`);
+      }else{
+          try {
+              const notified = await axios.post('http://localhost:8080/payment/validation', {
+                
+                imp_uid: response.imp_uid,
+                merchant_uid: response.merchant_uid,
+                amount: parseInt(amount)
+              }, {
+                headers: { "Content-Type": "application/json" }
+              });
+              if(notified){
+                console.log("결제 verification 성공");
+                const payDto={
+                  imp_uid: response.imp_uid,
+                  merchant_uid: response.merchant_uid,
+                  amount: parseInt(amount)
+                }
+                const combinedDto = {
+                  reservationReqDto: reservationReqDto,
+                  payDto: payDto
+                };
+                try {
+                  const response = await axios.post('http://localhost:8080/reservations/reservation', combinedDto, {
+                    headers: { 'Content-Type': 'application/json' }
+                  });
+                  if (response.data === 'success') {
+                    alert("예약 성공!");
+                  }else{
+                    alert(response.data);
+                  }
+                } catch (error) {
+                  console.error('Error making reservation:', error);
+                }
+
+
+              }else{
+                alert("결제 실패");
+                console.log("결제 verification 실패");
+              }
+            } catch (error) {
+              alert("결제 화면 호출 실패");
+              console.error('api 호출 실패:', error);
+            }
+      }
+
+    
+    })
+  }
   return (
     <div className="reservation">
       <div className="res-container">

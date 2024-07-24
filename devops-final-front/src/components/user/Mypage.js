@@ -36,6 +36,7 @@ const Mypage = ({ userId, onCardClick }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
   const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
+  const [editSuccess, setEditSuccess] = useState(false);
 
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
@@ -57,7 +58,7 @@ const Mypage = ({ userId, onCardClick }) => {
     fetchWaiting();
     fetchReviews();
     fetchResCount();
-  }, [userId]);
+  }, [userId, editSuccess]);
 
   const fetchUser = async () => {
     try {
@@ -317,15 +318,12 @@ const Mypage = ({ userId, onCardClick }) => {
   const renderPaginationButtons = () => {
     let startPage, endPage;
     if (totalPages <= maxPagesToShow) {
-      // 모든 페이지 번호를 표시할 수 있는 경우
       startPage = 1;
       endPage = totalPages;
     } else {
-      // 현재 페이지를 기준으로 앞뒤로 5개씩 표시
       startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
       endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
 
-      // 마지막 페이지가 totalPages와 같은 경우, startPage를 재조정
       if (endPage === totalPages) {
         startPage = endPage - maxPagesToShow + 1;
       }
@@ -643,7 +641,7 @@ const Mypage = ({ userId, onCardClick }) => {
           </div>
         </div>
       </div>
-      <NicknameEditModal EditClose={EditClose} editshow={editshow} />
+      <NicknameEditModal EditClose={EditClose} editshow={editshow} userId={userId} onSuccess={() => setEditSuccess(true)}/>
       <ReviewModal ReviewClose={ReviewClose} reviewshow={reviewshow} />
     </div>
   );
