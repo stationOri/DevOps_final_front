@@ -13,12 +13,16 @@ const Main = ({ userId }) => {
   const [trendingFoods, setTrendingFoods] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [userLat, setUserLat] = useState(null);
+  const [userLng, setUserLng] = useState(null);
 
   const { loaded, coordinates, error } = useGeolocation();
 
   useEffect(() => {
     if (loaded && coordinates) {
       console.log("Current Coordinates:", coordinates);
+      setUserLat(coordinates.lat);
+      setUserLng(coordinates.lng);
     } else if (error) {
       console.error("Geolocation Error:", error.message);
     }
@@ -26,7 +30,9 @@ const Main = ({ userId }) => {
 
   const getBannerFood = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/restaurants/recommend`);
+      const response = await fetch(
+        `http://localhost:8080/restaurants/recommend`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -51,15 +57,17 @@ const Main = ({ userId }) => {
   };
 
   const getRestaurantsData = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/mapdata`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
+    if (userLat && userLng) {
+      try {
+        const response = await fetch(`http://localhost:8080/restaurants/near/lat/${userLat}/lng/${userLng}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+        const json = await response.json();
+        setRestaurants(json || []);
+      } catch (error) {
+        console.error("Error fetching restaurants data:", error);
       }
-      const json = await response.json();
-      setRestaurants(json || []);
-    } catch (error) {
-      console.error("Error fetching restaurants data:", error);
     }
   };
 
@@ -68,7 +76,6 @@ const Main = ({ userId }) => {
       await Promise.all([
         getBannerFood(),
         getTrendingFood(),
-        getRestaurantsData(),
       ]);
       setLoading(false);
     };
@@ -76,8 +83,22 @@ const Main = ({ userId }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (userLat && userLng) {
+      getRestaurantsData();
+    }
+  }, [userLat, userLng]);
+
   return (
-    <div style={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div className="carouselContainer">
         <Carousel bannerFoods={bannerFoods} />
       </div>
@@ -125,6 +146,8 @@ const Main = ({ userId }) => {
         <ArrayRestaurantsMap
           restaurants={restaurants}
           onMarkerClick={(restaurant) => setSelectedRestaurant(restaurant)}
+          lat={userLat}
+          lng={userLng}
         />
       </div>
       <div className="hotTrendingRestWrapper">

@@ -1,21 +1,23 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import axios from "axios";
 import markerIcon from "../assets/images/marker.png";
+import oriMarker from "../assets/images/orimarker.png"
+import Loading from "./Loading";
 
-const ArrayRestaurantsMap = ({ restaurants, onMarkerClick }) => {
+const ArrayRestaurantsMap = ({ restaurants, onMarkerClick, lat, lng }) => {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markerRef = useRef(null);
+  const userLocationMarkerRef = useRef(null);
 
   useEffect(() => {
     const initializeMap = async () => {
       if (!mapRef.current || !restaurants || restaurants.length === 0) return;
 
       if (!mapInstance.current) {
-        const defaultLatLng = [37.339832, 127.108985];
-        const defaultZoom = 12;
+        const defaultLatLng = [lat, lng];
+        const defaultZoom = 13;
 
         const map = L.map(mapRef.current).setView(defaultLatLng, defaultZoom);
 
@@ -34,95 +36,100 @@ const ArrayRestaurantsMap = ({ restaurants, onMarkerClick }) => {
         popupAnchor: [0, -32],
       });
 
-      const getLatLngFromAddress = async (address) => {
-        const apiUrl = "/api/req/address";
-        const params = {
-          service: "address",
-          request: "getcoord",
-          version: "2.0",
-          crs: "epsg:4326",
-          address: address,
-          type: "ROAD",
-          key: process.env.REACT_APP_VWORLD_API_KEY,
-        };
+      const userLocationIcon = L.icon({
+        iconUrl: oriMarker,
+        iconSize: [40, 40],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
 
-        try {
-          const response = await axios.get(apiUrl, { params: params });
-          const { result } = response.data.response;
+      // const getLatLngFromAddress = async (address) => {
+      //   const apiUrl = "/api/req/address";
+      //   const params = {
+      //     service: "address",
+      //     request: "getcoord",
+      //     version: "2.0",
+      //     crs: "epsg:4326",
+      //     address: address,
+      //     type: "ROAD",
+      //     key: process.env.REACT_APP_VWORLD_API_KEY,
+      //   };
 
-          if (result && result.point) {
-            const { x, y } = result.point;
-            return L.latLng(parseFloat(y), parseFloat(x));
-          } else {
-            console.error(`주소에서 좌표를 가져오는 중 오류: ${JSON.stringify(result)}`);
-            return null;
-          }
-        } catch (error) {
-          console.error(`API 호출 오류 (${address}):`, error);
-          return null;
-        }
-      };
+      //   try {
+      //     const response = await axios.get(apiUrl, { params: params });
+      //     const { result } = response.data.response;
 
-      const addMarkers = async () => {
-        const markerPromises = restaurants.map(async (restaurant) => {
-          const latlng = await getLatLngFromAddress(restaurant.rest_address);
-          if (latlng) {
-            const marker = L.marker(latlng, { icon: customIcon })
-              .addTo(mapInstance.current)
-              .bindPopup(restaurant.rest_name);
+      //     if (result && result.point) {
+      //       const { x, y } = result.point;
+      //       return L.latLng(parseFloat(y), parseFloat(x));
+      //     } else {
+      //       console.error(`주소에서 좌표를 가져오는 중 오류: ${JSON.stringify(result)}`);
+      //       return null;
+      //     }
+      //   } catch (error) {
+      //     console.error(`API 호출 오류 (${address}):`, error);
+      //     return null;
+      //   }
+      // };
 
-            marker.on("click", () => {
-              if (markerRef.current) {
-                markerRef.current.closePopup();
-              }
-              marker.openPopup();
-              
-              mapRef.current.style.width = "50%";
-              // 클릭 시 마커 위치로 지도 이동
-              mapInstance.current.setView(marker.getLatLng());
-              
-              // 클릭한 마커 참조 저장
-              markerRef.current = marker;
-              onMarkerClick(restaurant);
-            });
+      const addMarkers = () => {
+        const markerPromises = restaurants.map((restaurant) => {
+          const latlng = L.latLng(restaurant.lat, restaurant.lng);
 
-            marker.on("popupclose", () => {
-              // 팝업이 닫힐 때 다시 기본 너비로 변경
-              mapRef.current.style.width = "100%";
-              markerRef.current = null;
+          const marker = L.marker(latlng, { icon: customIcon })
+            .addTo(mapInstance.current)
+            .bindPopup(`
+              <div>
+                <img src="${restaurant.restPhoto}" alt="${restaurant.restName}" style="width:100px;height:80px;" />
+                <div><strong>${restaurant.restName}</strong></div>
+                <div>${restaurant.restAddress}</div>
+                <div>${restaurant.keyword1} ${restaurant.keyword2} ${restaurant.keyword3}</div>
+              </div>
+            `);
 
-              onMarkerClick(null);
-            });
-          }
+          marker.on("click", () => {
+            if (markerRef.current) {
+              markerRef.current.closePopup();
+            }
+            marker.openPopup();
+
+            mapRef.current.style.width = "50%";
+            mapInstance.current.setView(marker.getLatLng());
+
+            markerRef.current = marker;
+            onMarkerClick(restaurant);
+          });
+
+          marker.on("popupclose", () => {
+            mapRef.current.style.width = "100%";
+            markerRef.current = null;
+
+            onMarkerClick(null);
+          });
+
+          return marker;
         });
 
-        await Promise.all(markerPromises);
-
-        if (restaurants.length > 0) {
-          const bounds = await calculateBounds(restaurants);
-          if (bounds.isValid()) {
+        Promise.all(markerPromises).then(() => {
+          if (restaurants.length > 0) {
+            const bounds = new L.LatLngBounds();
+            restaurants.forEach((restaurant) => {
+              bounds.extend(L.latLng(restaurant.lat, restaurant.lng));
+            });
             mapInstance.current.fitBounds(bounds);
-          } else {
-            console.warn("유효하지 않은 경계 값:", bounds);
-          }
-        }
-      };
-
-      const calculateBounds = async (restaurants) => {
-        const bounds = new L.LatLngBounds();
-        const latlngPromises = restaurants.map((restaurant) =>
-          getLatLngFromAddress(restaurant.rest_address)
-        );
-        const latlngs = await Promise.all(latlngPromises);
-
-        latlngs.forEach((latlng) => {
-          if (latlng) {
-            bounds.extend(latlng);
           }
         });
-
-        return bounds;
       };
+
+      if (lat && lng) {
+        if (userLocationMarkerRef.current) {
+          userLocationMarkerRef.current.remove();
+        }
+        const userMarker = L.marker([lat, lng], { icon: userLocationIcon }).addTo(mapInstance.current);
+        userMarker.bindPopup("현재 위치");
+        userLocationMarkerRef.current = userMarker;
+      }
+    
 
       addMarkers();
 
@@ -135,7 +142,7 @@ const ArrayRestaurantsMap = ({ restaurants, onMarkerClick }) => {
     };
 
     initializeMap();
-  }, [restaurants, onMarkerClick]);
+  }, [restaurants, onMarkerClick, lat, lng]);
 
   return (
     <div
