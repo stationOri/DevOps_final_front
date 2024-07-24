@@ -11,6 +11,7 @@ function RevAcceptModal({
   RestCancelShow
 }) {
   const handlenavigate = () => {
+    //승인처리
     RevAcceptClose();
   };
 

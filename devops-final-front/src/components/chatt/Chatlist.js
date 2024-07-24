@@ -8,7 +8,7 @@ function ChatList({
   onChatSelect,
   chatImg = "default",
   refreshTrigger,
-  currentRestId
+  currentUserId
 }) {
   const [chatLists, setChatLists] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,6 +64,10 @@ function ChatList({
       chat.qsId,
       chat.ansId
     ); // 추가된 인자 전달
+    console.log(chat.ansId);
+    console.log(chat.ansName);
+    console.log(chat.qsId);
+    console.log(chat.qsName);
   };
 
   const filteredChatLists = searchTerm
@@ -82,12 +86,15 @@ function ChatList({
     if (chatList.ansName === "관리자") {
       return "관리자";
     }
-    if (currentRestId === chatList.qsId) {
+    const isCurrentUserQs = currentUserId === chatList.qsId;
+    const isCurrentUserAns = currentUserId === chatList.ansId;
+    if (isCurrentUserQs) {
       return chatList.ansName;
+    } else if (isCurrentUserAns) {
+      return chatList.qsName;
     }
     return chatList.qsName;
   };
-
 
   return (
     <aside className="sidebar">

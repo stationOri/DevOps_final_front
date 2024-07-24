@@ -20,7 +20,7 @@ function UserInfoModal({ InfoClose, infoshow, user }) {
         <div className={`infoModal ${infoshow ? "signinshow" : "signinhide"}`}>
           <div className="acceptmodalcontentswrapper">
             <div className="acceptModalHeader">
-              <div className="acceptboldText">매장 정보 확인</div>
+              <div className="acceptboldText">사용자 정보 확인</div>
               <button className="acceptclosebtn" onClick={InfoClose}>
                 X
               </button>

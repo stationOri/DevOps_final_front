@@ -103,13 +103,6 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
           }
   }, [token, setUserId]);
 
-  const handleEditNoticeModal = (contents, rest_id) => {
-    openNoticeModal({
-      contents: "수정해봐!",
-      rest_id: rest_id,
-    });
-  };
-
   // login modal 함수
   const loginClose = () => setLoginshow(false);
   const loginShow = () => setLoginshow(true);

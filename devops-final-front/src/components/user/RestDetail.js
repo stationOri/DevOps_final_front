@@ -208,7 +208,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
             <div className="rest-name">{restaurant.restName}</div>
             <div className="rest-btn-box">
               <div className="empty-btn" onClick={openModal}>
-                <img className="empty-img" src={emptyImg} />
+                <img className="empty-img" src={emptyImg} alt=""/>
                 <div>빈자리 알림 요청</div>
               </div>
               <div className="ask-btn" onClick={openReceiverModal}>
@@ -289,11 +289,11 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
             </div>
             <div className="rest-location-wrap">
               <div className="rest-info-wrap">
-                <img className="rest-info-img" src={locationImg} />
+                <img className="rest-info-img" src={locationImg} alt=""/>
                 <p className="rest-info-content">{restaurant.restAddress}</p>
               </div>
               <div className="rest-info-wrap-2">
-                <img className="rest-info-img" src={opentimeImg} />
+                <img className="rest-info-img" src={opentimeImg} alt=""/>
                 <div>
                   {opentimes.map((opentime) => (
                     <div key={opentime.id} className="rest-info-content">
@@ -305,7 +305,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
                 </div>
               </div>
               <div className="rest-info-wrap">
-                <img className="rest-info-img" src={phoneImg} />
+                <img className="rest-info-img" src={phoneImg} alt=""/>
                 <p className="rest-info-content">{restaurant.restPhone}</p>
               </div>
             </div>
@@ -319,7 +319,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
               onClick={() => paginate(currentPage - 1)}
               disabled={currentPage === 1}
             >
-              <img className="review-pagination-img" src={leftImg} />
+              <img className="review-pagination-img" src={leftImg} alt=""/>
             </div>
             <div className="rest-review-container">
               {currentReviews.length === 0 ? (
@@ -337,7 +337,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
                 currentPage === Math.ceil(reviews.length / reviewsPerPage)
               }
             >
-              <img className="review-pagination-img" src={rightImg} />
+              <img className="review-pagination-img" src={rightImg} alt=""/>
             </div>
           </div>
         </div>
