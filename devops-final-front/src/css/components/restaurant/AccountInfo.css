@@ -304,3 +304,24 @@
 .peakWrapper-second {
   margin-bottom: 15px;
 }
+
+.keyword-item {
+  display: flex;
+  width: 200px;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+  margin: 5px 10px 5px 0;
+  padding: 5px 10px;
+}
+.accinfo-button-keyword:disabled {
+  background-color: #ffb969; /* 비활성화 상태에서 버튼 색상 */
+  color: white;
+  cursor: not-allowed;
+
+}
+
+.keyworditemsWrapper {
+  display: flex;
+}

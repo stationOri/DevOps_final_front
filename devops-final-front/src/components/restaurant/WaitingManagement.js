@@ -30,6 +30,7 @@ function WaitingManagement({ restId }) {
       if (text === "A" || text === "C") {
         setWait(true);
       }
+      console.log(wait+text)
     } catch (error) {
       console.error("Error revWait status:", error);
     }
