@@ -9,7 +9,6 @@ import AdminMain from "./pages/AdminMain";
 import UserMain from "./pages/UserMain";
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
 import { InputModalProvider } from "./components/Modal/InputModalContext";
-import { NoticeModalProvider } from "./components/Modal/NoticeModalContext";
 
 function App() {
   return (
@@ -17,7 +16,6 @@ function App() {
     <CheckModalProvider>
     <MenuModalProvider>
     <InputModalProvider>
-    <NoticeModalProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<UserMain />}></Route>
@@ -27,7 +25,6 @@ function App() {
         <Route path="/restaurantsignup" element={<RestaurantSignup />}></Route>
       </Routes>
     </BrowserRouter>
-    </NoticeModalProvider>
     </InputModalProvider>
     </MenuModalProvider>
     </CheckModalProvider>

@@ -15,8 +15,10 @@ import opentimeImg from "../../assets/images/detail/opentime.png";
 import phoneImg from "../../assets/images/detail/phone.png";
 import quotesImg1 from "../../assets/images/detail/quotes.png";
 import quotesImg2 from "../../assets/images/detail/quotes2.png";
+import NoticeModal from "../Modal/NoticeModal";
 
 function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
+  const [noticeshow, setNoticeshow] = useState(false);
   const [restaurant, setRestaurant] = useState(null);
   const [opentimes, setOpentimes] = useState([]);
   const [menus, setMenus] = useState([]);
@@ -25,6 +27,10 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 4;
+
+  const [noticeSuccess, setNoticeSuccess] = useState(false);
+  const NoticeClose = () => setNoticeshow(false);
+  const NoticeShow = () => setNoticeshow(true);
 
   const { openInputModal } = useInputModal();
 
@@ -80,7 +86,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
       }
     };
     fetchData();
-  }, [restId]);
+  }, [restId, noticeSuccess]);
 
   const fetchRestaurant = async () => {
     try {
@@ -192,7 +198,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
         <div className="rest-mod-btn-wrap">
           <div className="rest-title">Announcement</div>
           <div className="rest-mod-btn-box">
-            <div className="mod-btn">
+            <div className="mod-btn" onClick={NoticeShow}>
               <div className="mod-btn-content">공지 수정</div>
             </div>
           </div>
@@ -307,6 +313,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
         </div>
       </div>
       <InputModal />
+      <NoticeModal NoticeClose={NoticeClose} noticeshow={noticeshow} restId={restId} onSuccess={() => setNoticeSuccess(true)}/>
     </div>
   );
 }

@@ -1,35 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNoticeModal } from "./NoticeModalContext";
 import "../../css/components/Modal/InputModal.css";
 
-function NoticeModal() {
-  const { modalState, closeNoticeModal } = useNoticeModal();
-  const { show, contents } = modalState;
-
+function NoticeModal({ NoticeClose, noticeshow, restId, onSuccess }) {
   const [NoticeInput, setNoticeInput] = useState("");
 
-  const handleNoticeEdit = async () => {
-    const content = document.querySelector(".reportinput").value;
-    putnotice(content);
-    closeNoticeModal();
-  };
+  const handleNoticeEdit = async (e) => {
+    e.preventDefault();
+    console.log(NoticeInput);
 
-  useEffect(() => {
-    setNoticeInput(contents);
-  }, [contents]);
-
-  const handleNoticeChange = (e) => {
-    setNoticeInput(e.target.value);
-  };
-
-  const putnotice = async (rest_id, content) => {
     const reportData = {
-      content,
+      restPost: NoticeInput,
     };
 
     try {
       const response = await fetch(
-        `http://localhost:8080/restaurants/info/${rest_id}`,
+        `http://localhost:8080/restaurants/info/notice/${restId}`,
         {
           method: "PUT",
           headers: {
@@ -41,25 +26,34 @@ function NoticeModal() {
       if (!response.ok) {
         throw new Error("Failed to post restaurant report");
       }
-      console.log("Restaurant report submitted successfully");
+
+      const responseText = await response.text();
+      const data = responseText ? JSON.parse(responseText) : { restPost: "" };
+
+      console.log("공지 수정 완료:", data);
+      alert("공지가 성공적으로 수정되었습니다.");
+      onSuccess();
+      NoticeClose();
     } catch (error) {
-      console.error("Error posting restaurant report:", error);
+      console.error("공지 수정 실패:", error);
+      alert("공지 수정을 실패했습니다.");
     }
   };
+
   return (
     <div>
       <div
-        id={show ? "checkbackgroundon" : "checkbackgroundoff"}
+        id={noticeshow ? "checkbackgroundon" : "checkbackgroundoff"}
         onClick={(e) => {
           if (
             e.target.id === "checkbackgroundon" ||
             e.target.id === "checkbackgroundoff"
           ) {
-            closeNoticeModal();
+            NoticeClose();
           }
         }}
       >
-        <div className={`InputModal ${show ? "checkshow" : "checkhide"}`}>
+        <div className={`InputModal ${noticeshow ? "checkshow" : "checkhide"}`}>
           <div className="checkModalContent">
             <div className="InputboldText">공지사항 수정</div>
             <div className="InputhintText">
@@ -69,18 +63,18 @@ function NoticeModal() {
               <div className="inputhinttext">전달내용</div>
               <input
                 type="text"
+                className="reportinput"
                 placeholder="최대 100자 까지 작성 가능합니다."
                 maxLength={100}
                 value={NoticeInput}
-                onChange={handleNoticeChange}
-                className="reportinput"
+                onChange={(e) => setNoticeInput(e.target.value)}
               />
             </div>
             <div className="inputmodalbuttonWrapper">
               <button className="InputModalreport" onClick={handleNoticeEdit}>
                 등록
               </button>
-              <button className="InputModalCancel" onClick={closeNoticeModal}>
+              <button className="InputModalCancel" onClick={NoticeClose}>
                 취소
               </button>
             </div>
