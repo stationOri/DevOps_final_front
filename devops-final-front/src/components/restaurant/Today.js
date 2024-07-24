@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Now from "../../assets/images/Restaurant/now.png";
 
-function Today({rev}) {
+function Today({rev, restId}) {
   const [todayinfo, setTodayInfo] = useState([]);
   const [todaynum, setTodayNum] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
-    getToday();
-  }, []);
+    getToday(restId,selectedDate);
+  }, [restId,rev]);
 
-  const getToday = async () => {
+  const formatDateFetch = (date) => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getToday = async (restId,selectedDate) => {
     try {
-      const response = await fetch(`http://localhost:4000/today`);
+      const response = await fetch(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(selectedDate)}`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }

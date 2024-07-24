@@ -312,6 +312,35 @@ const Mypage = ({ userId, onCardClick }) => {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
+  const totalPages = Math.ceil(reservations.length / reservationsPerPage);
+  const maxPagesToShow = 10;
+  const renderPaginationButtons = () => {
+    let startPage, endPage;
+    if (totalPages <= maxPagesToShow) {
+      // 모든 페이지 번호를 표시할 수 있는 경우
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      // 현재 페이지를 기준으로 앞뒤로 5개씩 표시
+      startPage = Math.max(currentPage - Math.floor(maxPagesToShow / 2), 1);
+      endPage = Math.min(startPage + maxPagesToShow - 1, totalPages);
+
+      // 마지막 페이지가 totalPages와 같은 경우, startPage를 재조정
+      if (endPage === totalPages) {
+        startPage = endPage - maxPagesToShow + 1;
+      }
+    }
+    return Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+      <button
+        key={startPage + index}
+        onClick={() => paginate(startPage + index)}
+        className={currentPage === startPage + index ? "active" : ""}
+      >
+        {startPage + index}
+      </button>
+    ));
+  };
+
   return (
     <div className="my-container">
       <div className="profile-container">
@@ -404,17 +433,7 @@ const Mypage = ({ userId, onCardClick }) => {
             ))}
           </div>
           <div className="my-page-res-pagination">
-            {Array.from({
-              length: Math.ceil(reservations.length / reservationsPerPage),
-            }).map((_, index) => (
-              <button
-                key={index + 1}
-                onClick={() => paginate(index + 1)}
-                className={currentPage === index + 1 ? "active" : ""}
-              >
-                {index + 1}
-              </button>
-            ))}
+            {renderPaginationButtons()}
           </div>
         </div>
         <div className="my-waiting-container">

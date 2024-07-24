@@ -53,6 +53,7 @@ function SendTalkModal({ TalkClose, talkshow, restId }) {
   };
 
   const handleClose = () => {
+    setSelectedDate(new Date());
     setMessage("");
     TalkClose();
   };
@@ -86,7 +87,7 @@ function SendTalkModal({ TalkClose, talkshow, restId }) {
                   selected={selectedDate}
                   onChange={handleDateChange}
                   minDate={minDate}
-                  className="picker insmallrev"
+                  className="pickerdate insmallrev"
                   placeholderText="DATE"
                   dateFormat="yyyy-MM-dd"
                 />

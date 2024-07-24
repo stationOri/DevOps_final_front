@@ -7,13 +7,13 @@ function AddressSearch({ onCompletePost }) {
   const handleCompletePost = (data) => {
     setModalState(false);
     if (onCompletePost) {
-      onCompletePost(data); // 부모 컴포넌트의 콜백을 호출
+      onCompletePost(data);
     }
   };
 
   return (
     <div>
-      <button onClick={() => setModalState(true)}>
+      <button className="addressSearchBtn" onClick={() => setModalState(true)}>
         주소 검색
       </button>
       {modalState && (

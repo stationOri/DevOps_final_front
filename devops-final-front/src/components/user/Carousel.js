@@ -35,13 +35,13 @@ function Carousel({ bannerFoods }) {
             <div className="carouselWrapper">
               <div
                 className="backgroundImage"
-                style={{ backgroundImage: `url(${rest.rest_photo})` }}
+                style={{ backgroundImage: `url(${rest.restPhoto})` }}
               >
                 <div className="carouselcontents">
-                  <div className="carouselname">{rest.rest_name}</div>
-                  <div className="carouseladdress">{rest.rest_address}</div>
+                  <div className="carouselname">{rest.restName}</div>
+                  <div className="carouseladdress">{rest.restAddress}</div>
                   <div className="carouselrating">
-                    <StarRatingsCarousel rating={rest.rest_grade} />
+                    <StarRatingsCarousel rating={rest.restGrade} />
                   </div>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import ArrayRestaurantsMap from "../../components/ArrayRestaurantsMap";
 import StarRatingsCarousel from "../../components/user/StarRatingCarousel";
 import "../../css/pages/Main.css";
 import ReviewCardMain from "../../components/ReviewCardMain";
+import useGeolocation from "./useGeolocation";
 
 const Main = ({ userId }) => {
   const [loading, setLoading] = useState(true);
@@ -12,11 +13,25 @@ const Main = ({ userId }) => {
   const [trendingFoods, setTrendingFoods] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
+  const [userLat, setUserLat] = useState(null);
+  const [userLng, setUserLng] = useState(null);
+
+  const { loaded, coordinates, error } = useGeolocation();
+
+  useEffect(() => {
+    if (loaded && coordinates) {
+      console.log("Current Coordinates:", coordinates);
+      setUserLat(coordinates.lat);
+      setUserLng(coordinates.lng);
+    } else if (error) {
+      console.error("Geolocation Error:", error.message);
+    }
+  }, [loaded, coordinates, error]);
 
   const getBannerFood = async () => {
     try {
       const response = await fetch(
-        `http://localhost:4000/maincarouselrestaurant`
+        `http://localhost:8080/restaurants/recommend`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch");
@@ -30,7 +45,7 @@ const Main = ({ userId }) => {
 
   const getTrendingFood = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/hot`);
+      const response = await fetch(`http://localhost:8080/restaurants/hot`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -42,15 +57,17 @@ const Main = ({ userId }) => {
   };
 
   const getRestaurantsData = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/mapdata`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
+    if (userLat && userLng) {
+      try {
+        const response = await fetch(`http://localhost:8080/restaurants/near/lat/${userLat}/lng/${userLng}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch");
+        }
+        const json = await response.json();
+        setRestaurants(json || []);
+      } catch (error) {
+        console.error("Error fetching restaurants data:", error);
       }
-      const json = await response.json();
-      setRestaurants(json || []);
-    } catch (error) {
-      console.error("Error fetching restaurants data:", error);
     }
   };
 
@@ -59,7 +76,6 @@ const Main = ({ userId }) => {
       await Promise.all([
         getBannerFood(),
         getTrendingFood(),
-        getRestaurantsData(),
       ]);
       setLoading(false);
     };
@@ -67,8 +83,22 @@ const Main = ({ userId }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (userLat && userLng) {
+      getRestaurantsData();
+    }
+  }, [userLat, userLng]);
+
   return (
-    <div style={{width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <div className="carouselContainer">
         <Carousel bannerFoods={bannerFoods} />
       </div>
@@ -79,12 +109,12 @@ const Main = ({ userId }) => {
               <div className="topbox">
                 <img
                   className="mainRestExPhoto"
-                  src="https://www.bluer.co.kr/images/es_baf6fbd8c5ad4a9ba20a346711b5dc1c.jpg"
+                  src={selectedRestaurant.restPhoto}
                   alt=""
                 />
                 <div className="reviewleft">
                   <div className="maincardrestname">
-                    {selectedRestaurant.rest_name}
+                    {selectedRestaurant.restName}
                   </div>
                   <div className="maincardKeywordWrapper">
                     {selectedRestaurant.keyword1 && (
@@ -116,6 +146,8 @@ const Main = ({ userId }) => {
         <ArrayRestaurantsMap
           restaurants={restaurants}
           onMarkerClick={(restaurant) => setSelectedRestaurant(restaurant)}
+          lat={userLat}
+          lng={userLng}
         />
       </div>
       <div className="hotTrendingRestWrapper">
@@ -132,9 +164,9 @@ const Main = ({ userId }) => {
               >
                 {index + 1}
               </div>
-              <img className="rankPhoto" src={rest.rest_photo} alt="" />
+              <img className="rankPhoto" src={rest.restPhoto} alt="" />
               <div className="MainRestNameWrapper">
-                <div className="MainRestName">{rest.rest_name}</div>
+                <div className="MainRestName">{rest.restName}</div>
                 <div className="MainKeywordWrapperMini">
                   {rest.keyword1 && (
                     <div className="innerKeywords">#{rest.keyword1}</div>
@@ -149,12 +181,13 @@ const Main = ({ userId }) => {
               </div>
             </div>
             <div className="rankingRight">
-              <div className="starRatingText">{rest.rest_grade}/5</div>
-              <StarRatingsCarousel rating={rest.rest_grade} />
+              <div className="starRatingText">{rest.restGrade}/5</div>
+              <StarRatingsCarousel rating={rest.restGrade} />
             </div>
           </div>
         ))}
       </div>
+      {loading && <Loading />}
     </div>
   );
 };
