@@ -35,6 +35,7 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
   const [receiverId, setReceiverId] = useState(null); // 선택된 수신자
   const [senderId, setSenderId] = useState(null); // 발신자 ID
 
+  const isok=query.get("isok");
   const navigate = useNavigate();
 
   const handleSidebarTextClick = (text) => {
@@ -42,7 +43,25 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
       onMenuClick(text);
     }
   };
-
+  useEffect(()=>{
+    console.log("isokcheck")
+    switch(isok){
+      case "1":
+        console.log("1")
+        alert ("해당 식당은 사용자 신고 누적으로 인해 사용 정지 상태입니다.");
+        navigate("/");
+        break;
+      case "2":
+        alert("해당 식당은 식당 등록 후 관리자 승인 대기 중입니다.");
+        navigate("/");
+        break;
+      case "3":
+        console.log("3")
+        alert("해당 사용자는 리뷰 신고 누적으로 인해 사용 정지 상태입니다.");
+        navigate("/");   
+        break;
+    }
+  },[isok])
   useEffect(() => {
     const signinok = query.get("signin");
       if (signinok === "true") {
