@@ -10,8 +10,6 @@ import ExtendBtn from "../../assets/images/sidebar/menubtn.png";
 import "../../css/components/user/SideBar.css";
 import SigninModal from "../Modal/SigninModal";
 import SigninNaverModal from "../Modal/SigninNaverModal";
-import NoticeModal from "../Modal/NoticeModal";
-import { useNoticeModal } from "../Modal/NoticeModalContext";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import LoginModal from "../Modal/LoginModal";
@@ -22,7 +20,6 @@ function useQuery() {
 }
 
 function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
-  const { openNoticeModal } = useNoticeModal();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("Guest");
   const [loginshow, setLoginshow] = useState(false);
@@ -246,7 +243,6 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
           관리자 문의
         </button>
       </div>
-      <NoticeModal />
       <SelectReceiverModal
         isOpen={isModalOpen}
         onClose={handleCloseSelectReceiverModal}
