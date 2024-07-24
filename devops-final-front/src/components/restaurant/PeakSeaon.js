@@ -1,34 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import DateBox from "../Datebox";
 import TimeSlot from "../Timeslot";
-import Select from "react-select";
+import Trash from "../../assets/images/Restaurant/recycle-bin.png";
 
-const revperiodOptions = [
-  { value: "half", label: "30분" },
-  { value: "hour", label: "1시간" },
-];
-
-function PeakSeason() {
+function PeakSeason({ restId }) {
   const [selectedDateStart, setSelectedDateStart] = useState(null);
   const [selectedDateEnd, setSelectedDateEnd] = useState(null);
   const [selectedDateReservation, setSelectedDateReservation] = useState(null);
-  const [revperiod, setRevperiod] = useState(null);
   const [openTime, setOpenTime] = useState(null);
+  const [peakSeasons, setPeakSeasons] = useState([]);
+
+  useEffect(() => {
+    const fetchPeakSeasons = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/restaurants/peak/${restId}`);
+        const data = Array.isArray(response.data) ? response.data : [];
+        setPeakSeasons(data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchPeakSeasons();
+  }, [restId]);
+
+  const formatDate = (date) => {
+    if (!date) return null;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handleDateChangeStart = (date) => {
-    setSelectedDateStart(date);
+    setSelectedDateStart(formatDate(date));
   };
 
   const handleDateChangeEnd = (date) => {
-    setSelectedDateEnd(date);
+    setSelectedDateEnd(formatDate(date));
   };
 
   const handleDateChangeReservation = (date) => {
-    setSelectedDateReservation(date);
+    setSelectedDateReservation(formatDate(date));
   };
 
-  const handleRevperiodChange = (selectedOption) => {
-    setRevperiod(selectedOption);
+  const handleEnroll = async () => {
+    if (!selectedDateStart || !selectedDateEnd || !selectedDateReservation || !openTime) {
+      alert("모든 필드를 채워주세요.");
+      return;
+    }
+
+    const today = new Date();
+    const startDateObj = new Date(selectedDateStart);
+    const endDateObj = new Date(selectedDateEnd);
+    const reservationDateObj = new Date(selectedDateReservation);
+    const reservationDateTime = `${selectedDateReservation} ${openTime}`;
+
+    if (startDateObj >= endDateObj) {
+      alert("성수기 영업 시작일은 마감일보다 앞에 있어야 합니다.");
+      return;
+    }
+
+    if (reservationDateObj >= startDateObj) {
+      alert("예약 오픈일은 성수기 영업 시작일보다 앞에 있어야 합니다.");
+      return;
+    }
+
+    if (reservationDateObj < today) {
+      alert("예약 오픈일은 오늘 이후로 설정해야 합니다.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:8080/restaurants/peak", {
+        restId,
+        dateStart: selectedDateStart,
+        dateEnd: selectedDateEnd,
+        peakOpendate: reservationDateTime,
+      });
+      
+      const response = await axios.get(`http://localhost:8080/restaurants/peak/${restId}`);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setPeakSeasons(data);
+    } catch (error) {
+      console.error("Error adding peak season:", error);
+    }
+  };
+
+  const handleDelete = async (peakId) => {
+    try {
+      await axios.delete(`http://localhost:8080/restaurants/peak/${peakId}`);
+      const response = await axios.get(`http://localhost:8080/restaurants/peak/${restId}`);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setPeakSeasons(data);
+    } catch (error) {
+      console.error("Error deleting peak season:", error);
+    }
   };
 
   return (
@@ -58,23 +126,25 @@ function PeakSeason() {
             />
           </div>
           <div className="calWrapper">
-            <div className="accinfo-hintText">성수기 운영시간</div>
+            <div className="accinfo-hintText">성수기 예약 오픈 시간</div>
             <TimeSlot time={openTime} setTime={setOpenTime} />
           </div>
-          <div className="Wrppaerforinput">
-            <div className="accinfo-hintText">예약 간격</div>
-            <Select
-              options={revperiodOptions}
-              value={revperiod}
-              onChange={handleRevperiodChange}
-              placeholder="기간 선택"
-              className="select-box"
-              classNamePrefix="react-select"
-            />
-          </div>
+          <button className="peakenrollbtn" onClick={handleEnroll}>
+            등록
+          </button>
         </div>
         <div className="peakWrapper-second">
-          {/* 있는 정보 뿌리기 */}
+          {peakSeasons.map((season) => (
+            <div key={season.id} className="peak-item">
+              <div>{season.dateStart} ~ {season.dateEnd} | {season.peakOpendate}</div>
+              <img
+                src={Trash}
+                alt="Delete"
+                className="TrashcanImg"
+                onClick={() => handleDelete(season.peakId)}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
