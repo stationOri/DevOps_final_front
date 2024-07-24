@@ -76,6 +76,7 @@ const Reservation = ({ userId, restId }) => {
       }
       const data = await response.json();
       setRestaurant(data);
+      console.log(restaurant);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -260,22 +261,22 @@ const Reservation = ({ userId, restId }) => {
           <div className="res-rest-photo">
             <img
               className="rest-photo"
-              src={restaurant.restPhoto}
-              alt={restaurant.restName}
+              src={restaurant?.restPhoto}
+              alt={restaurant?.restName}
             />
           </div>
           <div className="res-map">
-            <RestaurantLocationMap address={restaurant.restAddress} />
+            <RestaurantLocationMap address={restaurant?.restAddress} />
           </div>
         </div>
         <div className="res-rest-content">
           <div className="rest-info-box">
             <div className="rest-name-box">
-              <div className="rest-name">{restaurant.restName}</div>
+              <div className="rest-name">{restaurant?.restName}</div>
               <div className="res-rest-keyword">
-                <span className="rest-keyword">#{restaurant.keyword1} </span>
-                <span className="rest-keyword">#{restaurant.keyword2} </span>
-                <span className="rest-keyword">#{restaurant.keyword3} </span>
+                <span className="rest-keyword">#{restaurant?.keyword1} </span>
+                <span className="rest-keyword">#{restaurant?.keyword2} </span>
+                <span className="rest-keyword">#{restaurant?.keyword3} </span>
               </div>
             </div>
             <div className="res-horizon"></div>
@@ -283,7 +284,7 @@ const Reservation = ({ userId, restId }) => {
               <div className="res-rest-location-wrap">
                 <div className="rest-info-wrap">
                   <img className="rest-info-img" src={locationImg} alt=""/>
-                  <p className="rest-info-content">{restaurant.restAddress}</p>
+                  <p className="rest-info-content">{restaurant?.restAddress}</p>
                 </div>
                 <div className="rest-info-wrap-2">
                   <img className="rest-info-img mt-5" src={opentimeImg} alt=""/>
@@ -302,14 +303,14 @@ const Reservation = ({ userId, restId }) => {
                 </div>
                 <div className="rest-info-wrap">
                   <img className="rest-info-img" src={phoneImg} alt=""/>
-                  <p className="rest-info-content">{restaurant.restPhone}</p>
+                  <p className="rest-info-content">{restaurant?.restPhone}</p>
                 </div>
               </div>
               <div className="res_rest_intro">
                 <div className="rest-info-wrap-2">
                   <img className="rest-info-img mt-5" src={noteImg} alt=""/>
                   <div className="rest-info-content">
-                    {restaurant.restIntro}
+                    {restaurant?.restIntro}
                   </div>
                 </div>
               </div>
@@ -383,23 +384,23 @@ const Reservation = ({ userId, restId }) => {
                   <div className="res-menu-box">
                     <img
                       className="res-menu-img"
-                      src={menu.menuPhoto}
-                      alt={menu.menuName}
+                      src={menu?.menuPhoto}
+                      alt={menu?.menuName}
                     />
                     <div className="res-menu-info-box">
-                      <div className="res-menu-title">{menu.menuName}</div>
-                      <div className="res-menu-price">{menu.menuPrice}원</div>
+                      <div className="res-menu-title">{menu?.menuName}</div>
+                      <div className="res-menu-price">{menu?.menuPrice}원</div>
                       <div className="menu-quantity-controls">
                         <button
                           className="menu-picker-btn-minus"
-                          onClick={() => handleMenuDecrement(menu.menuId)}
+                          onClick={() => handleMenuDecrement(menu?.menuId)}
                         >
                           -
                         </button>
-                        <span>{menuQuantities[menu.menuId]}</span>
+                        <span>{menuQuantities[menu?.menuId]}</span>
                         <button
                           className="menu-picker-btn-plus"
-                          onClick={() => handleMenuIncrement(menu.menuId)}
+                          onClick={() => handleMenuIncrement(menu?.menuId)}
                         >
                           +
                         </button>
