@@ -11,7 +11,7 @@ function DateBox({ selectedDate, handleDateChange }) {
       <DatePicker
         selected={selectedDate}
         onChange={handleDateChange}
-        className="picker insmallrev"
+        className="pickerdate insmallrev"
         placeholderText="DATE"
         dateFormat="yyyy-MM-dd"
       />
