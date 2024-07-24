@@ -24,12 +24,11 @@ const generateTimes = () => {
   return times;
 };
 
-function TimeSlot({ disabled }) {
-  const [selectedTime, setSelectedTime] = useState("");
+function TimeSlot({ time, setTime, disabled }) {
   const uniqueTimes = generateTimes();
 
   const handleTimeChange = (event) => {
-    setSelectedTime(event.target.value);
+    setTime(event.target.value);
   };
 
   return (
@@ -38,13 +37,13 @@ function TimeSlot({ disabled }) {
       <select
         className="timeSelectBox"
         onChange={handleTimeChange}
-        value={selectedTime}
+        value={time}
         disabled={disabled}
       >
         <option value="" disabled>시간 선택</option>
-        {uniqueTimes.map((time, index) => (
-          <option key={index} value={time}>
-            {time}
+        {uniqueTimes.map((timeOption, index) => (
+          <option key={index} value={timeOption}>
+            {timeOption}
           </option>
         ))}
       </select>
