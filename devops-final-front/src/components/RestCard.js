@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
 import "../css/components/RestCard.css";
 
@@ -22,6 +22,13 @@ const RestCard = ({
     console.log(isFavorite);
   };
 
+  const uniqueOpentimes = useMemo(() => {
+    const uniqueTimes = Array.from(
+      new Map(RestOpentimes.map(item => [item.restDay, item])).values()
+    );
+    return uniqueTimes;
+  }, [RestOpentimes]);
+
   return (
     <div className="rest-card-container">
       <div className="rest-card" onClick={onCardClick}>
@@ -32,7 +39,7 @@ const RestCard = ({
           <div className="rest-card-name">{RestName}</div>
           <div className="rest-card-address">{RestAddress}</div>
           <div className="rest-card-opentimes">
-            {RestOpentimes.map((opentime, index) => (
+            {uniqueOpentimes.map((opentime, index) => (
               <div key={index}>
                 <div className="rest-card-opentime">
                   {opentime.restDay}: {opentime.restOpen} - {opentime.restClose}

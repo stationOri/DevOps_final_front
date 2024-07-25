@@ -100,11 +100,13 @@ const Restaurants = ({ userId, onCardClick }) => {
       if (data.length === 0) {
         setHasMore(false);
       } else {
-        setRestaurants((prevRestaurants) => [...prevRestaurants, ...data]);
-        setFilteredRestaurants((prevRestaurants) => [
-          ...prevRestaurants,
-          ...data,
-        ]);
+        setRestaurants((prevRestaurants) => {
+          // 새로운 Set 객체를 생성하여 중복을 제거합니다
+          const uniqueRestaurants = new Set(
+            [...prevRestaurants, ...data].map(JSON.stringify)
+          );
+          return Array.from(uniqueRestaurants).map(JSON.parse);
+        });
       }
     } catch (error) {
       console.error("Error fetching restaurants:", error);
@@ -230,7 +232,7 @@ const Restaurants = ({ userId, onCardClick }) => {
     setCurrentPage(1);
   };
 
-  const filterRestaurants = () => {
+  const filterRestaurants = useCallback(() => {
     let filtered = restaurants;
 
     if (locationFilter) {
@@ -250,8 +252,18 @@ const Restaurants = ({ userId, onCardClick }) => {
       );
     }
 
+    const uniqueFiltered = Array.from(
+      new Set(filtered.map((r) => r.restId))
+    ).map((id) => filtered.find((r) => r.restId === id));
+
+    return uniqueFiltered;
+  }, [restaurants, locationFilter, keywordFilters]);
+
+  useEffect(() => {
+    const filtered = filterRestaurants();
     setFilteredRestaurants(filtered);
-  };
+    setCurrentPage(1);
+  }, [filterRestaurants]);
 
   const extractLocations = () => {
     const locations = restaurants.map((restaurant) =>
