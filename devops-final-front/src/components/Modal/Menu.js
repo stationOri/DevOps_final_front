@@ -3,10 +3,11 @@ import { useMenuModal } from "./MenuModalContext";
 import "../../css/components/Modal/Menu.css";
 import File from "../../components/File";
 import axios from 'axios';
+import Loading from '../Loading';
 
-function MenuModal() {
-  const { menumodalState, closeMenuModal, openMenuModal } = useMenuModal();
-  const { show, header, menuname, menuprice } = menumodalState;
+function MenuModal({restId, onSuccess}) {
+  const { menumodalState, closeMenuModal } = useMenuModal();
+  const { show, header, menuname, menuprice, menuId } = menumodalState;
 
   const [nameInput, setNameInput] = useState('');
   const [priceInput, setPriceInput] = useState('');
@@ -33,43 +34,52 @@ function MenuModal() {
 
   const handleConfirm = useCallback(async () => {
     const file = fileInputRef.current.getFile();
-  
-    if (!file) {
-      console.error("No file selected");
-      return;
-    }
-  
+
     setUploading(true);
-  
+
     const formData = new FormData();
     formData.append('menuData', JSON.stringify({
-      restId: 1397,
-      menuName: nameInput,
       menuPrice: priceInput,
+      menuPhoto: file ? undefined : menumodalState.menuPhoto,
     }));
-    formData.append('file', file);
-  
+    if (file) {
+      formData.append('file', file);
+    }
+
     try {
-      const response = await axios.post('http://localhost:8080/restaurants/menu', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log("Menu added successfully with ID:", response.data);
+      let response;
+      if (menuId) {
+        // 메뉴 수정 요청
+        response = await axios.put(`http://localhost:8080/restaurants/menu/${menuId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      } else {
+        // 메뉴 추가 요청
+        response = await axios.post('http://localhost:8080/restaurants/menu', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+      }
+
+      console.log(`Menu ${menuId ? 'updated' : 'added'} successfully with ID:`, response.data);
+      onSuccess();
     } catch (error) {
-      console.error('Error adding menu: ', error);
+      console.error('Error adding/updating menu: ', error);
       setUploadError(error);
     } finally {
       setUploading(false);
       closeMenuModal();
     }
-  }, [nameInput, priceInput, closeMenuModal]);
+  }, [nameInput, priceInput, menuId, closeMenuModal, onSuccess]);
 
   const handleCancel = () => {
     setNameInput('');
     setPriceInput('');
     if (fileInputRef.current) {
-      fileInputRef.current.reset(); // Reset the file field
+      fileInputRef.current.reset();
     }
     closeMenuModal();
   };
@@ -79,7 +89,10 @@ function MenuModal() {
       <div
         id={show ? "menubackgroundon" : "menubackgroundoff"}
         onClick={(e) => {
-          if (e.target.id === "menubackgroundon" || e.target.id === "menubackgroundoff") {
+          if (
+            e.target.id === "menubackgroundon" ||
+            e.target.id === "menubackgroundoff"
+          ) {
             handleCancel();
           }
         }}
@@ -93,6 +106,7 @@ function MenuModal() {
               placeholder='메뉴 이름'
               value={nameInput}
               onChange={handleMenuNameChange}
+              disabled={menuId != null}
             />
             <input
               className='menu-price-input'
@@ -105,12 +119,10 @@ function MenuModal() {
               <div className='menudescription'>메뉴 사진은 한 장만 등록 가능합니다.</div>
             </div>
             <div className='menu-modal-file-wrapper'>
-              <File ref={fileInputRef} onFileChange={handleFileChange} />
+              <File ref={fileInputRef} />
             </div>
             <button className="MenuCheckModalBtn" onClick={handleConfirm}>확인</button>
             <button className="MenucancelModalBtn" onClick={handleCancel}>취소</button>
-            {uploading && <div>업로드 중...</div>}
-            {uploadError && <div>업로드 중 오류가 발생했습니다: {uploadError.message}</div>}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useImperativeHandle, forwardRef, useState } from "react";
 import axios from 'axios';
 import "../css/components/File.css";
+import Loading from "./Loading";
 
 const File = forwardRef(({ onFileChange, onUploadSuccess, onUploadError }, ref) => {
   const inputEl = useRef(null);
@@ -71,7 +72,7 @@ const File = forwardRef(({ onFileChange, onUploadSuccess, onUploadError }, ref) 
         <div className="fileselect">파일 선택</div>
       </label>
       <input accept=".jpg,.jpeg,.png" type="file" id="file" ref={inputEl} className="file-input" onChange={fileInputHandler} />
-      {uploading && <div>업로드 중...</div>}
+      {uploading && <Loading />}
     </div>
   );
 });

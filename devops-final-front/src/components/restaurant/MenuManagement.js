@@ -9,18 +9,15 @@ function MenuManagement({ restId }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const { openMenuModal } = useMenuModal();
-  const [menushow, setMenushow] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
     fetchMenus();
-  }, [restId]);
+  }, [restId, uploadSuccess]);
 
   const handleMenuAddModal = () => {
     openMenuModal("메뉴 정보 추가", "", "");
   };
-
-  const MenuClose = () => setMenushow(false);
-  const MenuShow = () => setMenushow(true);
 
   const fetchMenus = async () => {
     try {
@@ -35,13 +32,31 @@ function MenuManagement({ restId }) {
       setLoading(false);
     } catch (error) {
       console.error(error);
+      setError(error);
+    }
+  };
+
+  const handleMenuDelete = async (menuId) => {
+    if (window.confirm("정말로 이 메뉴를 삭제하시겠습니까?")) {
+      try {
+        const response = await fetch(`http://localhost:8080/restaurants/menu/${menuId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) {
+          throw new Error("Failed to delete menu");
+        }
+        fetchMenus();
+      } catch (error) {
+        console.error("Error deleting menu:", error);
+        setError(error);
+      }
     }
   };
 
   const filteredMenus = restmenu.filter((menu) => menu.restId === restId);
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Error: {error.message}</div>;
   }
 
   const formatPrice = (price) => {
@@ -54,7 +69,7 @@ function MenuManagement({ restId }) {
         <Loading />
       ) : (
         <div className="menu-edit-Wrapper">
-          <MenuModal />
+          <MenuModal restId={restId} onSuccess={() => setUploadSuccess(true)} />
           <div className="menu-edit-bg">
             <div className="menu-edit-contents-wrapper">
               <div className="menu-edit-title-out">
@@ -94,13 +109,17 @@ function MenuManagement({ restId }) {
                               openMenuModal(
                                 "메뉴 정보 수정",
                                 menu.menuName,
-                                formatPrice(menu.menuPrice)
+                                menu.menuPrice,
+                                menu.menuId
                               );
                             }}
                           >
                             메뉴 수정
                           </button>
-                          <button className="menu-edit-delete-btn">
+                          <button
+                            className="menu-edit-delete-btn"
+                            onClick={() => handleMenuDelete(menu.menuId)}
+                          >
                             메뉴 삭제
                           </button>
                         </div>

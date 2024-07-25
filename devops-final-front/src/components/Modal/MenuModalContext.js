@@ -1,46 +1,77 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
-const MenuModalContext = createContext();
+const MenuModalStateContext = createContext();
+const MenuModalDispatchContext = createContext();
 
-export const MenuModalProvider = ({ children }) => {
-  const [menumodalState, setMenuModalState] = useState({
-    show: false,
-    header: '',
-    menuname: '',
-    menuprice: ''
-  });
+const initialState = {
+  show: false,
+  header: '',
+  menuname: '',
+  menuprice: '',
+  menuId: null,
+};
 
-  const openMenuModal = (header, menuname, menuprice) => {
-    setMenuModalState({
-      show: true,
-      header,
-      menuname,
-      menuprice
-    });
+function menuModalReducer(state, action) {
+  switch (action.type) {
+    case 'OPEN':
+      return {
+        ...state,
+        show: true,
+        header: action.header,
+        menuname: action.menuname,
+        menuprice: action.menuprice,
+        menuId: action.menuId,
+      };
+    case 'CLOSE':
+      return initialState;
+    default:
+      throw new Error(`Unknown action: ${action.type}`);
+  }
+}
+
+export function MenuModalProvider({ children }) {
+  const [state, dispatch] = useReducer(menuModalReducer, initialState);
+
+  return (
+    <MenuModalStateContext.Provider value={state}>
+      <MenuModalDispatchContext.Provider value={dispatch}>
+        {children}
+      </MenuModalDispatchContext.Provider>
+    </MenuModalStateContext.Provider>
+  );
+}
+
+export function useMenuModalState() {
+  const context = useContext(MenuModalStateContext);
+  if (context === undefined) {
+    throw new Error('useMenuModalState must be used within a MenuModalProvider');
+  }
+  return context;
+}
+
+export function useMenuModalDispatch() {
+  const context = useContext(MenuModalDispatchContext);
+  if (context === undefined) {
+    throw new Error('useMenuModalDispatch must be used within a MenuModalProvider');
+  }
+  return context;
+}
+
+export function useMenuModal() {
+  const state = useMenuModalState();
+  const dispatch = useMenuModalDispatch();
+
+  const openMenuModal = (header, menuname, menuprice, menuId = null) => {
+    dispatch({ type: 'OPEN', header, menuname, menuprice, menuId });
   };
 
   const closeMenuModal = () => {
-    setMenuModalState({
-      show: false,
-      header: '',
-      menuname: '',
-      menuprice: ''
-    });
+    dispatch({ type: 'CLOSE' });
   };
 
-  return (
-    <MenuModalContext.Provider
-      value={{ menumodalState, openMenuModal, closeMenuModal }}
-    >
-      {children}
-    </MenuModalContext.Provider>
-  );
-};
-
-export const useMenuModal = () => {
-  const context = useContext(MenuModalContext);
-  if (!context) {
-    throw new Error('useMenuModal must be used within a MenuModalProvider');
-  }
-  return context;
-};
+  return {
+    menumodalState: state,
+    openMenuModal,
+    closeMenuModal,
+  };
+}
