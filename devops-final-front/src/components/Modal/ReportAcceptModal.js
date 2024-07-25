@@ -30,7 +30,7 @@ function ReportAcceptModal({ reportacceptshow, ReportAcceptClose }) {
       >
         <div className="acceptmodalcontentswrapper">
           <div className="ReportacceptModalHeader">
-            <div className="ReportacceptboldText">식당 신고 처리</div>
+            <div className="ReportacceptboldText">신고 처리</div>
             <button className="acceptclosebtn" onClick={ReportAcceptClose}>
               X
             </button>
