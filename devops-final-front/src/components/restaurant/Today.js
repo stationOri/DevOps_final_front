@@ -24,17 +24,18 @@ function Today({rev, restId}) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-
-      const timeCounts = json.reduce((acc, reservation) => {
-        const hour = new Date(reservation.res_datetime).getHours();
-        const timeSlot = `${hour}:00`;
+      const reservations = json.map(dateString => ({ resDatetime: dateString }));
+      console.log(reservations);
+      const timeCounts = reservations.reduce((acc, reservation) => {
+        const hour = new Date(reservation.resDatetime).getHours();
+        const minute = new Date(reservation.resDatetime).getMinutes().toString().padStart(2, '0'); 
+        const timeSlot = `${hour}:${minute}`;
         if (!acc[timeSlot]) {
           acc[timeSlot] = 0;
         }
         acc[timeSlot] += 1;
         return acc;
       }, {});
-
       setTodayNum(json.length);
       setTodayInfo(timeCounts);
     } catch (error) {
@@ -55,19 +56,25 @@ function Today({rev, restId}) {
                 </div>
                 <hr className="innerHrLinewai" />
                 {rev ? (
-                  <div className="resernoinfobox">
-                    예약 내역이 존재하지 않습니다.
-                  </div>
-                ) : (
-                  <div className="reserinfobox">
-                    {Object.entries(todayinfo).map(([timeSlot, count]) => (
-                      <div className="innerslot" key={timeSlot}>
-                        {timeSlot}{" "}
-                        <span className="spanforcounting">{count}</span>건
-                      </div>
-                    ))}
-                  </div>
-                )}
+                          todaynum === 0 ? (
+                            <div className="resernoinfobox">
+                              예약이 존재하지 않습니다.
+                            </div>
+                          ) : (
+                            <div className="reserinfobox">
+                              {Object.entries(todayinfo).map(([timeSlot, count]) => (
+                                <div className="innerslot" key={timeSlot}>
+                                  {timeSlot}{" "}
+                                  <span className="spanforcounting">{count}</span>건
+                                </div>
+                              ))}
+                            </div>
+                          )
+                          ) : (
+                            <div className="resernoinfobox">
+                              예약을 사용하지 않습니다.
+                            </div>
+                          )}
                 <hr className="innerHrLinewai" />
               </div>
             </div>

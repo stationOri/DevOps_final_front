@@ -7,9 +7,6 @@ import axios from 'axios';
 function RestStatusModal({ RestChangeClose, restchangeshow, reservation }) {
   const [selectedReason, setSelectedReason] = useState(null);
 
-  useEffect(() => {
-    console.log(reservation);
-  }, [reservation]);
 
   const handleCancel = async () => {
     if (selectedReason) {

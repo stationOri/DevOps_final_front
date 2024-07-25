@@ -11,6 +11,7 @@ import SendTalkModal from "../Modal/SendTalkModal";
 import Deposit from "./Deposit";
 import Today from "./Today";
 import DetailedReservation from "./DetailedReservation";
+import { useNavigate } from 'react-router-dom';
 
 function Reservation({ restId }) {
   const addDays = (date, days) => {
@@ -18,7 +19,7 @@ function Reservation({ restId }) {
     newDate.setDate(newDate.getDate() + days);
     return newDate;
   };
-
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -129,7 +130,9 @@ function Reservation({ restId }) {
   }, []);
 
   const handleDateChange = (date) => setSelectedDate(date);
-
+  const gotoRestInfo = () =>{
+    navigate("/restinfo");
+  }
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (
@@ -218,7 +221,7 @@ function Reservation({ restId }) {
                   <div>
                     해당 기능을 사용하려면 가게 정보 수정 화면에서 예약을 활성화 해주세요.
                   </div>
-                  <button>가게 정보 수정하러 가기</button>
+                  <button onClick={gotoRestInfo}>가게 정보 수정하러 가기</button>
                 </div>
               </div>
             )}
