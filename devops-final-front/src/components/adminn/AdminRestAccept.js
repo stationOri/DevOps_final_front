@@ -21,12 +21,10 @@ function AdminRestAccept() {
   const getRestData = async () => {
     try {
       const response = await fetch('http://localhost:8080/restaurants/beforeAccept');
-      // const response = await fetch('http://localhost:4000/beforeAccept')
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      console.log('Fetched data:', json);
       setReadyRest(json || []);
     } catch (error) {
       console.error('Error fetching data:', error);
