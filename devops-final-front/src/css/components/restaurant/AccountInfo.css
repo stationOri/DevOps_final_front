@@ -340,6 +340,11 @@
 
 }
 
+.accinfo-restname {
+  font-weight: 400;
+
+}
+
 .opentimecontWrapper {
   display: flex;
   max-width: 500px;
