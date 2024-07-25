@@ -4,36 +4,46 @@ import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/ReviewModal.css";
 import FileReview from "../FileReview";
 
-function ReviewModal({ ReviewClose, reviewshow }) {
+function ReviewModal({ ReviewClose, reviewshow, userId, restId }) {
   const [contents, setContents] = useState("");
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(null);
-  const userId = "user123";
 
   const fileRef = useRef(null);
 
   const handleEditActivate = async () => {
     const files = fileRef.current.getFiles();
 
+    if (files.length === 0 && !contents.trim()) {
+      alert("리뷰 내용과 이미지를 추가해주세요.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("userId", userId);
-    formData.append("contents", contents);
-    formData.append("rating", rating);
-    files.forEach((file, index) => {
-      formData.append(`file${index + 1}`, file);
-    });
+    formData.append("restId", restId);
+    formData.append("reviewData", contents);
+    formData.append("reviewGrade", rating);
+
+    if (files.length > 0) formData.append("file", files[0]);
+    if (files.length > 1) formData.append("file2", files[1]);
+    if (files.length > 2) formData.append("file3", files[2]);
 
     try {
-      // 백엔드 엔드포인트로 POST 요청
-      const response = await axios.post("https://your-backend-endpoint/api/review", formData, {
+      const response = await axios.post("http://localhost:8080/review/review", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log("Response:", response.data);
+      if (response.data > 0) {
+        alert('리뷰가 성공적으로 등록되었습니다.');
+      } else {
+        alert('리뷰 등록에 실패했습니다.');
+      }
     } catch (error) {
       console.error("Error uploading review:", error);
+      alert('리뷰 등록 중 오류가 발생했습니다.');
     } finally {
       setContents("");
       fileRef.current.reset();
@@ -45,7 +55,6 @@ function ReviewModal({ ReviewClose, reviewshow }) {
   const handleStarClick = (index) => {
     const newRating = index + 1;
     setRating(newRating);
-    console.log(`Selected Rating: ${newRating}`); // 선택한 별점 로그
   };
 
   const handleMouseEnter = (index) => {
