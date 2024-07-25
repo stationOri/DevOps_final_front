@@ -17,6 +17,7 @@ function AdminUserReport() {
     승인: false,
     반려: false,
   });
+  
   const [selectedReservation, setSelectedReservation] = useState(null);
 
   const ReportAcceptClose = () => setReportAcceptShow(false);
@@ -29,6 +30,7 @@ function AdminUserReport() {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
+      console.log("won")
       console.log("Fetched data:", json);
       setReadyRest(json || []);
     } catch (error) {
