@@ -72,7 +72,7 @@ const File = forwardRef(({ onFileChange, onUploadSuccess, onUploadError }, ref) 
         <div className="fileselect">파일 선택</div>
       </label>
       <input accept=".jpg,.jpeg,.png" type="file" id="file" ref={inputEl} className="file-input" onChange={fileInputHandler} />
-      {uploading && <Loading />}
+      {/* {uploading && <Loading />} */}
     </div>
   );
 });
