@@ -12,7 +12,7 @@ function AdminUserList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredItems, setFilteredItems] = useState([]);
   const [infoshow, setInfoShow] = useState(false);
-  const [selectedRest, setSelectedRest] = useState(null); // 선택된 매장 정보
+  const [selectedRest, setSelectedRest] = useState(null);
   const [statusFilters, setStatusFilters] = useState({
     활동회원: true,
     탈퇴회원: false,

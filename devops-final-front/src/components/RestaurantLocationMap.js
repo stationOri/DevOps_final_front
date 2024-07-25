@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
-import markerIcon from "../assets/images/marker.png";
+import markerIcon from "../assets/images/restaurant.png";
 
 const RestaurantLocationMap = ({ address }) => {
   const mapRef = useRef(null);
@@ -19,7 +19,7 @@ const RestaurantLocationMap = ({ address }) => {
 
     const customIcon = L.icon({
       iconUrl: markerIcon,
-      iconSize: [32, 42],
+      iconSize: [42, 42],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32],
     });

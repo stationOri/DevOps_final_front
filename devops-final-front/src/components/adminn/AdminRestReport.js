@@ -24,7 +24,7 @@ function AdminRestReport() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/adminreport");
+      const response = await fetch("http://localhost:8080/rest/report");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -68,14 +68,16 @@ function AdminRestReport() {
 
     filtered = filtered.filter((item) => {
       if (
-        (statusFilters.처리대기 && item.status === "처리대기") ||
-        (statusFilters.승인 && item.status === "승인") ||
-        (statusFilters.반려 && item.status === "반려")
+        (statusFilters.처리대기 && item.reportStatus === "처리대기") ||
+        (statusFilters.승인 && item.reportStatus === "승인") ||
+        (statusFilters.반려 && item.reportStatus === "반려")
       ) {
         return true;
       }
       return false;
     });
+
+    
 
     filtered = filtered.filter((item) =>
       item.id.toString().includes(searchTerm)
@@ -92,13 +94,13 @@ function AdminRestReport() {
       const itemsToAdd = itemsPerPage - remainder;
       for (let i = 0; i < itemsToAdd; i++) {
         filledArray.push({
-          id: filledArray.length + 1,
-          rest_name: "김밥 천국",
-          report_date: "2024-06-01",
-          report_data: "",
-          reporter_id: "",
-          admin_in: "",
-          status: "빈열",
+          restReportId: filledArray.length + 1,
+          restName: "김밥 천국",
+          reportDate: "2024-06-01",
+          reportContent: "",
+          reporterId: "",
+          adminId: "",
+          reportStatus: "빈열",
         });
       }
     }
@@ -187,7 +189,6 @@ function AdminRestReport() {
                   <th scope="col">관리자 ID</th>
                 </tr>
               </thead>
-
               {currentItems.length === 0 ? (
                 <td colSpan={5}
                 style={{textAlign:"center", fontSize:"15px"}}>표시할 항목이 없습니다.</td>
@@ -197,17 +198,17 @@ function AdminRestReport() {
                     <tr key={index}>
                       {rest.status !== "빈열" ? (
                         <td>
-                          {rest.rest_name}({rest.report_date})
+                          {rest.restName}({rest.reportDate})
                         </td>
                       ) : (
                         <td></td>
                       )}
-                      <td>{rest.report_data}</td>
-                      <td>{rest.reporter_id}</td>
-                      {rest.status !== "빈열" ? (
+                      <td>{rest.reportContent}</td>
+                      <td>{rest.reporterId}</td>
+                      {rest.reportStatus !== "빈열" ? (
                         <td style={{width:"65px"}}>
-                          <p>{rest.status}</p>
-                          {rest.status === "처리대기" && (
+                          <p>{rest.reportStatus}</p>
+                          {rest.reportStatus === "처리대기" && (
                             <button
                               className="adminrescancel"
                               onClick={(e) => {
@@ -222,8 +223,8 @@ function AdminRestReport() {
                       ) : (
                         <td></td>
                       )}
-                      {rest.admin_id ? (
-                        <td className="cnforbgc">{rest.admin_id}</td>
+                      {rest.adminId ? (
+                        <td className="cnforbgc">{rest.adminId}</td>
                       ) : (
                         <td className="cnforbgc"></td>
                       )}

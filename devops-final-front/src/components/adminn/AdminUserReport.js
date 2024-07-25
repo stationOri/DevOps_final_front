@@ -208,7 +208,6 @@ function AdminUserReport() {
                         >
                           신고처리
                         </button>)
-
                         }
                         </td> : <td></td>
                       }
