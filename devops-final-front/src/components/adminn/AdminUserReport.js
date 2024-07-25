@@ -24,7 +24,7 @@ function AdminUserReport() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/userreport");
+      const response = await fetch("http://localhost:8080/userreport");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -67,9 +67,9 @@ function AdminUserReport() {
 
     filtered = filtered.filter((item) => {
       if (
-        (statusFilters.처리대기 && item.report_status === "처리대기") ||
-        (statusFilters.승인 && item.report_status === "승인") ||
-        (statusFilters.반려 && item.report_status === "반려")
+        (statusFilters.처리대기 && item.reportStatus === "처리대기") ||
+        (statusFilters.승인 && item.reportStatus === "승인") ||
+        (statusFilters.반려 && item.reportStatus === "반려")
       ) {
         return true;
       }
@@ -77,7 +77,7 @@ function AdminUserReport() {
     });
 
     filtered = filtered.filter((item) =>
-      item.user_name.toLowerCase().includes(searchTerm.toLowerCase())
+      item.userName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setFilteredItems(filtered);
@@ -91,19 +91,21 @@ function AdminUserReport() {
       const itemsToAdd = itemsPerPage - remainder;
       for (let i = 0; i < itemsToAdd; i++) {
         filledArray.push({
-          user_report_id: filledArray.length + 1,
-          user_name: "이름없음",
-          report_date: "",
-          review_content: "",
-          report_content: "",
+          userReportId: filledArray.length + 1,
+          userName: "이름없음",
+          reportDate: "",
+          reviewContent: "",
+          reportContent: "",
           reporter_id: "",
-          report_status: "빈열",
-          admin_id: null
+          reportStatus: "빈열",
+          adminId: null
         });
       }
     }
     return filledArray;
   };
+  
+  
 
   const handleReservationClick = (reservation) => {
     setSelectedReservation(reservation);
@@ -191,24 +193,26 @@ function AdminUserReport() {
               <tbody>
                 {currentItems.map((user, index) => (
                   <tr key={index}>
-                        { user.report_status === "빈열" ?
+                        { user.reportStatus === "빈열" ?
                         <td></td> : 
-                        <td>{user.user_name} ({user.report_date})</td>}
-                    <td>{user.review_content}</td>
-                    <td>{user.report_content}</td>
+                        <td>{user.userName} ({user.reportDate})</td>}
+                    <td>{user.reviewContent}</td>
+                    <td>{user.reportContent}</td>
                     <td>{user.reporter_id}</td>
-                      {user.report_status !== "빈열" ? 
+                      {user.reportStatus !== "빈열" ? 
                         <td style={{width:"63px"}}>
-                        <p>{user.report_status}</p>
-                        <button
+                        <p>{user.reportStatus}</p>
+                        { user.reportStatus ==="처리대기"&&(<button
                           className="adminrescancel"
                           onClick={() => handleReservationClick(user)}
                         >
                           신고처리
-                        </button>
+                        </button>)
+
+                        }
                         </td> : <td></td>
                       }
-                    <td>{user.admin_id || ""}</td>
+                    <td>{user.adminId || ""}</td>
                   </tr>
                 ))}
               </tbody>
