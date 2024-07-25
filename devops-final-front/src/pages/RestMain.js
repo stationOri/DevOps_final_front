@@ -65,8 +65,8 @@ function RestMain() {
             {selectedMenu === "메뉴 관리" && selectedRestId && (
               <MenuManagement restId={selectedRestId} />
             )}
-            {selectedMenu === "예약" && <Reservation restId={selectedRestId}/>}
-            {selectedMenu === "웨이팅 관리" && <WaitingManagement restId={selectedRestId}/>}
+            {selectedMenu === "예약" && <Reservation restId={selectedRestId} onMenuClick={handleMenuClick}/>}
+            {selectedMenu === "웨이팅 관리" && <WaitingManagement restId={selectedRestId} onMenuClick={handleMenuClick}/>}
             {selectedMenu === "1:1 문의" && <RestChat restId={selectedRestId}/>}
             {selectedMenu === "계정 정보" && <AccountInfo restId={selectedRestId}/>}
             {selectedMenu === "로그아웃" && <Logout />}

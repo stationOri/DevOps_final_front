@@ -1,5 +1,5 @@
 // DetailedReservation.js
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import Human from "../../assets/images/Restaurant/human.png";
 import Table from "../../assets/images/Restaurant/table.png";
 import RevAcceptModal from '../Modal/RevAcceptModal';
@@ -13,6 +13,12 @@ function DetailedReservation({ reservations, row, restId }) {
   const [revdetailshow, setRevDetailShow] = useState(false);
   const [restchangeshow, setRestChangeShow] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState(null);
+  const previousTimeRef = useRef(null);
+
+  useEffect(() => {
+    previousTimeRef.current=null;
+  }, [reservations]);
+
 
   const RevAcceptShow = (reservation) => {
     setSelectedReservation(reservation);
@@ -34,15 +40,26 @@ function DetailedReservation({ reservations, row, restId }) {
     setSelectedReservation(null);
   };
 
-  const RestCancelShow = () => setRestCancelShow(true);
-  const RestCancelClose = () => setRestCancelShow(false);
+  const RestCancelShow = (reservation) => {
+    setSelectedReservation(reservation);
+    setRestCancelShow(true);
+  }
+  const RestCancelClose = () =>{
+    setSelectedReservation(null);
+    setRestCancelShow(false);
+  }
 
-  const RestChangeShow = () => setRestChangeShow(true);
-  const RestChangeClose = () => setRestChangeShow(false);
-
-  const previousTimeRef = useRef(null);
+  const RestChangeShow = (reservation) => {
+    setSelectedReservation(reservation);
+    setRestChangeShow(true);
+  }
+  const RestChangeClose = () =>{
+    setSelectedReservation(null);
+    setRestChangeShow(false);
+  }
 
   const getButtonText = useCallback((status, reservation) => {
+    
     switch (status) {
       case "RESERVATION_READY":
         return (
@@ -72,7 +89,7 @@ function DetailedReservation({ reservations, row, restId }) {
   return (
     <>
       {reservations.map((rev, index) => {
-        const date = new Date(rev.res_datetime);
+        const date = new Date(rev.resDate);
         const hours = date.getHours();
         const minutes = date.getMinutes();
         const period = hours >= 12 ? "PM" : "AM";
@@ -112,16 +129,16 @@ function DetailedReservation({ reservations, row, restId }) {
         return (
           <div
             className={`reservationBox ${rowClass} ${isNewLine ? "newLine" : "notNewLine"} ${index === reservations.length - 1 ? "lastElement" : ""}`}
-            key={rev.res_id}
+            key={rev.resId}
           >
             <div className="timebox">{timeDisplay}</div>
             <div className="reservationDetail">
               <div className="reservationdetailed">
-                <div>{rev.user_name}</div>
+                <div>{rev.userName}</div>
                 <div className="boxforicon">
                   <div className="innericonbox">
                     <img src={Human} alt="" className="iconforrev humanicon" />
-                    <div className="cnfornumber">{rev.res_num}</div>
+                    <div className="cnfornumber">{rev.resNum}</div>
                   </div>
                   <div className="innericonbox">
                     <img src={Table} alt="" className="iconforrev" />
@@ -145,6 +162,7 @@ function DetailedReservation({ reservations, row, restId }) {
               <RestCancelModal 
                 RestCancelClose={RestCancelClose} 
                 restcancelshow={restcancelshow} 
+                reservation={selectedReservation}
               />
             )}
             {revdetailshow && selectedReservation && (
@@ -160,6 +178,7 @@ function DetailedReservation({ reservations, row, restId }) {
               <RestStatusModal 
                 RestChangeClose={RestChangeClose} 
                 restchangeshow={restchangeshow} 
+                reservation={selectedReservation}
               />
             )}
           </div>

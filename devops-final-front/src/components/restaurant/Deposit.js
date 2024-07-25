@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import DepositPho from "../../assets/images/Restaurant/deposit.png";
 import AccountModal from "../Modal/AccountModal";
-
+import axios from "axios";
 function Deposit({ restId }) {
   const [infoshow, setInfoShow] = useState(false);
   const [deposit, setDeposit] = useState(0);
 
-  const getToday = async (restId, selectedDate) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8080/reservations/rest/${restId}/time/`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch");
-      }
-      console.log(response);
-      // const json = await response.json();
-    } catch (error) {
-      console.error("Error fetching today's reservations:", error);
-    }
-  };
+  useEffect(() => {
+    getDeposit(restId);
+  }, [restId]);
+
+  
+const getDeposit = async (restId) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/restaurants/deposit/${restId}`);
+    setDeposit(response.data);
+  } catch (error) {
+    console.error("Error fetching deposit:", error);
+  }
+};
 
   const openInfoModal = () => {
     setInfoShow(true);

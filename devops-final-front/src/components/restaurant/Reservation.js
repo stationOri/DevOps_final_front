@@ -12,13 +12,12 @@ import Deposit from "./Deposit";
 import Today from "./Today";
 import DetailedReservation from "./DetailedReservation";
 
-function Reservation({ restId }) {
+function Reservation({ restId, onMenuClick, }) {
   const addDays = (date, days) => {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + days);
     return newDate;
   };
-
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -67,10 +66,10 @@ function Reservation({ restId }) {
 
     try {
       const [response1, response2, response3, response4] = await Promise.all([
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.today)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day1)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day2)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day3)}}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.today)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day1)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day2)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day3)}`),
       ]);
 
       setRev1(sortByDateTime(response1.data));
@@ -82,7 +81,7 @@ function Reservation({ restId }) {
     }
   }, []);
 
-  const sortByDateTime = (data) => data.sort((a, b) => new Date(a.res_datetime) - new Date(b.res_datetime));
+  const sortByDateTime = (data) => data.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,7 +128,9 @@ function Reservation({ restId }) {
   }, []);
 
   const handleDateChange = (date) => setSelectedDate(date);
-
+  const gotoRestInfo = () =>{
+     onMenuClick("계정 정보");
+  }
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (
@@ -218,7 +219,7 @@ function Reservation({ restId }) {
                   <div>
                     해당 기능을 사용하려면 가게 정보 수정 화면에서 예약을 활성화 해주세요.
                   </div>
-                  <button>가게 정보 수정하러 가기</button>
+                  <button onClick={gotoRestInfo}>가게 정보 수정하러 가기</button>
                 </div>
               </div>
             )}

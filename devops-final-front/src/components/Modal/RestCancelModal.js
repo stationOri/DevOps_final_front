@@ -1,27 +1,42 @@
 // RestCancelModal.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../../css/components/Modal/CheckModal.css";
 import "../../css/components/Modal/CancelModal.css";
 import "../../css/components/Modal/RestCancelModal.css";
-
-function RestCancelModal({ RestCancelClose, restcancelshow }) {
+import axios from 'axios';
+function RestCancelModal({ RestCancelClose, restcancelshow, reservation }) {
   const [selectedReason, setSelectedReason] = useState(null);
 
-  const handleCancel = () => {
+  const handleCancel = async () => {
+   
     if (selectedReason) {
-      console.log(`Reservation cancelled. Selected reason: ${selectedReason}`);
+      try{
+        const response = await  axios.put(`http://localhost:8080/reservations/status/${reservation.resId}`, {
+          status: "RESERVATION_REJECTED",
+          reason: selectedReason
+        }, {
+          headers: { "Content-Type": "application/json" }
+        });
+        if (response.data==='success') {
+            alert('예약 거절 및 알림 완료, 상태 반영을 원한다면 날짜 선택 및 조회를 다시 해주세요.')
+          } else {
+            alert(response.data);
+          }
+        } catch (error) {
+          console.error('Error updating reservation status:', error);
+          alert('An error occurred while updating reservation status.')
+        }
+        
+        RestCancelClose();
     } else {
       console.log('Reservation cancelled. No reason selected');
+      alert("예약 거절 이유를 선택해주세요. ")
     }
-    RestCancelClose();
+    
+    
   };
 
-  const handleReject = () => {
-    if (selectedReason) {
-      console.log(`Reservation rejected. Selected reason: ${selectedReason}`);
-    } else {
-      console.log('Reservation rejected. No reason selected');
-    }
+  const handleReject =  () => {
     RestCancelClose();
   };
 

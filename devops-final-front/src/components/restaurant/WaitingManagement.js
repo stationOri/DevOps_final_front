@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Loading from "../Loading";
 import Pagination from "../Pagination";
 
-function WaitingManagement({ restId }) {
+function WaitingManagement({ restId, onMenuClick }) {
   const [loading, setLoading] = useState(true);
   const [wait, setWait] = useState(false);
   const [upperText, setUpperText] = useState("");
@@ -213,7 +213,9 @@ function WaitingManagement({ restId }) {
         return <td></td>;
     }
   };
-
+  const gotoRestInfo = () =>{
+    onMenuClick("계정 정보");
+ }
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (
@@ -322,7 +324,7 @@ function WaitingManagement({ restId }) {
                     </tr>
                     <tr>
                       <td colSpan={5} style={{ textAlign: "center" }}>
-                        <button>가게 정보 수정하러 가기</button>
+                        <button onClick={gotoRestInfo}>가게 정보 수정하러 가기</button>
                       </td>
                     </tr>
                   </>

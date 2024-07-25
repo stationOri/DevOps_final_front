@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/SigninModal.css";
 import "../../css/components/Modal/AccountModal.css";
@@ -8,6 +8,27 @@ import Select from "react-select";
 function AccountModal({ closeInfoModal, infoshow, restId }) {
   const [accountNumber, setAccountNumber] = useState("");
   const [selectedBank, setSelectedBank] = useState(null);
+
+  const getAccount = async(restId) => {
+        try {
+          const response = await axios.get(`http://localhost:8080/restaurants/info/account/${restId}`);          
+          const [bank, number] = response.data.split(" ");
+          setAccountNumber(number);
+          const initialBank = bankOptions.find(option => option.label === bank);
+          if (initialBank) {
+            setSelectedBank(initialBank);
+          }
+        
+                } catch (error) {
+          console.error("Error fetching deposit:", error);
+        }
+    }
+
+  useEffect(() => {
+    getAccount(restId);
+  
+  }, [restId]);
+
 
   const bankOptions = [
     { value: 'kookmin', label: '국민은행' },
@@ -23,17 +44,18 @@ function AccountModal({ closeInfoModal, infoshow, restId }) {
   ];
 
   const handleAccountSet = async () => {
-    console.log(selectedBank.label+" "+accountNumber);
-    try {
-      // const response = await axios.post("http://localhost:8080/account", { restId, accountNumber, selectedBank });
+    const restAccount=`${selectedBank.label} ${accountNumber}`
+        try {
+      const response = await axios.put(`http://localhost:8080/restaurants/info/account/${restId}`, { 
+         restAccount 
+       });
       alert("수정 완료")
     } catch (error) {
       console.error("Error:", error);
       alert("수정 실패! 다시 시도해주세요")
     } finally {
-      
-      setAccountNumber("");
-      setSelectedBank(null);
+      // setAccountNumber("");
+      // setSelectedBank(null);
       closeInfoModal();
     }
   };
