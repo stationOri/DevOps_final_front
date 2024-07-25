@@ -19,7 +19,7 @@ function RestBlacklist() {
 
   const getRestData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/restblacklist");
+      const response = await fetch("http://localhost:8080/black/rest");
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
@@ -62,16 +62,16 @@ function RestBlacklist() {
 
     filtered = filtered.filter((item) => {
       return (
-        (statusFilters.정지중 && item.black_status === "정지중") ||
-        (statusFilters.일회경고완료 && item.black_status === "1회경고완료") ||
-        (statusFilters.탈퇴완료 && item.black_status === "탈퇴완료") ||
-        (statusFilters.정지대기 && item.black_status === "정지대기")
+        (statusFilters.정지중 && item.blackStatus === "정지중") ||
+        (statusFilters.일회경고완료 && item.blackStatus === "1회경고완료") ||
+        (statusFilters.탈퇴완료 && item.blackStatus === "탈퇴완료") ||
+        (statusFilters.정지대기 && item.blackStatus === "정지대기")
       );
     });
 
     filtered = filtered.filter(
       (item) =>
-        item.email_rest.toLowerCase().includes(searchTerm.toLowerCase())
+        item.restEmail.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const filledItems = fillEmptyItems(filtered, itemsPerPage);
@@ -84,12 +84,12 @@ function RestBlacklist() {
     if (remainder !== itemsPerPage) {
       for (let i = 0; i < remainder; i++) {
         filledArray.push({
-          id: `empty-${i}`,
-          threetime_date: "",
-          email_rest: "",
-          email_admin: "",
-          black_status: "",
-          report_num: "",
+          blacklistId: `empty-${i}`,
+          processingDate: "",
+          restEmail: "",
+          adminEmail: "",
+          blackStatus: "",
+          reportNum: "",
         });
       }
     }
@@ -182,20 +182,20 @@ function RestBlacklist() {
               <thead>
                 <tr className="cnforbgc">
                   <th scope="col">3회 누적 날짜</th>
-                  <th scope="col">식당 ID</th>
-                  <th scope="col">관리자 ID</th>
+                  <th scope="col">식당 이메일</th>
+                  <th scope="col">관리자 이메일</th>
                   <th scope="col">처리 상태</th>
                   <th scope="col">누적 신고 수</th>
                 </tr>
               </thead>
               <tbody>
                 {currentItems.map((rest, index) => (
-                  <tr key={rest.id || index} style={rest.report_num >= 6 ? { color: 'red' } : {}}>
-                    <td style={{ width: "90px" }}>{rest.threetime_date}</td>
-                    <td style={{ width: "200px" }}>{rest.email_rest}</td>
-                    <td>{rest.email_admin}</td>
-                    <td style={{ width: "70px" }}>{rest.black_status}</td>
-                    <td>{rest.report_num}</td>
+                  <tr key={rest.id || index} style={rest.reportNum >= 6 ? { color: 'red' } : {}}>
+                    <td style={{ width: "90px" }}>{rest.processingDate}</td>
+                    <td style={{ width: "200px" }}>{rest.restEmail}</td>
+                    <td>{rest.adminEmail}</td>
+                    <td style={{ width: "70px" }}>{rest.blackStatus}</td>
+                    <td>{rest.reportNum}</td>
                   </tr>
                 ))}
               </tbody>
