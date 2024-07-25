@@ -339,3 +339,36 @@
   color: white;
 
 }
+
+.accinfo-restname {
+  font-weight: 400;
+
+}
+
+.opentimecontWrapper {
+  display: flex;
+  max-width: 500px;
+  justify-content: space-between;
+  height: 38px;
+  align-items: center;
+  border: 1px solid #dddddd;
+  padding: 0 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+.opentimeleft {
+  display: flex;
+}
+
+.highlightDay {
+  font-weight: 600;
+  width: 45px;
+}
+
+.opentime1{
+  width: 100px;
+}
+
+.opentime2, .opentime3 {
+  margin-left: 5px;
+}

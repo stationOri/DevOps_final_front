@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../css/components/restaurant/AccountInfo.css";
 import File from "../File";
 import AddressSearch from "./AddressSearch";
@@ -6,6 +6,7 @@ import Keywords from "./Keywords";
 import TempHoliday from "./TempHoliday";
 import RestRun from "./RestRun";
 import RevWaitSetting from "./RevWaitSetting";
+import axios from "axios";
 
 function AccountInfo({ restId }) {
   const [imagePreview, setImagePreview] = useState(null);
@@ -14,6 +15,35 @@ function AccountInfo({ restId }) {
   const [inputDetailAddressValue, setInputDetailAddressValue] = useState("");
   const [inputPhoneNumber, setInputPhoneNumber] = useState("");
   const [inputDescription, setInputDescription] = useState("");
+  const [restname, setRestName] = useState("");
+  const ref = useRef(null);
+
+  // Fetch restaurant settings
+  const fetchSettings = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/restaurants/info/setting/${restId}`);
+      const data = response.data;
+
+      setRestName(data.restName);
+      setInputAddressValue(data.restAddress || "");
+      setInputZipCodeValue(""); // Zip code is not available from response
+      setInputDetailAddressValue("");
+      setInputPhoneNumber(data.restPhone || "");
+      setInputDescription(data.restIntro || "");
+
+      if (data.restPhoto) {
+        setImagePreview(data.restPhoto);
+      } else {
+        setImagePreview(null); // Reset image preview if no photo
+      }
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSettings();
+  }, [restId]);
 
   const handleFileChange = (file) => {
     if (file) {
@@ -32,15 +62,31 @@ function AccountInfo({ restId }) {
     setInputZipCodeValue(data.zonecode);
   };
 
-  const handleSubmit = () => {
-    console.log({
-      imagePreview,
-      inputAddressValue,
-      inputZipCodeValue,
-      inputDetailAddressValue,
-      inputPhoneNumber,
-      inputDescription,
-    });
+  const handleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      if (ref.current) {
+        await ref.current.upload();
+        const file = await ref.current.getFile();
+        if (file) {
+          formData.append('file', file);
+        }
+      }
+
+      formData.append('restAddress', `${inputAddressValue} ${inputDetailAddressValue}`);
+      formData.append('restIntro', inputDescription);
+      formData.append('restPhone', inputPhoneNumber);
+
+      await axios.put(`http://localhost:8080/restaurants/info/setting/${restId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      alert("설정이 저장되었습니다.");
+      await fetchSettings();
+    } catch (error) {
+      console.error("Error submitting settings:", error);
+    }
   };
 
   return (
@@ -58,7 +104,7 @@ function AccountInfo({ restId }) {
             <div className="Wrppaerforplaintext">
               <div className="accinfo-hintText">가게명</div>
               <div className="accinfo-restname">
-                가게명이 들어갈 자리입니다.
+                {restname}
               </div>
             </div>
             <div className="WrapperforFile">
@@ -68,7 +114,7 @@ function AccountInfo({ restId }) {
               ></div>
               <div className="accinfo-hintText">대표사진</div>
               <div className="accinfo-file-wrapper">
-                <File onFileChange={handleFileChange} />
+                <File ref={ref} onFileChange={handleFileChange} />
               </div>
             </div>
             <div className="Wrppaerforinput">
@@ -130,7 +176,6 @@ function AccountInfo({ restId }) {
             </div>
             <div className="editCompleteBtnWrapper">
               <button className="ediCompleteBrn" onClick={handleSubmit}>
-                {" "}
                 수정 완료
               </button>
             </div>

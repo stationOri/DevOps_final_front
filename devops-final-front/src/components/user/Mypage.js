@@ -37,6 +37,7 @@ const Mypage = ({ userId, onCardClick }) => {
   const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
   const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
   const [editSuccess, setEditSuccess] = useState(false);
+  const [selectedRestId, setSelectedRestId] = useState(null);
 
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
@@ -204,7 +205,13 @@ const Mypage = ({ userId, onCardClick }) => {
       );
     } else if (reservation.resStatus === "VISITED") {
       return (
-        <button className="my-res-info-review-btn" onClick={ReviewShow}>
+        <button
+          className="my-res-info-review-btn"
+          onClick={() => {
+            setSelectedRestId(reservation.restId);
+            ReviewShow();
+          }}
+        >
           리뷰
         </button>
       );
@@ -641,8 +648,18 @@ const Mypage = ({ userId, onCardClick }) => {
           </div>
         </div>
       </div>
-      <NicknameEditModal EditClose={EditClose} editshow={editshow} userId={userId} onSuccess={() => setEditSuccess(true)}/>
-      <ReviewModal ReviewClose={ReviewClose} reviewshow={reviewshow} />
+      <NicknameEditModal
+        EditClose={EditClose}
+        editshow={editshow}
+        userId={userId}
+        onSuccess={() => setEditSuccess(true)}
+      />
+      <ReviewModal
+        ReviewClose={ReviewClose}
+        reviewshow={reviewshow}
+        userId={userId}
+        restId={selectedRestId}
+      />
     </div>
   );
 };
