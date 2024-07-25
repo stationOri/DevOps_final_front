@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../../css/components/Modal/CheckModal.css";
 import "../../css/components/Modal/CancelModal.css";
 import "../../css/components/Modal/RevAcceptModal.css";
@@ -12,14 +12,15 @@ function RestStatusChangeModal({
   RestCancelShow
 
 }) {
+  
   const handlenavigate = () => {
-    RestChangeShow();
     RevDetailClose();
+    RestChangeShow(reservation);
   };
 
   const handleno = () => {
-    RestCancelShow();
     RevDetailClose();
+    RestCancelShow(reservation);
   };
 
   return (
@@ -53,21 +54,21 @@ function RestStatusChangeModal({
           <div className="resacceprmodalmid">
             <div className="nameRow">
               <div className="explainTextinAccept">예약자 이름</div>
-              <div className="explaininputText">{reservation.user_name}</div>
+              <div className="explaininputText">{reservation.userName}</div>
             </div>
             <hr className="grayline" />
             <div className="numRow">
               <div className="explainTextinAccept">예약 인원 수</div>
-              <div className="explaininputText">{reservation.res_num}</div>
+              <div className="explaininputText">{reservation.resNum}</div>
             </div>
             <hr className="grayline" />
             <div className="menuRow">
               <div className="explainTextinAccept">주문 메뉴</div>
               <div className="menuWrapper">
-                {reservation.menu.map((item, index) => (
+                {reservation.menuList.map((item, index) => (
                   <div className="acceptmodaltrWrapper" key={index}>
                     <div className="menutd menunamtinaccept">
-                      {item.menu_name}
+                      {item.menuName}
                     </div>
                     <div className="menutd">{item.amount}개</div>
                   </div>

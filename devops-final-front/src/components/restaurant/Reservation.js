@@ -67,10 +67,10 @@ function Reservation({ restId }) {
 
     try {
       const [response1, response2, response3, response4] = await Promise.all([
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.today)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day1)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day2)}}`),
-        axios.get(`http://localhost:8080/reservations/rest/${restId}/time/${formatDateFetch(tableDates.day3)}}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.today)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day1)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day2)}`),
+        axios.get(`http://localhost:8080/reservations/reservation/rest/${restId}/${formatDateFetch(tableDates.day3)}`),
       ]);
 
       setRev1(sortByDateTime(response1.data));
@@ -82,7 +82,7 @@ function Reservation({ restId }) {
     }
   }, []);
 
-  const sortByDateTime = (data) => data.sort((a, b) => new Date(a.res_datetime) - new Date(b.res_datetime));
+  const sortByDateTime = (data) => data.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
 
   useEffect(() => {
     const fetchData = async () => {

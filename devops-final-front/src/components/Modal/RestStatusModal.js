@@ -1,19 +1,41 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../../css/components/Modal/CheckModal.css";
 import "../../css/components/Modal/CancelModal.css";
 import "../../css/components/Modal/RestCancelModal.css";
-
-function RestStatusModal({ RestChangeClose, restchangeshow }) {
+import axios from 'axios';
+function RestStatusModal({ RestChangeClose, restchangeshow, reservation }) {
   const [selectedReason, setSelectedReason] = useState(null);
 
-  const handleCancel = () => {
+  useEffect(() => {
+    console.log(reservation);
+  }, [reservation]);
+
+  const handleCancel = async () => {
     if (selectedReason) {
-      console.log(`Reservation changed. Selected reason: ${selectedReason}`);
+      try{
+        
+        const response = await  axios.put(`http://localhost:8080/reservations/status/${reservation.resId}`, {
+          status:  selectedReason === '노쇼'? 'NOSHOW' : 'VISITED',
+          reason: ""
+        }, {
+          headers: { "Content-Type": "application/json" }
+        });
+        if (response.data==='success') {
+            alert('예약 상태 변경 완료, 화면에 상태 반영을 원한다면 날짜 선택 및 조회를 다시 해주세요.')
+          } else {
+            alert(response.data);
+          }
+        } catch (error) {
+          console.error('Error updating reservation status:', error);
+          alert('An error occurred while updating reservation status.')
+        }
+        
+        RestChangeClose();
     } else {
-      console.log('Reservation cancelled. No reason selected');
+      console.log('변경할 예약의 상태를 선택해 주세요.');
     }
-    RestChangeClose();
+    
   };
 
   const handleReject = () => {
