@@ -4,9 +4,8 @@ import "../../css/components/restaurant/WaitingManagement.css";
 import React, { useState, useEffect } from "react";
 import Loading from "../Loading";
 import Pagination from "../Pagination";
-import { useNavigate } from 'react-router-dom';
 
-function WaitingManagement({ restId }) {
+function WaitingManagement({ restId, onMenuClick }) {
   const [loading, setLoading] = useState(true);
   const [wait, setWait] = useState(false);
   const [upperText, setUpperText] = useState("");
@@ -17,7 +16,6 @@ function WaitingManagement({ restId }) {
   const [waitingList, setWaitingList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [tableOrder, setTableOrder] = useState([]);
-  const navigate = useNavigate();
 
   // 식당 웨이팅 상태 확인
   const getWait = async () => {
@@ -216,8 +214,8 @@ function WaitingManagement({ restId }) {
     }
   };
   const gotoRestInfo = () =>{
-    navigate("/restinfo");
-  }
+    onMenuClick("계정 정보");
+ }
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (

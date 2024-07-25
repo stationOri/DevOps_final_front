@@ -11,15 +11,13 @@ import SendTalkModal from "../Modal/SendTalkModal";
 import Deposit from "./Deposit";
 import Today from "./Today";
 import DetailedReservation from "./DetailedReservation";
-import { useNavigate } from 'react-router-dom';
 
-function Reservation({ restId }) {
+function Reservation({ restId, onMenuClick, }) {
   const addDays = (date, days) => {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + days);
     return newDate;
   };
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rev, setRev] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -131,7 +129,7 @@ function Reservation({ restId }) {
 
   const handleDateChange = (date) => setSelectedDate(date);
   const gotoRestInfo = () =>{
-    navigate("/restinfo");
+     onMenuClick("계정 정보");
   }
   return (
     <div className="WrapperWithoutBorder">
