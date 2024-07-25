@@ -90,7 +90,7 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
       }
     };
     fetchData();
-  }, [restId]);
+  }, [restId, userId]);
 
   const fetchRestaurant = async () => {
     try {
@@ -145,16 +145,18 @@ const RestDetail = ({ userId, restId, moveToReservation }) => {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:8080/review/rest/${restId}/user/${userId}`
-      );
+      const url = userId
+        ? `http://localhost:8080/review/rest/${restId}/user/${userId}`
+        : `http://localhost:8080/review/rest/${restId}`;
+
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch reviews");
       }
       const data = await response.json();
       setReviews(data);
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching reviews:", error);
     }
   };
 
