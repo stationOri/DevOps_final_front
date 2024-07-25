@@ -11,14 +11,29 @@ const AdminChat = ({ adminId }) => {
   const [selectedChatRoomId, setSelectedChatRoomId] = useState(null);
   const [selectedChatAnsName, setSelectedChatAnsName] = useState(null);
   const [selectedChatQsName, setSelectedChatQsName] = useState(null);
+  const [selectedChatQsId, setSelectedChatQsId] = useState(null);
+  const [selectedChatAnsId, setSelectedChatAnsId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleChatSelect = (chattingRoomId, ansName, qsName) => {
+  const handleChatSelect = async (
+    chattingRoomId,
+    ansName,
+    qsName,
+    qsId,
+    ansId
+  ) => {
     setSelectedChatRoomId(chattingRoomId);
     setSelectedChatAnsName(ansName);
     setSelectedChatQsName(qsName);
-    console.log("chattingRoomId:", chattingRoomId);
+    setSelectedChatQsId(qsId);
+    setSelectedChatAnsId(ansId);
+
     console.log("ansName:", ansName);
-    console.log("qsName:", qsName);
+  };
+
+  const handleRefresh = () => {
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   return (
@@ -33,6 +48,8 @@ const AdminChat = ({ adminId }) => {
             <ChatList
               userId={adminId}
               onChatSelect={handleChatSelect}
+              refreshTrigger={refreshTrigger}
+              currentUserId={adminId}
               chatImg="blue"
               chatType="admin"
             />
@@ -44,6 +61,10 @@ const AdminChat = ({ adminId }) => {
                   chattingRoomId={selectedChatRoomId}
                   ansName={selectedChatAnsName}
                   qsName={selectedChatQsName}
+                  qsId={selectedChatQsId}
+                  ansId={selectedChatAnsId}
+                  refreshTrigger={refreshTrigger}
+                  currentUserId={adminId}
                   sentColor="#4E95D9"
                   chatType="ans"
                 />
@@ -54,7 +75,16 @@ const AdminChat = ({ adminId }) => {
               )}
             </div>
             <div className="chat-input-box">
-              <MessageInput btnColor="#4E95D9" />
+              {loading ? (
+                <Loading />
+              ) : (
+                <MessageInput
+                  chattingRoomId={selectedChatRoomId}
+                  userId={adminId}
+                  onMessageSent={handleRefresh}
+                  btnColor="#4E95D9"
+                />
+              )}
             </div>
           </div>
         </div>
