@@ -3,11 +3,10 @@ import "../../css/components/Modal/WaitingSuccessModal.css";
 import checkIcon from "../../assets/images/modal/check.png";
 import peopleIcon from "../../assets/images/modal/people.png";
 import restIcon from "../../assets/images/modal/rest.png";
-import Loading from "../Loading";
 
 function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
+
   const [waiting, setWaiting] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
@@ -26,12 +25,10 @@ function WaitingSuccessModal({ isOpen, onClose, userId, userPhone }) {
       const data = await response.json();
       console.log("Fetched data:", data);
       setWaiting(data);
-      setLoading(false);
     } catch (error) {
       setWaiting(null);
       console.error("Error fetching waiting:", error);
     } finally {
-      setLoading(false);
     }
   };
 
