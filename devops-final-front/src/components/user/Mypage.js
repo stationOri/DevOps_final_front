@@ -19,7 +19,9 @@ import leftImg from "../../assets/images/detail/left.png";
 import locationImg from "../../assets/images/detail/location.png";
 import NicknameEditModal from "../Modal/NicknameEditModal";
 import ReviewModal from "../Modal/ReviewModal";
-
+import InputModal from "../Modal/InputModal";
+import { useInputModal } from "../Modal/InputModalContext";
+import UserResCancelModal from "../Modal/UserResCancelModal";
 const Mypage = ({ userId, onCardClick }) => {
   const [editshow, setEditshow] = useState(false);
   const [reviewshow, setReviewshow] = useState(false);
@@ -39,7 +41,7 @@ const Mypage = ({ userId, onCardClick }) => {
   const [editSuccess, setEditSuccess] = useState(false);
   const [selectedRestId, setSelectedRestId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
-
+  const { openInputModal } = useInputModal();
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
   const favoritesPerPage = 3;
@@ -47,6 +49,10 @@ const Mypage = ({ userId, onCardClick }) => {
   const EditShow = () => setEditshow(true);
   const ReviewClose = () => setReviewshow(false);
   const ReviewShow = () => setReviewshow(true);
+  const [usercancelshow, setUserCancelShow] = useState(false);
+
+  const UserCancelShow = () => setUserCancelShow(true);
+  const UserCancelClose = () => setUserCancelShow(false);
 
   const onPageChange = (pageNumber) => {
     setReviewCurrentPage(pageNumber);
@@ -217,7 +223,7 @@ const Mypage = ({ userId, onCardClick }) => {
         </button>
       );
     } else {
-      return <button className="my-res-info-res-btn">예약 취소</button>;
+      return <button className="my-res-info-res-btn" onClick={UserCancelShow}>예약 취소</button>;
     }
   };
 
@@ -350,6 +356,19 @@ const Mypage = ({ userId, onCardClick }) => {
   const handleReviewSuccess = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
+  
+  const handleRestReportClick = (restId, userId) => {
+    openInputModal({
+      show: true,
+      header: "식당 신고",
+      user_id: userId,
+      rest_id: restId
+    });
+  };
+
+  const handleResCancel = (resId)=>{
+
+  }
 
   return (
     <div className="my-container">
@@ -430,8 +449,15 @@ const Mypage = ({ userId, onCardClick }) => {
                     <div className="my-res-refund-review">
                       <div className="my-res-refund-box">
                         {renderReservationAction(reservation)}
+                          {usercancelshow && (
+                            <UserResCancelModal
+                            usercancelshow={usercancelshow}
+                            UserCancelClose={UserCancelClose}
+                              reservation={reservation}
+                            />
+                          )}
                       </div>
-                      <div className="my-res-info-rest-report">식당 신고</div>
+                      <div className="my-res-info-rest-report"  onClick={() => handleRestReportClick(reservation.restId, userId)}>식당 신고</div>
                       <div className="my-res-info-res-id">
                         reservation id: {reservation.resId}
                       </div>
@@ -666,6 +692,8 @@ const Mypage = ({ userId, onCardClick }) => {
         restId={selectedRestId}
         onReviewSuccess={handleReviewSuccess}
       />
+      <InputModal/>
+      
     </div>
   );
 };
