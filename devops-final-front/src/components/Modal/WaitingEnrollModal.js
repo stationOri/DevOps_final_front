@@ -15,6 +15,7 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
   const [waitingCount, setWaitingCount] = useState(0);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,7 +57,7 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
   };
 
   const handleGuestIncrement = () => {
-    const maxGuests = restInfo.maxPpl || 10;
+    const maxGuests = restInfo?.maxPpl || 10;
   
     if (selectedGuests < maxGuests) {
       setSelectedGuests(selectedGuests + 1);
@@ -82,16 +83,18 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
         userId: userId,
         restId: restId,
         waitingPpl: selectedGuests,
-        watingPhone: userPhoneString,
+        waitingPhone: userPhoneString,
       });
       console.log("POST 요청 성공", response.data);
-      if (response.data === 0) {
-        alert("현재 예약이 불가능합니다.");
+      if (response.data === -1) {
+        alert("현재 웨이팅이 불가능합니다.");
       } else {
+        setSuccessData(response.data);
         setIsSuccessModalOpen(true);
       }
     } catch (error) {
       console.error("웨이팅 요청 오류:", error.response || error.message);
+      alert("웨이팅 요청에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setLoading(false);
     }
@@ -162,21 +165,21 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
             </div>
             <div className="waiting-enroll-btn">
               <div className="waiting-btn-content" onClick={handleOpenSuccessModal}>
-                {loading ? <Loading /> : "등록"}
+                등록
               </div>
             </div>
           </div>
         </div>
       </div>
-      {isSuccessModalOpen && (
+      {isSuccessModalOpen && successData && (
         <WaitingSuccessModal
           isOpen={isSuccessModalOpen}
           onClose={() => {
             setIsSuccessModalOpen(false);
             onClose();
           }}
-          userId={userId}
           userPhone={userPhone}
+          successData={successData}
         />
       )}
     </>
