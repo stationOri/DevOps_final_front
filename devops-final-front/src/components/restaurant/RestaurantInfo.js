@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from "react";
 import "../../css/components/restaurant/RestaurantInfo.css";
 import "../../css/pages/RestDetailPage.css";
@@ -26,6 +27,7 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isopenContent, setIsOpenContent] = useState(false)
   const reviewsPerPage = 4;
 
   const [noticeSuccess, setNoticeSuccess] = useState(false);
@@ -70,10 +72,35 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
     });
   };
 
+const handelIsopen = async () => {
+  try {
+    const temp = !isopenContent; 
+    const response = await axios.put(`http://localhost:8080/restaurants/info/isopen/${restId}/${temp}`, {
+
+    });
+
+    if(response.data === true) {
+      alert("영업이 시작되었습니다.")
+    }
+    if(response.data === false) {
+      alert("영업이 종료되었습니다.")
+    }
+
+    setIsOpenContent(response.data);
+
+  } catch (error) {
+    console.error(error);
+    setError(error.message); 
+  }
+}
+
+  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         await Promise.all([
+          fetchIsopen(),
           fetchRestaurant(),
           fetchOpentimes(),
           fetchMenus(),
@@ -87,6 +114,19 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
     };
     fetchData();
   }, [restId, noticeSuccess]);
+
+  const fetchIsopen = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/restaurants/info/isopen/${restId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch isopen status");
+      }
+      setIsOpenContent(response.data)
+    } catch (error) {
+      console.error(error);
+      setError(error.message);
+    }
+  }
 
   const fetchRestaurant = async () => {
     try {
@@ -178,6 +218,9 @@ function RestaurantInfo({ onMenuEditClick, onInfoEditClick, restId }) {
         <div className="rest-name-box">
           <div className="rest-name">{restaurant.restName}</div>
           <div className="rest-mod-btn-box">
+          <div className="mod-btn" onClick={handelIsopen}>
+              <div className="mod-btn-content">{isopenContent?"영업 종료":"영업 시작"}</div>
+            </div>
             <div className="mod-btn" onClick={() => onInfoEditClick(restId)}>
               <div className="mod-btn-content">식당 정보 수정</div>
             </div>
