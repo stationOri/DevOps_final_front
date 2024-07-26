@@ -1,15 +1,30 @@
 import "../../css/components/Modal/AdminResCancelModal.css";
 import { useState } from "react";
-
+import axios from "axios";
 function AdminResCancelModal({ admincancelshow, reservation, AdminCancelClose }) {
   const [isChecked, setIsChecked] = useState(false);
   const [showCheckMessage, setShowCheckMessage] = useState(false);
 
-  const handleResCancel = () => {
-    // 예약 취소 로직 추가
-    const res_id = reservation.id;
-    console.log(res_id);
-    AdminCancelClose();
+  const handleResCancel = async () => {
+    console.log(reservation);
+    try{
+      const response = await  axios.put(`http://localhost:8080/reservations/status/${reservation.res_id}`, {
+        status: "RESERVATION_CANCELED_BYADMIN",
+        reason: ""
+      }, {
+        headers: { "Content-Type": "application/json" }
+      });
+      if (response.data==='success') {
+         alert('예약 취소 및 사용자 알림 완료');
+         
+        } else {
+          alert(response.data);
+        }
+      } catch (error) {
+        console.error('Error updating reservation status:', error);
+        alert('An error occurred while updating reservation status.')
+      }
+      AdminCancelClose();
   }
 
   const handleYesButtonClick = () => {

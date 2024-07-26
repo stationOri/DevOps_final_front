@@ -4,7 +4,7 @@ import Logo from "../../assets/images/oriblue.png";
 import "../../css/components/Modal/ReviewModal.css";
 import FileReview from "../FileReview";
 
-function ReviewModal({ ReviewClose, reviewshow, userId, restId }) {
+function ReviewModal({ ReviewClose, reviewshow, userId, restId, onReviewSuccess }) {
   const [contents, setContents] = useState("");
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(null);
@@ -38,6 +38,7 @@ function ReviewModal({ ReviewClose, reviewshow, userId, restId }) {
 
       if (response.data > 0) {
         alert('리뷰가 성공적으로 등록되었습니다.');
+        onReviewSuccess();
       } else {
         alert('리뷰 등록에 실패했습니다.');
       }

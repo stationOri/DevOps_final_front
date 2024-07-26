@@ -23,9 +23,9 @@ const ReviewCard = ({ review }) => {
           <img className="review-img" src={review.reviewImg3} alt="review" />
         </div>
         <div className="review-data-box">
-          <p>
+          <p className="review-data-text">
             {isExpanded ? reviewContent : 
-              isLongText ? `${reviewContent.substring(0, 105)}...` : reviewContent}
+              isLongText ? `${reviewContent.substring(0, 86)}...` : reviewContent}
             {isLongText && (
               <span className="read-more" onClick={toggleReadMore}>
                 {isExpanded ? " Show less" : " Read more"}

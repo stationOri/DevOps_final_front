@@ -56,7 +56,9 @@ const WaitingEnrollModal = ({ isOpen, onClose, userId, restId, name }) => {
   };
 
   const handleGuestIncrement = () => {
-    if (selectedGuests < restInfo.maxPpl) {
+    const maxGuests = restInfo.maxPpl || 10;
+  
+    if (selectedGuests < maxGuests) {
       setSelectedGuests(selectedGuests + 1);
     }
   };

@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../css/components/adminn/AdminNav.css";
 
 function AdminNav({ activeNavButton, setActiveNavButton }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("Guest");
+  const navigate = useNavigate();
+
   const handleNavButtonClick = (buttonName) => {
     setActiveNavButton(buttonName);
+  };
+
+  const handleLogout = () => {
+    const currentUrl = new URL(window.location.href); 
+    currentUrl.searchParams.delete('token');
+    window.history.replaceState({}, document.title, currentUrl.toString());
+    setIsLoggedIn(false);
+    setUsername("Guest");
+    navigate('/');
+    localStorage.removeItem('token');
   };
 
   return (
@@ -29,7 +44,7 @@ function AdminNav({ activeNavButton, setActiveNavButton }) {
         </button>
         <button
           className={`adminnavmenu ${activeNavButton === "로그아웃" ? "active" : ""}`}
-          onClick={() => handleNavButtonClick("로그아웃")}
+          onClick={handleLogout}
         >
           로그아웃
         </button>

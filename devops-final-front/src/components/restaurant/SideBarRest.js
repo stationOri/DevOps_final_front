@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/oriblue.png";
 import Food from "../../assets/images/sidebar/food.png";
 import Rest from "../../assets/images/sidebar/rest.png";
@@ -13,7 +14,6 @@ import SelectReceiverModal from "../Modal/SelectReceiverModal";
 import { useCheckModal } from "../Modal/CheckModalContext";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -90,13 +90,13 @@ function SideBarRest({
   }, [token, setRestId, onRestIdChange]);
 
   const handleLogout = () => {
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.delete("token");
+    const currentUrl = new URL(window.location.href); 
+    currentUrl.searchParams.delete('token');
     window.history.replaceState({}, document.title, currentUrl.toString());
     setIsLoggedIn(false);
     setUsername("Guest");
-    navigate("/");
-    localStorage.removeItem("token");
+    navigate('/');
+    localStorage.removeItem('token');
   };
 
   // 수신자 ID를 설정

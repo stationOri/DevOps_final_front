@@ -38,6 +38,7 @@ const Mypage = ({ userId, onCardClick }) => {
   const [favoritesCurrentPage, setFavoritesCurrentPage] = useState(1);
   const [editSuccess, setEditSuccess] = useState(false);
   const [selectedRestId, setSelectedRestId] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const reservationsPerPage = 3;
   const reviewPerPage = 2;
@@ -59,7 +60,7 @@ const Mypage = ({ userId, onCardClick }) => {
     fetchWaiting();
     fetchReviews();
     fetchResCount();
-  }, [userId, editSuccess]);
+  }, [userId, editSuccess, refreshKey]);
 
   const fetchUser = async () => {
     try {
@@ -344,6 +345,10 @@ const Mypage = ({ userId, onCardClick }) => {
         {startPage + index}
       </button>
     ));
+  };
+
+  const handleReviewSuccess = () => {
+    setRefreshKey(prevKey => prevKey + 1);
   };
 
   return (
@@ -659,6 +664,7 @@ const Mypage = ({ userId, onCardClick }) => {
         reviewshow={reviewshow}
         userId={userId}
         restId={selectedRestId}
+        onReviewSuccess={handleReviewSuccess}
       />
     </div>
   );

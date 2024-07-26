@@ -83,9 +83,9 @@ function ChatList({
   };
 
   const getDisplayName = (chatList) => {
-    if (chatList.ansName === "관리자") {
-      return "관리자";
-    }
+    // if (chatList.ansName === "관리자") {
+    //   return "관리자";
+    // }
     const isCurrentUserQs = currentUserId === chatList.qsId;
     const isCurrentUserAns = currentUserId === chatList.ansId;
     if (isCurrentUserQs) {

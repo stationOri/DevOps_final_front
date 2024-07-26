@@ -27,11 +27,13 @@ function AdminRestReservation() {
   const getRestData = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/reservations/reservation/admin"
+        "http://localhost:8080/reservations/admin"
       );
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
+      console.log(response);
+      console.log(response.data);
       const json = await response.json();
       console.log("Fetched data:", json);
       setReadyRest(json || []);
@@ -60,6 +62,7 @@ function AdminRestReservation() {
   };
 
   const handleStatusChange = (e) => {
+    
     setStatusFilters({
       ...statusFilters,
       [e.target.value]: e.target.checked,
