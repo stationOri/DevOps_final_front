@@ -1,6 +1,6 @@
 import "../../css/components/adminn/AdminRestAccept.css";
 import React, { useState, useEffect } from "react";
-import Pagination from "../Pagination";  // 페이지네이션 컴포넌트 임포트
+import Pagination from "../Pagination"; // 페이지네이션 컴포넌트 임포트
 import RestAcceptModal from "../Modal/RestAcceptModal";
 import Loading from "../Loading";
 
@@ -10,7 +10,9 @@ function AdminRestAccept() {
   const [currentPage, setCurrentPage] = useState(1);
   const [acceptshow, setAcceptShow] = useState(false);
   const itemsPerPage = 10;
+  const [totalElements, setTotalElements] = useState(0);
   const [selectedRest, setSelectedRest] = useState(null);
+  const [editSuccess, setEditSuccess] = useState(false);
 
   const AcceptClose = () => setAcceptShow(false);
   const AcceptShow = (rest) => {
@@ -19,13 +21,17 @@ function AdminRestAccept() {
   };
 
   const getRestData = async () => {
+    console.log('Fetching data...');
+    setLoading(true);
     try {
-      const response = await fetch('http://localhost:8080/restaurants/beforeAccept');
+      const response = await fetch(`http://localhost:8080/restaurants/beforeAccept/${currentPage}`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
-      setReadyRest(json || []);
+      setReadyRest(json.content || []); 
+      setTotalElements(json.totalElements || 0);
+      console.log('Data fetched successfully:', json);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -35,28 +41,32 @@ function AdminRestAccept() {
 
   useEffect(() => {
     getRestData();
-  }, []);
+  }, [currentPage]); 
+
+  useEffect(() => {
+    console.log("editSuccess 상태가 변경되었습니다:", editSuccess);
+    if (editSuccess) {
+      getRestData();
+      setEditSuccess(false);
+    }
+  }, [editSuccess]);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
   const handleUpdateStatus = (id, newStatus) => {
-    console.log('Updating status for ID:', id, 'to:', newStatus);
-    const updatedRests = readyRest.map(rest =>
+    console.log("Updating status for ID:", id, "to:", newStatus);
+    const updatedRests = readyRest.map((rest) =>
       rest.restId === id ? { ...rest, status: newStatus } : rest
     );
     setReadyRest(updatedRests);
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = readyRest.slice(indexOfFirstItem, indexOfLastItem);
-
   return (
     <div className="restacceptrootWrapper">
       {loading ? (
-        <Loading/>
+        <Loading />
       ) : (
         <>
           <div className="restAcceptbfWrapper">
@@ -65,26 +75,35 @@ function AdminRestAccept() {
           </div>
           <hr />
           <div className="restacceptTableWrapper">
-            {currentItems.length === 0 ?
-            <div style={{
-              width:"100%",
-              textAlign:"center",
-              marginTop:"200px"
-            }}>
-              승인을 대기중인 매장이 없습니다.
-            </div> :
-            <>
-            {currentItems.map((rest) => (
-              <div className="restacceptRowWrapper" key={rest.restId}>
-                <div className="restaccept">{rest.rest_name}</div>
-                <button className="restacceptbutton" rest_id={rest.restId} onClick={() => AcceptShow(rest)}>승인</button>
+            {readyRest.length === 0 ? (
+              <div
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  marginTop: "200px",
+                }}
+              >
+                승인을 대기중인 매장이 없습니다.
               </div>
-            ))}
-            </>
-          }
+            ) : (
+              <>
+                {readyRest.map((rest) => (
+                  <div className="restacceptRowWrapper" key={rest.restId}>
+                    <div className="restaccept">{rest.rest_name}</div>
+                    <button
+                      className="restacceptbutton"
+                      rest_id={rest.restId}
+                      onClick={() => AcceptShow(rest)}
+                    >
+                      승인
+                    </button>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
           <Pagination
-            totalItems={readyRest.length}
+            totalItems={totalElements}  // 전체 항목 수 전달
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -104,6 +123,7 @@ function AdminRestAccept() {
           join_date={selectedRest.join_date}
           onUpdateStatus={handleUpdateStatus}
           reloadData={getRestData} // 새로운 함수 전달
+          setEditSuccess={setEditSuccess}
         />
       )}
     </div>

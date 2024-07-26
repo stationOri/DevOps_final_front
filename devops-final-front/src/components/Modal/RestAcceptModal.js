@@ -13,7 +13,8 @@ function RestAcceptModal({
   rest_data,
   join_date,
   onUpdateStatus,
-  reloadData // 부모 컴포넌트에서 전달된 함수
+  reloadData, // 부모 컴포넌트에서 전달된 함수
+  setEditSuccess
 }) {
   const [rejectshow, setRejectShow] = useState(false);
 
@@ -42,9 +43,8 @@ function RestAcceptModal({
       console.log('Updated status:', rest_id, "B");
 
       onUpdateStatus(rest_id, "B");
-
+      setEditSuccess(true);
       reloadData();
-
       AcceptClose();
     } catch (error) {
       console.error('레스토랑 상태 업데이트 오류:', error);
