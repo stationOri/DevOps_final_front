@@ -83,10 +83,6 @@ function RestRun({ restId }) {
       alert("라스트오더 시간은 마감시간보다 이전이어야 합니다.");
       return false;
     }
-    if (lastOrder <= new Date(close - 30 * 60000)) { // 30분 차이 검사
-      alert("라스트오더 시간은 마감시간과 최소 30분 차이가 나야 합니다.");
-      return false;
-    }
 
     return true;
   };

@@ -19,6 +19,10 @@ function RestInfoModal({
   const blockedStatus = is_blocked ? 'yes' : 'no';
   const openStatus = rest_isopen ? 'yes' : 'no';
 
+  const handleShowClick = () => {
+    window.open(rest_data, "_blank");
+  };
+
   return (
     <div>
       <div
@@ -95,10 +99,10 @@ function RestInfoModal({
                     <input
                       type="text"
                       className="input2boxwithbtn"
-                      value={rest_data}
+                      value={rest_num}
                       readOnly
                     />
-                    <button className="acceptshowbtn">show</button>
+                    <button className="acceptshowbtn" onClick={handleShowClick}>show</button>
                   </div>
                 </div>
                 <div className="foralign">
@@ -114,7 +118,7 @@ function RestInfoModal({
               <div className="fifthaccpetrow">
                 <div className="foralign">
                   <div className="accepthintText">계정 금지 유무</div>
-                  <input className="input2box" value={blockedStatus} ReadOnly/>
+                  <input className="input2box" value={blockedStatus} readOnly/>
                 </div>
                 <div className="foralign">
                   <div className="accepthintText">탈퇴일</div>
@@ -138,7 +142,7 @@ function RestInfoModal({
                 </div>
                 <div className="foralign">
                   <div className="accepthintText">예약 오픈 여부</div>
-                  <input className="input2box" value={openStatus} ReadOnly/>
+                  <input className="input2box" value={openStatus} readOnly/>
                 </div>
               </div>
             </div>

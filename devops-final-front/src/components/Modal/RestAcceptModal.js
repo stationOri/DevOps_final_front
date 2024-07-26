@@ -57,6 +57,10 @@ function RestAcceptModal({
     RejectShow();
   };
 
+  const handleShowClick = () => {
+    window.open(rest_data, "_blank");
+  };
+
   return (
     <div>
       <div
@@ -126,10 +130,10 @@ function RestAcceptModal({
                     <input
                       type="text"
                       className="input2boxwithbtn"
-                      value={rest_data}
+                      value={rest_num}
                       readOnly
                     />
-                    <button className="acceptshowbtn">show</button>
+                    <button className="acceptshowbtn" onClick={handleShowClick}>show</button>
                   </div>
                 </div>
                 <div className="foralign">
