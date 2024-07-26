@@ -3,7 +3,7 @@ import "../../css/components/adminn/AdminRestAfterAccept.css";
 import Pagination from "../Pagination";
 import RestInfoModal from "../Modal/RestInfoModal";
 import Search from "../../assets/images/sidebar/search.png";
-import Loading from "../Loading"; // Ensure this path is correct based on your project structure
+import Loading from "../Loading";
 
 function AdminRestAfterAccept() {
   const [readyRest, setReadyRest] = useState([]);
@@ -12,19 +12,21 @@ function AdminRestAfterAccept() {
   const [selectedRest, setSelectedRest] = useState(null); // 선택된 매장 정보
   const [infoshow, setInfoShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredItems, setFilteredItems] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
   const itemsPerPage = 20;
 
+  // 데이터 가져오기 함수
   const getRestData = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/restaurants/afterAccept`);
+      const response = await fetch(`http://localhost:8080/restaurants/afterAccept/${currentPage}`);
       if (!response.ok) {
         throw new Error("Failed to fetch");
       }
       const json = await response.json();
       console.log("Fetched data:", json);
-      setReadyRest(json || []);
-      setFilteredItems(json || []);
+      setReadyRest(json.content || []);
+      setTotalElements(json.totalElements || 0);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -32,36 +34,32 @@ function AdminRestAfterAccept() {
     }
   };
 
+  // 페이지가 변경될 때 데이터 새로 가져오기
   useEffect(() => {
     getRestData();
-  }, []);
+  }, [currentPage]);
 
+  // 검색 필터 적용
+  const filteredItems = readyRest.filter((item) =>
+    item.rest_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+
+  // 페이지 변경 핸들러
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
-
+  // 정보 모달 열기
   const openInfoModal = (rest) => {
     setSelectedRest(rest);
     setInfoShow(true);
   };
 
+  // 정보 모달 닫기
   const closeInfoModal = () => {
     setInfoShow(false);
   };
-
-  useEffect(() => {
-    const filtered = readyRest.filter((item) =>
-      item.rest_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredItems(filtered);
-  }, [searchTerm, readyRest]);
-
-  const leftColumnItems = currentItems.filter((_, index) => index % 2 === 0);
-  const rightColumnItems = currentItems.filter((_, index) => index % 2 !== 0);
 
   return (
     <div className="restacceptrootWrapper">
@@ -88,7 +86,7 @@ function AdminRestAfterAccept() {
           <hr />
           <div className="restafteracceptTableWrapper">
             <div className="restacceptColumn">
-              {leftColumnItems.map((rest) => (
+              {filteredItems.filter((_, index) => index % 2 === 0).map((rest) => (
                 <div className="restafteracceptRowWrapper" key={rest.rest_id}>
                   <div className="restaccept">{rest.rest_name}</div>
                   <button
@@ -101,7 +99,7 @@ function AdminRestAfterAccept() {
               ))}
             </div>
             <div className="restacceptColumn">
-              {rightColumnItems.map((rest) => (
+              {filteredItems.filter((_, index) => index % 2 !== 0).map((rest) => (
                 <div className="restafteracceptRowWrapper" key={rest.rest_id}>
                   <div className="restaccept">{rest.rest_name}</div>
                   <button
@@ -115,7 +113,7 @@ function AdminRestAfterAccept() {
             </div>
           </div>
           <Pagination
-            totalItems={filteredItems.length}
+            totalItems={totalElements}  // 전체 항목 수 전달
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}

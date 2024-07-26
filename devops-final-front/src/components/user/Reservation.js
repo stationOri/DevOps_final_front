@@ -12,7 +12,7 @@ import noteImg from "../../assets/images/detail/note.png";
 import calImg from "../../assets/images/modal/cal.png";
 import pplImg from "../../assets/images/modal/people.png";
 
-const Reservation = ({ userId, restId }) => {
+const Reservation = ({ userId, restId, setSelectedMenu}) => {
   const [loading, setLoading] = useState(true);
   const [restaurant, setRestaurant] = useState(null);
   const [opentimes, setOpentimes] = useState([]);
@@ -55,6 +55,10 @@ const Reservation = ({ userId, restId }) => {
     fetchRestInfo();
     fetchMenus();
   }, [restId]);
+
+  const handlesuccess = () => {
+    setSelectedMenu("마이페이지")
+  }
 
   useEffect(() => {
     if (menus.length > 0) {
@@ -291,75 +295,77 @@ const Reservation = ({ userId, restId }) => {
     }
   };
 
-  const PaymentRequest = (amount, userId, reservationReqDto) => {
-    const { IMP } = window;
-    IMP.init("imp50204728"); // 가맹점 번호 지정
-    IMP.request_pay(
-      {
-        pg: "tosspayments",
-        pay_method: "card",
-        merchant_uid: `mid_${new Date().getTime()}_${userId}`,
-        name: "waitmate 예약금",
-        amount: amount,
-        buyer_name: userId,
-      },
-      async (response) => {
-        if (response.error_code != null) {
-          return alert(
-            `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
-          );
-        } else {
-          try {
-            const notified = await axios.post(
-              "http://localhost:8080/payment/validation",
-              {
-                imp_uid: response.imp_uid,
-                merchant_uid: response.merchant_uid,
-                amount: parseInt(amount),
-              },
-              {
-                headers: { "Content-Type": "application/json" },
-              }
-            );
-            if (notified) {
-              console.log("결제 verification 성공");
-              const payDto = {
-                imp_uid: response.imp_uid,
-                merchant_uid: response.merchant_uid,
-                amount: parseInt(amount),
-              };
-              const combinedDto = {
-                reservationReqDto: reservationReqDto,
-                payDto: payDto,
-              };
-              try {
-                const response = await axios.post(
-                  "http://localhost:8080/reservations/reservation",
-                  combinedDto,
-                  {
-                    headers: { "Content-Type": "application/json" },
-                  }
-                );
-                if (response.data === "success") {
-                  alert("예약 성공!");
-                } else {
-                  alert(response.data);
-                }
-              } catch (error) {
-                console.error("Error making reservation:", error);
-              }
-            } else {
-              alert("결제 실패");
-              console.log("결제 verification 실패");
+  const PaymentRequest = (amount, userId, reservationReqDto, setSelectedMenu) => {
+  const { IMP } = window;
+  IMP.init("imp50204728"); // 가맹점 번호 지정
+  IMP.request_pay(
+    {
+      pg: "tosspayments",
+      pay_method: "card",
+      merchant_uid: `mid_${new Date().getTime()}_${userId}`,
+      name: "waitmate 예약금",
+      amount: amount,
+      buyer_name: userId,
+    },
+    async (response) => {
+      if (response.error_code != null) {
+        return alert(
+          `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
+        );
+      } else {
+        try {
+          const notified = await axios.post(
+            "http://localhost:8080/payment/validation",
+            {
+              imp_uid: response.imp_uid,
+              merchant_uid: response.merchant_uid,
+              amount: parseInt(amount),
+            },
+            {
+              headers: { "Content-Type": "application/json" },
             }
-          } catch (error) {
-            alert("결제 화면 호출 실패");
-            console.error("api 호출 실패:", error);
+          );
+          if (notified) {
+            console.log("결제 verification 성공");
+            const payDto = {
+              imp_uid: response.imp_uid,
+              merchant_uid: response.merchant_uid,
+              amount: parseInt(amount),
+            };
+            const combinedDto = {
+              reservationReqDto: reservationReqDto,
+              payDto: payDto,
+            };
+            try {
+              const reservationResponse = await axios.post(
+                "http://localhost:8080/reservations/reservation",
+                combinedDto,
+                {
+                  headers: { "Content-Type": "application/json" },
+                }
+              );
+              if (reservationResponse.data === "success") {
+                alert("예약 성공!");
+                handlesuccess();
+              } else {
+                alert(reservationResponse.data);
+              }
+            } catch (error) {
+              console.error("Error making reservation:", error);
+            }
+          } else {
+            alert("결제 실패");
+            console.log("결제 verification 실패");
           }
+        } catch (error) {
+          alert("결제 화면 호출 실패");
+          console.error("api 호출 실패:", error);
         }
       }
-    );
-  };
+    }
+  );
+};
+
   return (
     <div className="reservation">
       <div className="res-container">

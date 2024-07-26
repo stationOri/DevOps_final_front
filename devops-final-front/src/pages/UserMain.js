@@ -33,6 +33,7 @@ function UserMain() {
     setSelectedMenu("예약");
   };
 
+
   return (
     <div className="mainWrapper">
       <SideBar
@@ -72,6 +73,7 @@ function UserMain() {
                 onMenuEditClick={handleMenuClick}
                 userId={userId}
                 restId={selectedRestId}
+                setSelectedMenu={setSelectedMenu}
               />
             )}
             {selectedMenu === "1:1 문의" && (
