@@ -27,7 +27,7 @@ function RestMain() {
   const handleInfoEditClick = (id) => {
     console.log("식당 정보 수정 버튼 클릭됨, ID:", id);
     setSelectedRestId(id);
-    setSelectedMenu("식당정보 수정");
+    setSelectedMenu("계정 정보");
   };
 
   const handleRestIdChange = useCallback((id) => {
@@ -58,9 +58,6 @@ function RestMain() {
                 restId={selectedRestId}
               />
               // <FileUploadTest />
-            )}
-            {selectedMenu === "식당정보 수정" && selectedRestId && (
-              <RestaurantInfoEdit restId={selectedRestId} />
             )}
             {selectedMenu === "메뉴 관리" && selectedRestId && (
               <MenuManagement restId={selectedRestId} />
