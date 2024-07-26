@@ -30,7 +30,7 @@ function WaitingManagement({ restId, onMenuClick }) {
       if (text === "A" || text === "C") {
         setWait(true);
       }
-      console.log(wait+text)
+      console.log(wait + text);
     } catch (error) {
       console.error("Error revWait status:", error);
     }
@@ -93,19 +93,15 @@ function WaitingManagement({ restId, onMenuClick }) {
   };
 
   // 웨이팅 상태 업데이트
-  const updateWaitStatus = async (status, waitingId) => {
+  const updateWaitStatus = async (status) => {
     try {
-      console.log(
-        `Updating wait status: ${status} for waitingId: ${waitingId}`
-      );
       const response = await fetch(
-        `http://localhost:8080/waiting/${waitingId}`,
+        `http://localhost:8080/restaurants/info/rest/${restId}/waitstatus/${status}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(status),
         }
       );
 
@@ -115,12 +111,28 @@ function WaitingManagement({ restId, onMenuClick }) {
           `Failed to update status. Status code: ${response.status}. Response: ${errorText}`
         );
       }
-
-      console.log("Status updated successfully");
+      alert("변경 완료")
+      await getWait();
+      await getWaitStatus();
       await getWaitList();
     } catch (error) {
       console.error("Error updating wait status:", error);
     }
+  };
+
+  // 웨이팅 접수 시작
+  const handleStartWaiting = () => {
+    updateWaitStatus("C");
+  };
+
+  // 웨이팅 접수 중지
+  const handleStopWaiting = () => {
+    updateWaitStatus("A");
+  };
+
+  // 웨이팅 접수 종료
+  const handleEndWaiting = () => {
+    updateWaitStatus("B");
   };
 
   // 빈 항목 채우기 (페이지네이션을 위해)
@@ -213,9 +225,11 @@ function WaitingManagement({ restId, onMenuClick }) {
         return <td></td>;
     }
   };
-  const gotoRestInfo = () =>{
+
+  const gotoRestInfo = () => {
     onMenuClick("계정 정보");
- }
+  };
+
   return (
     <div className="WrapperWithoutBorder">
       {loading ? (
@@ -240,11 +254,24 @@ function WaitingManagement({ restId, onMenuClick }) {
                 {wait && (
                   <div className="rest-right-box">
                     <div className="rest-button-box">
-                      <button className="btnforBlackBorder">
+                      <button
+                        className="btnforBlackBorder"
+                        onClick={handleStartWaiting}
+                      >
                         웨이팅 접수 시작
                       </button>
-                      <button className="btnforOrange">웨이팅 접수 중지</button>
-                      <button className="btnforOrange">웨이팅 접수 종료</button>
+                      <button
+                        className="btnforOrange"
+                        onClick={handleStopWaiting}
+                      >
+                        웨이팅 접수 중지
+                      </button>
+                      <button
+                        className="btnforOrange"
+                        onClick={handleEndWaiting}
+                      >
+                        웨이팅 접수 종료
+                      </button>
                     </div>
                     <div className="boxforhinttext">
                       {upperText}
@@ -316,10 +343,9 @@ function WaitingManagement({ restId, onMenuClick }) {
                     <tr>
                       <td
                         colSpan={5}
-                        style={{ textAlign: "center", paddingBottom: "20px", backgroundColor:"#fff"}}
+                        style={{ textAlign: "center", paddingBottom: "20px", backgroundColor: "#fff" }}
                       >
-                        해당 기능을 사용하려면 가게 정보 수정 화면에서 원격
-                        줄서기 기능을 활성화 해주세요.
+                        해당 기능을 사용하려면 가게 정보 수정 화면에서 원격 줄서기 기능을 활성화 해주세요.
                       </td>
                     </tr>
                     <tr>
