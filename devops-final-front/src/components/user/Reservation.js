@@ -256,18 +256,18 @@ const Reservation = ({ userId, restId }) => {
   const handleEnrollReservation = async (e) => {
     e.preventDefault();
     const menulist = menus
-    .filter(menu => menuQuantities[menu.menuId] > 0)
-    .map(menu => ({
+      .filter((menu) => menuQuantities[menu.menuId] > 0)
+      .map((menu) => ({
         menuId: menu.menuId,
-        amount: menuQuantities[menu.menuId]
-    }));
-    
+        amount: menuQuantities[menu.menuId],
+      }));
+
     let depositAmount;
-      if (restInfo && restInfo.restDepositMethod === "A") {
-        depositAmount = restInfo.restDeposit * selectedGuests;
-      } else {
-        depositAmount = calculateTotalPrice() * 0.2;
-      }
+    if (restInfo && restInfo.restDepositMethod === "A") {
+      depositAmount = restInfo.restDeposit * selectedGuests;
+    } else {
+      depositAmount = calculateTotalPrice() * 0.2;
+    }
     const reservationReqDto = {
       restId,
       userId,
@@ -276,85 +276,97 @@ const Reservation = ({ userId, restId }) => {
       resNum: selectedGuests,
       deposit: depositAmount,
       request: reqText,
-      menulist
+      menulist,
     };
 
     try {
-      console.log(menulist)
-      const response = await axios.post('http://localhost:8080/reservations/reservationcheck', reservationReqDto, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      if (response.data === 'available') {
+      console.log(menulist);
+      const response = await axios.post(
+        "http://localhost:8080/reservations/reservationcheck",
+        reservationReqDto,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      if (response.data === "available") {
         PaymentRequest(depositAmount, userId, reservationReqDto);
-      }else{
+      } else {
         alert(response.data);
       }
     } catch (error) {
-      console.error('Error making reservation:', error);
+      console.error("Error making reservation:", error);
     }
   };
 
   const PaymentRequest = (amount, userId, reservationReqDto) => {
     const { IMP } = window;
-    IMP.init('imp50204728'); // 가맹점 번호 지정
-    IMP.request_pay({
-      pg: "tosspayments",
-      pay_method: 'card',
-      merchant_uid: `mid_${new Date().getTime()}_${userId}`,
-      name: 'waitmate 예약금',
-      amount: amount, 
-      buyer_name: userId,
-  },  async (response) => {
-      if (response.error_code != null) {
-        return alert(`결제에 실패하였습니다. 에러 내용: ${response.error_msg}`);
-      }else{
+    IMP.init("imp50204728"); // 가맹점 번호 지정
+    IMP.request_pay(
+      {
+        pg: "tosspayments",
+        pay_method: "card",
+        merchant_uid: `mid_${new Date().getTime()}_${userId}`,
+        name: "waitmate 예약금",
+        amount: amount,
+        buyer_name: userId,
+      },
+      async (response) => {
+        if (response.error_code != null) {
+          return alert(
+            `결제에 실패하였습니다. 에러 내용: ${response.error_msg}`
+          );
+        } else {
           try {
-              const notified = await axios.post('http://localhost:8080/payment/validation', {
-                
+            const notified = await axios.post(
+              "http://localhost:8080/payment/validation",
+              {
                 imp_uid: response.imp_uid,
                 merchant_uid: response.merchant_uid,
-                amount: parseInt(amount)
-              }, {
-                headers: { "Content-Type": "application/json" }
-              });
-              if(notified){
-                console.log("결제 verification 성공");
-                const payDto={
-                  imp_uid: response.imp_uid,
-                  merchant_uid: response.merchant_uid,
-                  amount: parseInt(amount)
-                }
-                const combinedDto = {
-                  reservationReqDto: reservationReqDto,
-                  payDto: payDto
-                };
-                try {
-                  const response = await axios.post('http://localhost:8080/reservations/reservation', combinedDto, {
-                    headers: { 'Content-Type': 'application/json' }
-                  });
-                  if (response.data === 'success') {
-                    alert("예약 성공!");
-                  }else{
-                    alert(response.data);
-                  }
-                } catch (error) {
-                  console.error('Error making reservation:', error);
-                }
-
-
-              }else{
-                alert("결제 실패");
-                console.log("결제 verification 실패");
+                amount: parseInt(amount),
+              },
+              {
+                headers: { "Content-Type": "application/json" },
               }
-            } catch (error) {
-              alert("결제 화면 호출 실패");
-              console.error('api 호출 실패:', error);
+            );
+            if (notified) {
+              console.log("결제 verification 성공");
+              const payDto = {
+                imp_uid: response.imp_uid,
+                merchant_uid: response.merchant_uid,
+                amount: parseInt(amount),
+              };
+              const combinedDto = {
+                reservationReqDto: reservationReqDto,
+                payDto: payDto,
+              };
+              try {
+                const response = await axios.post(
+                  "http://localhost:8080/reservations/reservation",
+                  combinedDto,
+                  {
+                    headers: { "Content-Type": "application/json" },
+                  }
+                );
+                if (response.data === "success") {
+                  alert("예약 성공!");
+                } else {
+                  alert(response.data);
+                }
+              } catch (error) {
+                console.error("Error making reservation:", error);
+              }
+            } else {
+              alert("결제 실패");
+              console.log("결제 verification 실패");
             }
+          } catch (error) {
+            alert("결제 화면 호출 실패");
+            console.error("api 호출 실패:", error);
+          }
+        }
       }
-
-    
-    })
-  }
+    );
+  };
   return (
     <div className="reservation">
       <div className="res-container">
@@ -384,11 +396,15 @@ const Reservation = ({ userId, restId }) => {
             <div className="res-rest-intro-box flex-row">
               <div className="res-rest-location-wrap">
                 <div className="rest-info-wrap">
-                  <img className="rest-info-img" src={locationImg} alt=""/>
+                  <img className="rest-info-img" src={locationImg} alt="" />
                   <p className="rest-info-content">{restaurant?.restAddress}</p>
                 </div>
                 <div className="rest-info-wrap-2">
-                  <img className="rest-info-img mt-5" src={opentimeImg} alt=""/>
+                  <img
+                    className="rest-info-img mt-5"
+                    src={opentimeImg}
+                    alt=""
+                  />
                   <div>
                     {opentimes.map((opentime) => (
                       <div
@@ -403,13 +419,13 @@ const Reservation = ({ userId, restId }) => {
                   </div>
                 </div>
                 <div className="rest-info-wrap">
-                  <img className="rest-info-img" src={phoneImg} alt=""/>
+                  <img className="rest-info-img" src={phoneImg} alt="" />
                   <p className="rest-info-content">{restaurant?.restPhone}</p>
                 </div>
               </div>
               <div className="res_rest_intro">
                 <div className="rest-info-wrap-2">
-                  <img className="rest-info-img mt-5" src={noteImg} alt=""/>
+                  <img className="rest-info-img mt-5" src={noteImg} alt="" />
                   <div className="rest-info-content">
                     {restaurant?.restIntro}
                   </div>
@@ -419,7 +435,7 @@ const Reservation = ({ userId, restId }) => {
           </div>
           <div className="res-enroll-date-time">
             <div className="res-enroll-date">
-              <img className="res-cal-img" src={calImg} alt=""/>
+              <img className="res-cal-img" src={calImg} alt="" />
               <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
@@ -431,7 +447,7 @@ const Reservation = ({ userId, restId }) => {
               />
             </div>
             <div className="res-enroll-ppl">
-              <img className="res-ppl-img" src={pplImg} alt=""/>
+              <img className="res-ppl-img" src={pplImg} alt="" />
               {restInfo && restInfo.maxPpl ? (
                 <select
                   id="guestPicker"
@@ -564,7 +580,9 @@ const Reservation = ({ userId, restId }) => {
                 {restInfo
                   ? restInfo.restDepositMethod === "A"
                     ? `${restInfo.restDeposit * selectedGuests} 원`
-                    : `${calculateTotalPrice() * 0.2} 원`
+                    : `${
+                        Math.ceil((calculateTotalPrice() * 0.2) / 100) * 100
+                      } 원`
                   : "0원"}
               </div>
               <div className="res-refund-rule">
