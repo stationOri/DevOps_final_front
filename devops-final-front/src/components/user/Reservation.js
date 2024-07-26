@@ -138,13 +138,6 @@ const Reservation = ({ userId, restId }) => {
         return;
       }
 
-      // const times = Object.keys(data.availabilityMap[formattedDate]);
-      // const timeStates = Object.values(data.availabilityMap[formattedDate]);
-
-      // times.forEach((time, index) => {
-      //   console.log(`시간: ${time}, 상태: ${timeStates[index]}`);
-      // });
-
       setAvailableTimes(data.availabilityMap[formattedDate]);
     } catch (error) {
       console.error("사용 가능한 시간 가져오기 오류:", error);

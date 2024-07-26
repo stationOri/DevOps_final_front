@@ -159,6 +159,7 @@
 
 .tableBorderyes {
   border-right: 2px solid #dddddd;
+  border-bottom: 2px solid #dddddd;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -166,6 +167,7 @@
 }
 
 .tableBorderyesend {
+  border-bottom: 2px solid #dddddd;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -231,6 +233,7 @@
 .firstElement {
   border-right: 2px solid #dddddd;
   border-left: 2px solid #fff;
+  /* border-top: none; */
 }
 
 .secondElement, .thirdElement {
@@ -322,4 +325,8 @@
   width: 100%;
   box-shadow: 0 0 10px #dddddd;
   border-radius: 5px;
+}
+
+.firstrevbox {
+  border-top: none;
 }
