@@ -64,7 +64,7 @@ function UserResCancelModal({ usercancelshow, reservation, UserCancelClose }) {
         <div className={`signinModal ${usercancelshow ? "checkshow" : "checkhide"}`}>
           <div className="adminCancelModalContent">
             <div className="adminCancelboldText">예약을 취소하시겠습니까?</div>
-            <div class="line"></div>
+            <div class="line2"></div>
             <div className="userCancelhintText">예약금은 예약 시 안내드린 <br></br>규정에 의거하여 환불됩니다.</div>
             <div className="userCancelhintText2">
             [이용 7일 전] &emsp; 예약금 전액 환불 <br></br>
