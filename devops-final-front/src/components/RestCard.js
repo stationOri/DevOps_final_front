@@ -29,6 +29,29 @@ const RestCard = ({
     return uniqueTimes;
   }, [RestOpentimes]);
 
+  const convertDayToKorean = (day) => {
+    switch (day) {
+      case "MON":
+        return "월요일";
+      case "TUE":
+        return "화요일";
+      case "WED":
+        return "수요일";
+      case "THU":
+        return "목요일";
+      case "FRI":
+        return "금요일";
+      case "SAT":
+        return "토요일";
+      case "SUN":
+        return "일요일";
+      case "HOL":
+        return "공휴일";
+      default:
+        return day;
+    }
+  };
+
   return (
     <div className="rest-card-container">
       <div className="rest-card" onClick={onCardClick}>
@@ -42,7 +65,7 @@ const RestCard = ({
             {uniqueOpentimes.map((opentime, index) => (
               <div key={index}>
                 <div className="rest-card-opentime">
-                  {opentime.restDay}: {opentime.restOpen} - {opentime.restClose}
+                  {convertDayToKorean(opentime.restDay)}: {opentime.restOpen} - {opentime.restClose}
                 </div>
               </div>
             ))}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useInputModal } from "./InputModalContext";
 import "../../css/components/Modal/InputModal.css";
 
@@ -6,24 +6,27 @@ function InputModal() {
   const { modalState, closeInputModal } = useInputModal();
   const { show, header, reviewId, user_id, rest_id } = modalState;
   const [reportContent, setReportContent] = useState("");
-
+  useEffect(() => {
+    console.log("Modal State:", modalState); // modalState 값 확인
+  }, [modalState]);
   const handleReport = () => {
-    if (header === "식당 신고") postRestReport();
+    if (header === "식당 신고") postRestReport(rest_id, user_id, reportContent);
     if (header === "리뷰 신고") postUserReport(reviewId, reportContent);
     closeInputModal();
   };
 
   const postRestReport = async (rest_id, user_id, content) => {
+    console.log(rest_id,user_id,content);
     const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 (YYYY-MM-DD 형식)
     const reportData = {
-      rest_id,
-      user_id,
-      report_date: today,
-      content,
+      restId: rest_id,
+      userId: user_id,
+      reportDate: today,
+      reportContent: content,
     };
 
     try {
-      const response = await fetch("http://localhost:8080/restreport", {
+      const response = await fetch("http://localhost:8080/rest/report", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
