@@ -19,6 +19,7 @@ jobs:
 
       - name: .env 파일 생성
         run: |
+          cd devops-final-front
           echo "${{ secrets.ENV }}" > .env
 
       - name: 의존성 설치
