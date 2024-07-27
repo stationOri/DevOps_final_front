@@ -1,4 +1,5 @@
 import "../../css/components/Modal/AdminResCancelModal.css";
+import React from "react";
 import { useState } from "react";
 import axios from "axios";
 function AdminResCancelModal({ admincancelshow, reservation, AdminCancelClose }) {
