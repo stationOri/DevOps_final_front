@@ -9,7 +9,7 @@ jobs:
   ContainerBased-Deploy-Job:
     runs-on: ubuntu-latest
     steps:
-      - name: Github Repository 의 파일 가져오기
+      - name: Github Repository의 파일 가져오기
         uses: actions/checkout@v4
 
       - name: Node.js 설치
@@ -19,15 +19,17 @@ jobs:
 
       - name: .env 파일 생성
         run: |
-          cd devops-final-front
+          ls
           echo "${{ secrets.ENV }}" > .env
 
       - name: 의존성 설치
         run: |
+          cd devops-final-front
           npm install
 
       - name: 리액트 앱 빌드
         run: |
+          cd devops-final-front
           npm run build
 
       - name: Dockerfile 생성
