@@ -1,29 +1,47 @@
 {
   "env": {
-    "browser": true,
-    "es2021": true
+      "browser": true,
+      "commonjs": true,
+      "es6": true,
+      "node": true
   },
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
+      "eslint:recommended",
+      "plugin:react/recommended"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true
-    }
+      "ecmaFeatures": {
+          "experimentalObjectRestSpread": true,
+          "jsx": true,
+          "legacyDecorators": true
+      },
+      "sourceType": "module",
+      "allowImportExportEverywhere": false
   },
   "plugins": [
-    "react",
-    "react-hooks",
-    "jsx-a11y"
+      "react"
   ],
   "rules": {
-    "no-unused-vars": "warn",
-    "react-hooks/exhaustive-deps": "warn",
-    "jsx-a11y/alt-text": "warn",
-    "react/prop-types": "off"
+      "indent": [
+          "off",
+          4
+      ],
+      "linebreak-style": [
+          "warn",
+          "unix"
+      ],
+      "no-console": "off",
+      "no-mixed-spaces-and-tabs": "warn",
+      "no-unused-vars": "off",
+      "react/prop-types": ["warn", {"skipUndeclared": true}],
+      "quotes": [
+          "off",
+          "single"
+      ],
+      "semi": [
+          "off",
+          "always"
+      ]
   }
 }
