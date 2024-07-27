@@ -24,11 +24,13 @@ jobs:
 
       - name: .env 파일 생성
         run: |
-          ls
+          cd devops-final-front
           echo "${{ secrets.ENV }}" > .env
 
       - name: 리액트 앱 빌드
         run: |
+          ls
+          cd devops-final-front
           npm run build
 
       - name: Dockerfile 생성
