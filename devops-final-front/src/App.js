@@ -9,7 +9,6 @@ import AdminMain from "./pages/AdminMain";
 import UserMain from "./pages/UserMain";
 import { MenuModalProvider } from "./components/Modal/MenuModalContext";
 import { InputModalProvider } from "./components/Modal/InputModalContext";
-import RestaurantInfo from "./components/restaurant/RestaurantInfo";
 
 function App() {
   return (
