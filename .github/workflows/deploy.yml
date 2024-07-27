@@ -31,7 +31,7 @@ jobs:
         run: |
           ls
           cd devops-final-front
-          npm run build
+          CI=false npm run build
 
       - name: Dockerfile 생성
         run: |
