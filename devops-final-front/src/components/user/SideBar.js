@@ -59,6 +59,7 @@ function SideBar({ onMenuClick, isExtended, toggleSidebar, setUserId }) {
         break;
     }
   },[isok])
+  
   useEffect(() => {
     const signinok = query.get("signin");
       if (signinok === "true") {
