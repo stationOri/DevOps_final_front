@@ -33,10 +33,10 @@ jobs:
           cd devops-final-front
           CI=false npm run build
 
-      - name: Dockerfile 생성
-        run: |
-          echo 'FROM nginx:alpine' > Dockerfile
-          echo 'COPY build /usr/share/nginx/html' >> Dockerfile
+      # - name: Dockerfile 생성
+      #   run: |
+      #     echo 'FROM nginx:alpine' > Dockerfile
+      #     echo 'COPY build /usr/share/nginx/html' >> Dockerfile
 
       - name: AWS ECR 접근하기 위해 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
